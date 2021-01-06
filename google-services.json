@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "716902039021",
+    "firebase_url": "https://bus2u-dev.firebaseio.com",
+    "project_id": "bus2u-dev",
+    "storage_bucket": "bus2u-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716902039021:android:5f74ef204fe7ef409fbbe4",
+        "android_client_info": {
+          "package_name": "com.bus2u.grabita.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "716902039021-9h3cr5sap5op8aqhl7do2suq5r2096pp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0OZCoj1Y2hj_yCFSKoJ_ATuIUbDnaVcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "716902039021-9h3cr5sap5op8aqhl7do2suq5r2096pp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

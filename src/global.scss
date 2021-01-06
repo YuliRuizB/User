@@ -24,3 +24,45 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+@font-face {
+	font-family: 'Google Sans';
+	src: url('src/assets/font/GoogleSans-Regular.woff2') format('woff2'), url('src/assets/font/GoogleSans-Regular.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Google Sans';
+	src: url('src/assets/font/GoogleSans-MediumItalic.woff2') format('woff2'), url('src/assets/font/GoogleSans-MediumItalic.woff') format('woff');
+	font-weight: 500;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Google Sans';
+	src: url('src/assets/font/GoogleSans-Bold.woff2') format('woff2'), url('src/assets/font/GoogleSans-Bold.woff') format('woff');
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Google Sans';
+	src: url('src/assets/font/GoogleSans-BoldItalic.woff2') format('woff2'), url('src/assets/font/GoogleSans-BoldItalic.woff') format('woff');
+	font-weight: bold;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Google Sans';
+	src: url('src/assets/font/GoogleSans-Medium.woff2') format('woff2'), url('src/assets/font/GoogleSans-Medium.woff') format('woff');
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Google Sans';
+	src: url('src/assets/font/GoogleSans-Italic.woff2') format('woff2'), url('src/assets/font/GoogleSans-Italic.woff') format('woff');
+	font-weight: normal;
+	font-style: italic;
+}

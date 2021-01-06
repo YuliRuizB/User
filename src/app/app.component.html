@@ -1,18 +1,43 @@
 <ion-app>
-  <ion-split-pane contentId="main-content">
+  <ion-split-pane lines="none" contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">
       <ion-header>
-        <ion-toolbar>
-          <ion-title>Menu</ion-title>
+        <ion-toolbar color="primary">
+          <ion-title></ion-title>
         </ion-toolbar>
       </ion-header>
+      
       <ion-content>
-        <ion-list>
+        <ion-list lines="none">
+          <div *ngIf="user">
+            <ion-menu-toggle auto-hide="false">
+              <ion-item lines="none" menuClose detail="false" [routerLink]="['/profile']"
+                routerLinkActive="router-link-active">
+                <ion-avatar slot="start">
+                  <img [src]="user.photoURL ? user.photoURL : 'assets/img/male_avatar.png'">
+                </ion-avatar>
+                <ion-label color="primary">
+                  <h2>{{ user.displayName }}</h2>
+                  <p><small>{{ user.email }}</small></p>
+                </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </div>
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-            <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
-              <ion-icon slot="start" [name]="p.icon"></ion-icon>
+            <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" detail="false">
+              <ion-icon slot="start" [name]="p.icon" [color]="p.color"></ion-icon>
               <ion-label>
                 {{p.title}}
+                <p class="ion-text-wrap">{{ p.subtitle }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <ion-menu-toggle auto-hide="false">
+            <ion-item menuClose (click)="signout()">
+              <ion-icon slot="start" name="close" color="danger"></ion-icon>
+              <ion-label>
+                Cerrar
+                <p>Cerrar la sesión</p>
               </ion-label>
             </ion-item>
           </ion-menu-toggle>

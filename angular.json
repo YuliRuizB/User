@@ -29,6 +29,11 @@
                 "glob": "**/*.svg",
                 "input": "node_modules/ionicons/dist/ionicons/svg",
                 "output": "./svg"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/leaflet/dist/images",
+                "output": "leaflet/"
               }
             ],
             "styles": [
@@ -37,9 +42,19 @@
               },
               {
                 "input": "src/global.scss"
+              },
+              {
+                "input": "./node_modules/leaflet/dist/leaflet.css"
+              },
+              {
+                "input": "./node_modules/@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css"
               }
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js",
+              "src/assets/js/openpay.v1.min.js",
+              "src/assets/js/openpay-data.v1.min.js"
+            ]
           },
           "configurations": {
             "production": {
