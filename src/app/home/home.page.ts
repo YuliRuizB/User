@@ -483,7 +483,6 @@ export class HomePage implements OnInit {
 
   updateDevices() {
     this.asyncProcess = true;
-    console.log(this.user.defaultRoute);
 
     this.busesService
       .getLiveBusesRoute(this.user, this.user.defaultRoute)
@@ -518,7 +517,6 @@ export class HomePage implements OnInit {
         this.devices = _.map(devices, (a) => {
           return a.vehicleId;
         });
-        console.log("dic 18 ", devices);
         devices.forEach((device: any) => {
           device.occupancy = (device.count * 100) / device.capacity;
           device.availability = device.capacity - device.count;
