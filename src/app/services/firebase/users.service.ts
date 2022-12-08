@@ -41,6 +41,11 @@ export class UsersService {
     const user = this.users.doc(uid);
     return user.update(preference);
   }
+  updateUserTerms(uid: string, terms: boolean) {
+    const user = this.users.doc(uid);
+    return user.update({"terms": terms});
+  }
+
 
   uploadImage(imageURI) {
     return new Promise<any>((resolve, reject) => {

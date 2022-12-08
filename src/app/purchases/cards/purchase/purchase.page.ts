@@ -200,7 +200,7 @@ export class PurchasePage implements OnInit {
       amount: this.product.price,
       currency: this.product.currency,
       order_id: `${this.product.id}-${this.userData.id}-${Math.floor(100000000 + Math.random() * 900000000)}`,
-      description: this.product.description + ' turno de ' + this.product.round + '. El servicio será prestado en la parada ' + this.product.stopName + ' (' + this.product.stopDescription + ').',
+      description: 'Para la ruta ' + this.product.routeName + ' ' + this.product.description + ' turno de ' + this.product.round + '. El servicio será prestado en la parada ' + this.product.stopName + ' (' + this.product.stopDescription + '). Usuario: ' + this.userData.displayName +' , Matricula: ' + this.userData.studentId + ' Telefono: '+ this.userData.phone,
       customer: {
         name: this.userData.firstName,
         last_name: this.userData.lastName,

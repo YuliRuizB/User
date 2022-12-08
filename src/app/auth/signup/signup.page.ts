@@ -4,7 +4,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { CustomersService } from 'src/app/services/firebase/customers.service';
 import { map } from 'rxjs/operators';
 import { ToastService } from 'src/app/services/toast.service';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController} from '@ionic/angular';
 import * as _ from 'lodash';
 
 @Component({
@@ -17,6 +17,8 @@ export class SignupPage implements OnInit {
   signupForm: FormGroup;
   customersList: any = [];
   loading = false;
+  canDismiss = null;
+  presentingElement = null;
   
   constructor(
     private authService: AuthService,
@@ -30,6 +32,7 @@ export class SignupPage implements OnInit {
   ngOnInit() {
     this.createForm();
     this.getSubscriptions();
+    this.presentingElement = document.querySelector('.ion-page');
   }
 
   createForm() {
@@ -41,7 +44,8 @@ export class SignupPage implements OnInit {
       customerId: ['', Validators.compose([Validators.required])],
       customerName: ['', Validators.compose([Validators.required])],
       password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
-      verifyPassword: ['', Validators.compose([Validators.required, Validators.minLength(8)])]
+      verifyPassword: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
+      verifyTerms:  ['', Validators.compose([Validators.required,Validators.requiredTrue])]
     });
   }
 
@@ -125,6 +129,11 @@ export class SignupPage implements OnInit {
 
   backToSignIn() {
     this.navController.navigateBack('auth/signin');
+  }
+
+  onTermsChanged(event: Event) {
+    console.log(event);
+   this.canDismiss = false;
   }
 
 }

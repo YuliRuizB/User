@@ -106,7 +106,8 @@ export class AuthService {
       _userId: result.uid,
       customerName: user.customerName,
       customerId: user.customerId,
-      studentId: user.studentId
+      studentId: user.studentId,
+      terms: user.verifyTerms
     }
 
     // let customerRequest = {

@@ -13,6 +13,23 @@
 </ion-header>
 
 <ion-content fullscreen="true">
+  <div [hidden]="edited">
+    <p>No has aceptado los terminos y condiciones, favor de validar y aceptar.</p>
+  
+    <ion-checkbox [(ngModel)]="termsVal" (ionChange)="updateTerms()" slot="start" checked="false"></ion-checkbox>
+    <h5 [routerLink]="['/auth/terms/1']" routerLinkActive="router-link-active" text-center>
+      <span>
+        <ion-text color="primary">
+          Términos y Condiciones
+        </ion-text>
+      </span>
+    </h5>
+    <ion-col size-md="12" id="termsInfo" hidden="">
+      <ion-textarea class="italic" rows="10" cols="5" autoGrow="false" maxlength="200"></ion-textarea>
+    </ion-col>
+    <ion-button (click)="AcceptTerms()">Aceptar</ion-button>
+  </div>
+  <div [hidden]="!edited">
   <div class="map">
     <div id="mapId" style="width: 100%; height: 100%"></div>
   </div>
@@ -72,5 +89,5 @@
       </ion-slide>
     </ion-slides>
   </ion-toolbar>
-
+ </div>
 </ion-content>

@@ -76,6 +76,16 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
+    path: 'reglamento',
+    loadChildren: () => import('./reglamento/reglamento.module').then( m => m.ReglamentoPageModule),
+    ...canActivate(redirectUnauthorizedToLanding)
+  },
+  {
+    path: 'faq',
+    loadChildren: () => import('./faq/faq.module').then( m => m.FAQPageModule),
+    ...canActivate(redirectUnauthorizedToLanding)
+  },
+  {
     path: 'promotions',
     loadChildren: () => import('./promotions/promotions.module').then( m => m.PromotionsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)

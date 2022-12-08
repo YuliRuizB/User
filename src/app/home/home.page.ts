@@ -26,6 +26,7 @@ import { StationInfoPage } from "./station-info/station-info.page";
 import { FCM } from "@ionic-native/fcm/ngx";
 import { OsrmService } from "../services/osrm/osrm.service";
 import esLocale from "date-fns/locale/es";
+import { id } from "date-fns/locale";
 
 @Component({
   selector: "app-home",
@@ -50,6 +51,10 @@ export class HomePage implements OnInit {
   showToolbar = false;
   stationsMarkers: L.LayerGroup<any>;
   busesMarkers: L.LayerGroup<any>;
+  dataUser: any;
+  public edited = false;
+  chkTerms:boolean = false;
+  termsVal:boolean = false;
 
   sliderConfig = {
     slidesPerView: 1.5,
@@ -78,6 +83,7 @@ export class HomePage implements OnInit {
     this.storageService.getItem("userData").then((userData) => {
       this.user = JSON.parse(userData);
       // this.canShowDevices();
+      this.validateTerms();
       this.getSubscriptions();
       this.validateToken();
 
@@ -108,6 +114,23 @@ export class HomePage implements OnInit {
     // });
   }
 
+  validateTerms() {
+    const uid = this.user.id;
+    this.usersService
+      .getUser(uid)
+      .pipe(
+        map(a => {
+          const data = a.payload.data() as any;
+          const id = a.payload.id;
+          return { id, ...data };
+        })
+      )
+      .subscribe((dataUser) => {
+        let result = dataUser.hasOwnProperty('terms');
+        this.edited = result;
+        console.log('has terms :' + result);
+      });
+  }
   validateToken() {
     this.fcm.getToken().then((token) => {
       console.log("getToken() from homepage");
@@ -717,5 +740,19 @@ export class HomePage implements OnInit {
       color,
     });
     toast.present();
+  }
+
+  AcceptTerms() {
+    console.log(this.chkTerms);
+    this.usersService
+      .updateUserTerms(this.user.id, this.chkTerms)
+      .then(() => {
+        this.storageService.setItem("userData", JSON.stringify(this.user));
+      });
+  }
+
+  updateTerms(){
+  this.chkTerms = this.termsVal;
+  console.log("terms accepted: " + this.termsVal);
   }
 }

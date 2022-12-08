@@ -55,7 +55,21 @@ export class AppComponent {
       color: 'primary'
     },
     {
-      title: 'Conectémonos',
+      title: 'Preguntas Frecuentes',
+      subtitle: 'Tus dudas pueden resolverse, consulta aqui',
+      url: '/faq',
+      icon: 'chatbubble-ellipses',
+      color: 'primary'
+    },
+    {
+      title: 'Reglamento',
+      subtitle: 'Reglamento de Bus2U',
+      url: '/reglamento',
+      icon: 'newspaper',  
+      color: 'primary'
+    },
+    {
+      title: 'Contactémonos',
       subtitle: 'Tus comentarios son importantes',
       url: '/contact-us',
       icon: 'chatbubbles',
@@ -77,7 +91,8 @@ export class AppComponent {
   ) {
     this.authService.getUserFromDB().subscribe( (user) => {
       this.user = user;
-      if(user.disabled) {
+      //console.log("1-" + this.user);
+      if(this.user === undefined) {
         this.signout();
       }
     })

@@ -65,7 +65,19 @@
             placeholder="Confirmar contraseña 8 dígitos" required>
           </ion-input>
         </ion-item>
-
+        <ion-item>
+          <ion-checkbox slot="start" checked="false" formControlName="verifyTerms" required></ion-checkbox>
+          <h5 [routerLink]="['/auth/terms/2']" routerLinkActive="router-link-active"  text-center>
+            <span>
+              <ion-text class="term-cond" color="primary">
+                Términos y Condiciones
+              </ion-text>
+            </span>
+          </h5>
+          <ion-col size-md = "12" id="termsInfo" hidden="">
+            <ion-textarea class = "italic" rows="10" cols="5" autoGrow="false" maxlength = "200"></ion-textarea> 
+           </ion-col>
+        </ion-item>
       </ion-list>
       <ion-button expand="block" size="large" class="" type="submit" [disabled]="!signupForm.valid">Registrarme</ion-button>
     </div>

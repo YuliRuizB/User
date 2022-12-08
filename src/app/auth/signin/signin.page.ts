@@ -49,13 +49,13 @@ export class SigninPage implements OnInit {
                 const id = a.payload.id;
                 return { id, ...data };
               })
-            ).subscribe( (user) => {
-              const roles: any[] = user.roles;
+            ).subscribe((userR) => {
+              const roles: any[] = userR.roles;
               const isUser = roles.includes('user');
-              const disabled = user.disabled || false;
-              console.log(user.roles.includes('user'));
+              const disabled = userR.disabled || false;
+              console.log("UserR//" + userR);
               if(isUser && !disabled) {
-                this.storageService.setItem('userData', JSON.stringify(user));
+                this.storageService.setItem('userData', JSON.stringify(userR));
                 this.storageService.getItem('isLoggedIn').then(isLoggedIn => {
                   console.log(isLoggedIn);
                   if(!isLoggedIn) {

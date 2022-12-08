@@ -19,13 +19,21 @@
   </div>
 
   <ion-list lines="none">
-    <ion-item>
+  <!--  <ion-item>
       <ion-label>
         <p color="medium">Envíanos un correo</p>
         <h2>{{ contactUsInfo.email }}</h2>
       </ion-label>
       <ion-button fill="clear" slot="end" href="mailto:{{ contactUsInfo.email }}" target="_top">
         <ion-icon slot="icon-only" name="mail" color="primary"></ion-icon>
+      </ion-button>  https://api.whatsapp.com/send/?phone=528115397961&text&type=phone_number&app_absent=0
+    </ion-item>-->
+    <ion-item>
+      <ion-label>
+        <p color="medium">Habla con nosotros!</p>
+      </ion-label>
+      <ion-button fill="clear" slot="end" href="https://api.whatsapp.com/send/?phone=528115397961&text&type=phone_number&app_absent=0" target="_top">
+        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
       </ion-button>
     </ion-item>
 
@@ -37,6 +45,16 @@
       <ion-button fill="clear" slot="end" href="tel:{{ contactUsInfo.phone }}" target="_top">
         <ion-icon slot="icon-only" name="call" color="success"></ion-icon>
       </ion-button>
+    </ion-item>
+
+    <ion-item>
+      <h5 [routerLink]="['/auth/terms/1']" routerLinkActive="router-link-active" text-center>
+        <span>
+          <ion-text color="primary">
+            Términos y Condiciones
+          </ion-text>
+        </span>
+      </h5>
     </ion-item>
 
   </ion-list>
