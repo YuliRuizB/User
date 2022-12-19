@@ -64,7 +64,7 @@ export class AppComponent {
     {
       title: 'Reglamento',
       subtitle: 'Reglamento de Bus2U',
-      url: '/reglamento',
+      url: '/regulation',
       icon: 'newspaper',  
       color: 'primary'
     },
