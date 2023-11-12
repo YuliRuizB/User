@@ -54,7 +54,7 @@
       
     </form>
   </ion-content>
-  <ion-footer class="ion-no-border">
+  <ion-footer class="ion-no-border">   
       <ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
       <ion-button expand="block" class="" size="large" type="button" (click)="signin()" strong="true" [color]="loginForm.valid ? 'primary' : 'medium'" [fill]="loginForm.valid ? 'solid' : 'outline'" [disabled]="!loginForm.valid">Ingresar</ion-button>
   </ion-footer>

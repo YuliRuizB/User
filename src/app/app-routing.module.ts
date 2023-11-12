@@ -89,6 +89,10 @@ const routes: Routes = [
     path: 'promotions',
     loadChildren: () => import('./promotions/promotions.module').then( m => m.PromotionsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
+  },
+  {
+    path: 'profile-detail',
+    loadChildren: () => import('./profile-detail/profile-detail.module').then( m => m.ProfileDetailPageModule)
   }
 ];
 

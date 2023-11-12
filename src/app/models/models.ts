@@ -12,6 +12,9 @@ export interface IUserData {
     customerName: string;
     displayName: string;
     defaultRoute: string;
+    defaultRound:string;
+    defaultRouteName:string;
+    defaultStopName:string;
     email: string;
     emailVerified: boolean;
     firstName: string;
@@ -45,7 +48,7 @@ export interface IUserData {
     uid: string;
     username: string;
     _isEditMode: boolean;
-    _userId: string;
+    _userId: string;   
 }
 
 export interface IRoles {

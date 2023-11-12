@@ -11,11 +11,11 @@ import { Storage } from '@ionic/storage';
 export class OnemapService {
 
   httpOptions: any = {};
-  apiUrl = 'http://gps.onemap7.com/api/';
+  apiUrl = 'http://34.135.13.60:8082/api/'; //'http://gps.onemap7.com/api/';
   serverMapLayer = 'https://mt0.google.com/vt/lyrs=m&ml=es&x={x}&y={y}&z={z}&s=Ga';
   device: Device;
-  email = 'bus2u@grabita.com';
-  password = 'bus2ugrabita';
+  email = 'dev.bus2u@gmail.com'; //'bus2u@grabita.com';
+  password = 'Bus2Utr@ccar'; //'bus2ugrabita';
 
   constructor(
       public alertCtrl: AlertController,
@@ -59,7 +59,7 @@ export class OnemapService {
         this.http.get(url, this.httpOptions).subscribe(data => {
           resolve(data);
         }, err => {
-          // // console.log(err);
+           console.log("getDevices " + err);
         });
       });
     });

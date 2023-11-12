@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class OsrmService {
 
-  osrm = 'http://209.97.155.186:5000';
+  osrm = 'http://209.97.155.186:5000' // 
   service: string = 'route';
   version: string = 'v1';
   profile: string = 'driving';

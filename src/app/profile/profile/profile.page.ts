@@ -4,7 +4,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage, AngularFireUploadTask, AngularFireStorageReference } from '@angular/fire/storage';
 import * as firebase from 'firebase/app';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, NavController } from '@ionic/angular';
 import { IUserData } from 'src/app/models/models';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { UsersService } from 'src/app/services/firebase/users.service';
@@ -12,6 +12,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { File } from '@ionic-native/file/ngx';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
+import { CustomersService } from 'src/app/services/firebase/customers.service';
 
 export interface Image {
   id: string;
@@ -40,6 +41,10 @@ export class ProfilePage implements OnInit {
   uploadPercent: Observable<number>;
   uploadvalue: number = 0;
   downloadURL: Observable<string>;
+  roundOptions = [];
+  roundName: string = "";
+  stopsOptions = [];
+
 
   // Upload Task 
   task: AngularFireUploadTask;
@@ -62,10 +67,12 @@ export class ProfilePage implements OnInit {
 
   constructor(private auth: AngularFireAuth,
     private usersService: UsersService,
+    private navCtrl: NavController, 
     private storageService: StorageService,
     public actionSheetController: ActionSheetController,
     private camera: Camera,
     private file: File,
+    public customersService: CustomersService,
     private formBuilder: FormBuilder,
     private afs: AngularFirestore,
     private bucketStorage: AngularFireStorage) {
@@ -81,9 +88,37 @@ export class ProfilePage implements OnInit {
   ngOnInit() {
     this.storageService.getItem('userData').then((userData) => {
       this.userData = JSON.parse(userData);
-      console.log(this.userData);
+      console.log(this.userData.defaultRoute);
+      this.roundName = this.userData.defaultRouteName;
+      //console.log("this.userData");
+      console.log(this.userData);     
+      this.customersService.getRoutesByCustomer(this.userData.customerId).pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as any;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      ).subscribe( (routes) => {
+        console.log("routes");
+        console.log(routes);
+        this.roundOptions = routes;        
+      })
+
+      this.customersService.getRouteStopPoints(this.userData.customerId,this.userData.defaultRoute).pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as any;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      ).subscribe( (stops) => {
+        console.log("rostopsutes");
+        console.log(stops);
+        this.stopsOptions = stops;        
+      })
+
     });
     if (this.user) {
+      console.log("this.user");
       console.log(this.user);
     }
   }
@@ -247,11 +282,23 @@ export class ProfilePage implements OnInit {
 
   }
 
+  updateMyInfo(){
+    //this.navCtrl.navigateForward('/profile-detail'); 
+    console.log("data");
+
+  }
+
   initializeFormGroup() {
     this.profile = this.formBuilder.group({
       displayName: ['', Validators.compose([Validators.required, Validators.email])],
       photoUrl: ['', Validators.compose([Validators.required, Validators.minLength(8)])]
     })
+  }
+
+  onRoundSelect(event: any) {
+    console.log('Selected Round:', this.roundName);
+    console.log('Event:', event);
+    // Add your custom logic here
   }
 
 }

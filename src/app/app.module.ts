@@ -29,6 +29,7 @@ import { AngularFireFunctionsModule, FUNCTIONS_REGION } from '@angular/fire/func
 import { AngularFireAuthGuard, AngularFireAuthGuardModule } from '@angular/fire/auth-guard';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 
+
 //FCM
 import { FCM } from '@ionic-native/fcm/ngx';
 import { HttpClientModule } from '@angular/common/http';
@@ -59,7 +60,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
     AngularFireFunctionsModule,
     AngularFireAuthModule,
     AngularFireAuthGuardModule,
-    AngularFireStorageModule,
+    AngularFireStorageModule,    
     HttpClientModule,
     NgxQRCodeModule,
     IonicStorageModule.forRoot()

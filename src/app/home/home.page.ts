@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import * as L from "leaflet";
 import { Map, tileLayer } from "leaflet";
 import "leaflet-rotatedmarker";
@@ -27,13 +27,18 @@ import { FCM } from "@ionic-native/fcm/ngx";
 import { OsrmService } from "../services/osrm/osrm.service";
 import esLocale from "date-fns/locale/es";
 import { id } from "date-fns/locale";
-
+import { Subscription } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket } from 'rxjs/webSocket';
+import { WebsocketService } from "../services/onemap/websocket.service";
 @Component({
   selector: "app-home",
   templateUrl: "home.page.html",
   styleUrls: ["home.page.scss"],
+  providers: [ WebsocketService ]
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   loading = true;
   user: any;
   map: Map;
@@ -63,6 +68,12 @@ export class HomePage implements OnInit {
   };
   userGeoLocation: any;
   hasUserGeoLocation = false;
+  events: string[] = [];
+  subscription: Subscription;
+  email = 'dev.bus2u@gmail.com';
+  password = 'Bus2Utr@ccar';
+    private socket$: WebSocketSubject<any>;
+  
 
   constructor(
     private apiService: OnemapService,
@@ -75,11 +86,16 @@ export class HomePage implements OnInit {
     private storageService: StorageService,
     private fcm: FCM,
     private osrmService: OsrmService,
-    private routerOutlet: IonRouterOutlet
+    private routerOutlet: IonRouterOutlet,
+    private http: HttpClient,
+    private webSocketService: WebsocketService
   ) { }
 
-  ionViewDidEnter() {
-    console.log("ionviewdidenter");
+  ionViewDidEnter() {  
+     
+
+    //console.log("aqui");
+    //console.log("ionviewdidenter");
     this.storageService.getItem("userData").then((userData) => {
       this.user = JSON.parse(userData);
       // this.canShowDevices();
@@ -93,6 +109,10 @@ export class HomePage implements OnInit {
         this.requestDefaultRoute();
       }
     });
+  }
+ngOnDestroy() {
+    //this.subscription.unsubscribe();
+    
   }
 
   loadMapAfterSubscriptions() {
@@ -112,6 +132,81 @@ export class HomePage implements OnInit {
     //     this.asyncProcess = false;
     //   });
     // });
+   // this.connectWebSocket();
+   this.authenticate();
+  }
+  connectWebSocket() {
+    /* this.socket$ = new WebSocketSubject({
+      url: '/api/socket/',
+    });
+
+    this.socket$.subscribe(
+      (message) => {
+        console.log('Mensaje recibido:', message);
+        // Manejar mensajes WebSocket recibidos aquí
+      },
+      (error) => {
+        console.error('Error de WebSocket:', error);
+        // Manejar errores WebSocket aquí
+      },
+      () => {
+        console.log('Conexión WebSocket cerrada.');
+        // Manejar el cierre de la conexión WebSocket aquí
+      }
+    ); */
+
+    this.webSocketService.messages.pipe().subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => console.log(error),
+      complete: () => console.log('completed')
+    });
+  }
+  authenticate() {
+      const session = '/api/session/';
+
+      
+      const body = new HttpParams()
+        .set('email', this.email)
+        .set('password', this.password);
+
+      const headers = new HttpHeaders()
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .set('Accept', 'application/json')
+        .set('Authorization', 'Basic ' + btoa(this.email + ':' + this.password));
+
+      const httpOptions: any = {
+        headers,
+        observe: 'response',
+        withCredentials: true
+      };
+      const request = this.http.post(session,body.toString(), httpOptions).pipe().subscribe({
+        next:(response) => {
+          console.log(response);
+          this.connectWebSocket();
+        },
+        error: (error) => console.log(error),
+        complete: () => console.log("completed")
+      });
+
+/* // Crea una instancia de WebSocket
+const socket$ = webSocket(traccarWebSocketUrl);
+
+// Maneja los mensajes recibidos
+socket$.subscribe(
+  (message: any) => {
+    console.log('Mensaje recibido:', message);
+    // Puedes manejar los mensajes WebSocket aquí
+  },
+  (error: any) => {
+    console.error('Error de WebSocket:', error);
+    // Puedes manejar los errores WebSocket aquí
+  },
+  () => {
+    console.log('Conexión WebSocket cerrada.');
+    // Puedes manejar el cierre de la conexión WebSocket aquí
+  } */
   }
 
   validateTerms() {
@@ -128,7 +223,7 @@ export class HomePage implements OnInit {
       .subscribe((dataUser) => {
         let result = dataUser.hasOwnProperty('terms');
         this.edited = result;
-        console.log('has terms :' + result);
+        //console.log('has terms :' + result);
       });
   }
   validateToken() {
@@ -198,7 +293,8 @@ export class HomePage implements OnInit {
         {
           text: "Seleccionar",
           handler: (routeId) => {
-            console.log(routeId);
+            //console.log("seleccionar");
+            // console.log(routeId);
             this.updateUserPreference({ defaultRoute: routeId }).then(() => {
               this.stationsMarkers.eachLayer((layer) => {
                 this.stationsMarkers.removeLayer(layer);
@@ -224,10 +320,11 @@ export class HomePage implements OnInit {
 
   updateUserGeolocation() {
     this.asyncProcess = true;
-    console.log("update user geolocation");
+    
     this.geolocation
       .getCurrentPosition()
       .then((resp) => {
+        console.log("respuesta get current location");
         console.log(resp);
         this.userGeoLocation = resp;
         this.hasUserGeoLocation = true;
@@ -242,6 +339,7 @@ export class HomePage implements OnInit {
 
     const watch = this.geolocation.watchPosition();
     watch.subscribe((data: any) => {
+      console.log("data current location");
       console.log(data);
       // this.updateTimeTravel();
       // const pulsingIcon = L.Icon.pulse({
@@ -252,6 +350,8 @@ export class HomePage implements OnInit {
       // });
 
       //tslint:disable-next-line: no-string-literal
+      console.log("|this.markers[userPosition]");
+      console.log(this.markers["userPosition"]);
       if (!this.markers["userPosition"]) {
         // If there is no marker with this id yet, instantiate a new one.
         // tslint:disable-next-line: no-string-literal
@@ -345,7 +445,7 @@ export class HomePage implements OnInit {
     }).addTo(this.map);
 
     this.map.whenReady(() => {
-      console.log("map is ready");
+      //console.log("map is ready");
       if (this.user && this.user.defaultRoute) {
         this.showMapRoute();
         this.startAutoUpdate();
@@ -381,8 +481,11 @@ export class HomePage implements OnInit {
         )
       )
       .subscribe((routeStops) => {
-        console.log(routeStops);
+       // console.log("routeStops");
+       // console.log(routeStops);
         this.routeStopsList = routeStops;
+       // console.log("stopsrouteList");
+       // console.log(this.routeStopsList);
         this.addStopsToMap(this.routeStopsList);
         if (this.hasUserGeoLocation) {
           this.updateTimeTravel();
@@ -392,7 +495,7 @@ export class HomePage implements OnInit {
 
   updateTimeTravel() {
     this.routeStopsList.forEach((routeStop) => {
-      this.getTimeTravelDistance(routeStop).then((response: any) => {
+      /* this.getTimeTravelDistance(routeStop).then((response: any) => {
         routeStop.distance =
           Number(response.routes[0].distance / 1000).toFixed(0) + " km";
         routeStop.duration = formatDistance(
@@ -400,12 +503,12 @@ export class HomePage implements OnInit {
           response.routes[0].duration * 1000,
           { includeSeconds: true, locale: esLocale }
         );
-      });
+      }); */
     });
   }
 
   getTimeTravelDistance(station: any) {
-    let userCoordinates = `${this.userGeoLocation.coords.longitude},${this.userGeoLocation.coords.latitude}`;
+    /* let userCoordinates = `${this.userGeoLocation.coords.longitude},${this.userGeoLocation.coords.latitude}`;
     let stationCoordinates = `${station.geopoint.longitude},${station.geopoint.latitude}`;
     return this.osrmService
       .getTimeTravelDistance("foot", stationCoordinates, userCoordinates)
@@ -413,11 +516,11 @@ export class HomePage implements OnInit {
       .toPromise()
       .then((response) => {
         return response;
-      });
+      }); */
   }
 
   addStopsToMap(stationsArray) {
-    console.log(stationsArray);
+    //console.log(stationsArray);
     let arrayOfLatLngs = [];
     let coordinates = "";
     let radiuses = "";
@@ -459,7 +562,8 @@ export class HomePage implements OnInit {
         .addTo(this.stationsMarkers)
         .bindPopup(customPopup);
     });
-    console.log(arrayOfLatLngs);
+   // console.log("arrayOfLatLngs");
+   // console.log(arrayOfLatLngs);
     let bounds =
       arrayOfLatLngs.length > 0 ? new L.LatLngBounds(arrayOfLatLngs) : [];
 
@@ -473,17 +577,17 @@ export class HomePage implements OnInit {
         timestamps.substring(0, timestamps.length - 1)
       )
       .subscribe((response: any) => {
-        console.log(response);
+        //console.log(response);
         let polylineArray = [];
         const tracepoints = response.matchings[0].geometry.coordinates;
         _.map(tracepoints, (point) => {
-          console.log(typeof point);
+        //  console.log(typeof point);
           if (point.length > 0) {
             polylineArray.push([point[1], point[0]]);
           }
         });
         // create a red polyline from an array of LatLng points
-        console.log(polylineArray);
+       // console.log(polylineArray);
         var style = {
           color: "#3880ff",
           weight: 8,
@@ -520,7 +624,8 @@ export class HomePage implements OnInit {
         )
       )
       .subscribe((devices) => {
-        console.log(devices);
+       // console.log("devices");
+        //console.log(devices);
 
         if (this.devices.length > 0) {
           const currentDevices = _.map(devices, (a) => {

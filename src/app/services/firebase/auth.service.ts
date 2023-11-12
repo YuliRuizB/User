@@ -23,8 +23,6 @@ export class AuthService {
   userState: BehaviorSubject<any> = new BehaviorSubject([]);
 
   constructor(private auth: AngularFireAuth, private afs: AngularFirestore, private openpayService: OpenpayService, private usersService: UsersService, private storageService: StorageService) {
-
-    console.log('auth service constructor');
     this.auth.authState.subscribe((user) => {
       if (user) {
         this.user = user;

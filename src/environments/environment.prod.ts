@@ -1,15 +1,18 @@
 export const environment = {
   production: true,
-  mapboxToken: '',
+  mapbox: {
+    accessToken: 'pk.eyJ1IjoiZXZhbGxnYXIiLCJhIjoiY2l1cnc2aDRxMDBiYzJ1cHZqdWFlODdseiJ9._lOalqIZflhz0YQosjx-zw'
+  },
   firebaseConfig: {
-    apiKey: "AIzaSyAOjaBXSmdEGU3cav9CLc6We4CZhwr89cM",
-    authDomain: "bus2u-dev.firebaseapp.com",
-    databaseURL: "https://bus2u-dev.firebaseio.com",
-    projectId: "bus2u-dev",
-    storageBucket: "bus2u-dev.appspot.com",
-    messagingSenderId: "716902039021",
-    appId: "1:716902039021:web:54f3dbd02d9bc1a89fbbe4",
-    measurementId: "G-88Y68T9LZP",
-    vapidKey: 'BNHHFx9cgo53ZpqiEVVwmGsavg-CwBCha-1uoQ9CjIgNBPTmJF9MkMkG6UsBSnt7dnm_h0VkOPcl5Nn4WBa1v6c'
+    // QA - Nuevo
+    apiKey: "AIzaSyBvnxnTL4RPkTe0g5cbZFeTleYTArW-PXw",
+    authDomain: "bus2u-qa-391716.firebaseapp.com",
+    databaseURL: "https://bus2u-qa-391716-default-rtdb.firebaseio.com",
+    projectId: "bus2u-qa-391716",
+    storageBucket: "bus2u-qa-391716.appspot.com",
+    messagingSenderId: "8012546509",
+    appId: "1:8012546509:web:28caab96b2fb6e4f078484",
+    measurementId: "G-GHYKGGQK9N"
+
   }
 };

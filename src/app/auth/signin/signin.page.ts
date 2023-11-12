@@ -37,12 +37,14 @@ export class SigninPage implements OnInit {
   signin() {
     if(this.loginForm.valid) {
       this.authService.signin(this.loginForm.value).then((response:any) => {
+        console.log("response");
         console.log(response);
         if (response.user) {
           const user = response.user;
           if (!user.emailVerified) {
             this.navController.navigateForward('auth/verify');
           } else {
+            console.log("user.uid =" +user.uid);
             this.usersService.getUser(user.uid).pipe(
               map(a => {
                 const data = a.payload.data() as any;
@@ -72,8 +74,7 @@ export class SigninPage implements OnInit {
                 })
               }
             })
-            setTimeout(() => {
-              
+            setTimeout(() => {              
             }, 500);
           }
         } else {

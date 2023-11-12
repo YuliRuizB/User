@@ -1,0 +1,21 @@
+{
+    "/api/session": {
+        "target":"http://34.135.13.60:8082",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },
+    "/api": {
+        "target":"http://34.135.13.60:8082",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true
+    },  
+    "/api/socket":{
+        "target":"http://34.135.13.60:8082",
+        "secure": false,
+        "logLevel": "debug",
+        "changeOrigin": true,
+        "ws":true
+    }    
+}

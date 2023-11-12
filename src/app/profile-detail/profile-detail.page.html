@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Actualizar información</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="formGroup" (ngSubmit)="submitForm()">    
+    <ion-item>
+      <ion-icon slot="start" name="call-outline" color="tertiary"></ion-icon>
+      <ion-input type="number" formControlName="phone" class="ion-text-right" minLength="7" maxLength="9" name="phone" [value]="userData.phone"></ion-input>      
+    </ion-item>   
+    <ion-item>
+      <ion-icon slot="start" name="reorder-four-outline" color="tertiary"></ion-icon>
+      <ion-input type="text" formControlName="customerName" class="ion-text-right" minLength="7"  name="customerName" [value]="userData.customerName"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" name="reorder-three-outline" color="tertiary"></ion-icon>
+      <ion-input type="text" formControlName="defaultRound" class="ion-text-right" minLength="7" maxLength="7" name="defaultRound" [value]="userData.defaultRound"></ion-input>
+      <!-- <ion-label class="ion-text-right">{{ userData.studentId }}</ion-label> -->
+    </ion-item> 
+    <ion-item>
+      <ion-icon slot="start" name="reorder-two-outline" color="tertiary"></ion-icon>
+      <ion-input type="text" formControlName="defaultRouteName" class="ion-text-right" minLength="7"  name="defaultRouteName" [value]="userData.defaultRouteName"></ion-input>
+      <!-- <ion-label class="ion-text-right">{{ userData.studentId }}</ion-label> -->
+    </ion-item>  
+    <ion-item>
+      <ion-icon slot="start" name="remove-outline" color="tertiary"></ion-icon>
+      <ion-input type="text" formControlName="defaultStopName" class="ion-text-right" minLength="7" name="defaultStopName" [value]="userData.defaultStopName"></ion-input>
+      <!-- <ion-label class="ion-text-right">{{ userData.studentId }}</ion-label> -->
+    </ion-item>
+
+
+  <ion-button expand="full" type="submit">Guardar</ion-button>
+  <ion-button expand="full"  (click)="backMyInfo()">Atras</ion-button>
+  </form>
+ 
+</ion-content>
