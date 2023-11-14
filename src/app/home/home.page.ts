@@ -108,7 +108,10 @@ export class HomePage implements OnInit, OnDestroy {
       } else {
         this.requestDefaultRoute();
       }
-    });
+    }).catch((error) => {
+			console.log('error');
+			console.log(error)
+		})
   }
 ngOnDestroy() {
     //this.subscription.unsubscribe();
@@ -210,6 +213,8 @@ socket$.subscribe(
   }
 
   validateTerms() {
+		console.log('llega aqui1')
+		console.log(this.user);
     const uid = this.user.id;
     this.usersService
       .getUser(uid)
@@ -221,7 +226,10 @@ socket$.subscribe(
         })
       )
       .subscribe((dataUser) => {
+				console.log('esto1');
+				console.log(dataUser)
         let result = dataUser.hasOwnProperty('terms');
+				console.log(result)
         this.edited = result;
         //console.log('has terms :' + result);
       });
