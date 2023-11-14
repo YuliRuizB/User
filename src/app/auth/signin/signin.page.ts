@@ -37,14 +37,11 @@ export class SigninPage implements OnInit {
   signin() {
     if(this.loginForm.valid) {
       this.authService.signin(this.loginForm.value).then((response:any) => {
-        console.log("response");
-        console.log(response);
-        if (response.user) {
+        // if (response.user) {
           const user = response.user;
           if (!user.emailVerified) {
             this.navController.navigateForward('auth/verify');
           } else {
-            console.log("user.uid =" +user.uid);
             this.usersService.getUser(user.uid).pipe(
               map(a => {
                 const data = a.payload.data() as any;
@@ -55,16 +52,16 @@ export class SigninPage implements OnInit {
               const roles: any[] = userR.roles;
               const isUser = roles.includes('user');
               const disabled = userR.disabled || false;
-              console.log("UserR//" + userR);
               if(isUser && !disabled) {
                 this.storageService.setItem('userData', JSON.stringify(userR));
                 this.storageService.getItem('isLoggedIn').then(isLoggedIn => {
-                  console.log(isLoggedIn);
                   if(!isLoggedIn) {
-                    this.storageService.setItem('isLoggedIn', true);
+                    this.storageService.setItem('isLoggedIn', true)
                   } 
                   this.navController.navigateRoot('home');
-                })
+                }).catch((err) => {
+									this.toastService.presentToast(err, 3000, 'danger')
+								})
               } else {
                 console.log('is not a user');
                 this.toastService.presentToast('Esta aplicación es exclusiva para usuarios activos de la comunidad Bus2U. Para conductores, padres de familia y colaboradores hay otras aplicaciones.',5000,'danger').then( () => {
@@ -73,15 +70,16 @@ export class SigninPage implements OnInit {
                   })
                 })
               }
-            })
-            setTimeout(() => {              
-            }, 500);
+            },(error) => {
+							this.toastService.presentToast(error, 3000, 'danger')
+						})
           }
-        } else {
-          console.log("error");
-        }
-      })
-      .catch( err => this.toastService.presentToast(err, 3000, 'danger'))
+        /*} else {
+					this.toastService.presentToast('Opss! Error al iniciar sesion', 3000, 'danger')
+        }*/
+      }).catch( err => {
+				this.toastService.presentToast(err, 3000, 'danger')
+			})
     }
   }
 

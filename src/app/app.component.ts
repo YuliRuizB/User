@@ -102,9 +102,10 @@ export class AppComponent {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
+    this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+			// await this.storageService.forceSettings();
       this.fcm.onNotification().subscribe(data => {
         if (data.wasTapped) {
           console.log("Received in background", data);

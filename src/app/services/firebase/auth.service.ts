@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   signin(c: Credentials) {
-
+		
     return this.auth.auth.signInWithEmailAndPassword(c.email, c.password);
   }
 

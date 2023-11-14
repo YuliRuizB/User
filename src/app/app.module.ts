@@ -47,7 +47,6 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [ ],
@@ -63,7 +62,9 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
     AngularFireStorageModule,    
     HttpClientModule,
     NgxQRCodeModule,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(
+			{driverOrder: ['indexeddb', 'sqlite', 'websql']}
+		)
   ],
   providers: [
     StatusBar,
