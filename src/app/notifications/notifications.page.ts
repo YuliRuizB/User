@@ -4,7 +4,8 @@ import { StorageService } from '../services/storage/storage.service';
 import { IUserData } from '../models/models';
 import { map } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
-import { FCM } from '@ionic-native/fcm/ngx';
+// import { FCM } from '@ionic-native/fcm/ngx';
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { Platform } from '@ionic/angular';
 
 @Component({
@@ -27,15 +28,15 @@ export class NotificationsPage implements OnInit {
     'saturday': 'Sáb'
   }
 
-  constructor(private fcm: FCM, public plt: Platform, private usersService: UsersService, private storageService: StorageService, public alertController: AlertController) {
+  constructor(private fcm: FirebaseX, public plt: Platform, private usersService: UsersService, private storageService: StorageService, public alertController: AlertController) {
     this.storageService.getItem('userData').then((userData) => {
       this.user = JSON.parse(userData);
       this.getSubscriptions();
     });
     this.plt.ready().then(() => {
-      this.fcm.onTokenRefresh().subscribe(token => {
+      /* ali this.fcm.onTokenRefresh().subscribe(token => {
         this.usersService.registerToken(this.user.uid, token);
-      });
+      });*/
     })
   }
 
@@ -74,7 +75,8 @@ export class NotificationsPage implements OnInit {
   }
 
   subscribeToTopic(topic: string) {
-    this.fcm.subscribeToTopic(topic);
+    // this.fcm.subscribeToTopic(topic);
+		this.fcm.subscribe(topic);
   }
 
   getToken() {
@@ -84,7 +86,8 @@ export class NotificationsPage implements OnInit {
   }
 
   unsubscribeFromTopic(topic: string) {
-    this.fcm.unsubscribeFromTopic(topic);
+    // this.fcm.unsubscribeFromTopic(topic);
+		this.fcm.unsubscribe(topic);
   }
 
   async deleteReminder(slidingItem: HTMLIonItemSlidingElement, reminder) {

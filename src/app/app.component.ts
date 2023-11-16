@@ -4,7 +4,9 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/firebase/auth.service';
 import { StorageService } from './services/storage/storage.service';
-import { FCM } from '@ionic-native/fcm/ngx';
+// import { FCM } from '@ionic-native/fcm/ngx';
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
+
 import { UsersService } from './services/firebase/users.service';
 import { Router } from '@angular/router';
 
@@ -85,7 +87,7 @@ export class AppComponent {
     private navController: NavController,
     private storageService: StorageService,
     private usersService: UsersService,
-    private fcm: FCM,
+    private fcm: FirebaseX,
     private router: Router,
     public toastController: ToastController
   ) {
@@ -106,7 +108,17 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 			// await this.storageService.forceSettings();
-      this.fcm.onNotification().subscribe(data => {
+			// Old code cordova 9 
+      /*this.fcm.onNotification().subscribe(data => {
+        if (data.wasTapped) {
+          console.log("Received in background", data);
+        } else {
+          console.log("Received in foreground", data);
+          this.makeToast(data);
+        };
+      });*/
+			// New Code cordova 12
+			this.fcm.onMessageReceived().subscribe(data => {
         if (data.wasTapped) {
           console.log("Received in background", data);
         } else {
