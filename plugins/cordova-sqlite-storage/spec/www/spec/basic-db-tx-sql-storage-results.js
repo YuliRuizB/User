@@ -37,8 +37,6 @@ var scenarioCount = (!!window.hasWebKitWebSQL) ? (isAndroid ? 3 : 2) : 1;
 var mytests = function() {
 
   for (var i=0; i<scenarioCount; ++i) {
-    // TBD skip plugin test on browser platform (not yet supported):
-    if (isBrowser && (i === 0)) continue;
 
     describe(scenarioList[i] + ': BASIC db tx sql storage results test(s)', function() {
       var scenarioName = scenarioList[i];
@@ -1024,6 +1022,8 @@ var mytests = function() {
         }, MYTIMEOUT);
 
         it(suiteName + 'ALTER TABLE RENAME test', function(done) {
+          if (isWebSql && isAppleMobileOS) pending('TBD SKIP for (WebKit) Web SQL on iOS');
+
           var dbname = 'ALTER-TABLE-RENAME-test.db';
           var createdb = openDatabase(dbname, '1.0', 'Test', DEFAULT_SIZE);
 
@@ -1077,6 +1077,45 @@ var mytests = function() {
               (isWebSql) ? done() : db.close(done, done);
             });
           }
+        }, MYTIMEOUT);
+
+        // From December 2019 SQLite crash report - fixed in 2020 ref:
+        // - http://sqlite.1065341.n5.nabble.com/Crash-Bug-Report-tc109903.html
+        // - https://github.com/xpbrew/cordova-sqlite-storage/issues/904
+        it(suiteName + 'RENAME table with view test [SQLite crash bug report December 2019]', function(done) {
+          if (isWebSql) pending('[TBD] NOT WORKING on (WebKit) Web SQL');
+          if (!isWebSql && isAndroid && isImpl2) pending('[TBD] NOT WORKING on Android system android.database provider');
+
+          var dbname = 'RENAME-table-with-view-test.db';
+          var db = openDatabase(dbname);
+
+          db.transaction(function(tx) {
+            tx.executeSql('DROP TABLE IF EXISTS v0;');
+            tx.executeSql('DROP TABLE IF EXISTS v2;');
+            tx.executeSql('DROP TABLE IF EXISTS t3;');
+            tx.executeSql('DROP VIEW IF EXISTS v4;');
+            tx.executeSql('DROP TRIGGER IF EXISTS x;');
+            tx.executeSql('CREATE TABLE v0 ( v1 ) ;');
+            tx.executeSql('CREATE TABLE v2 ( v3 ) ;');
+            tx.executeSql('CREATE VIEW v4 AS WITH x AS ( SELECT x () OVER( ) FROM v4 ) SELECT v3 AS x FROM v2 ;');
+            tx.executeSql('ALTER TABLE v2 RENAME TO t3;');
+            tx.executeSql('SELECT COUNT(x) AS cnt FROM v4;', null, function(tx, rs) {
+              expect(rs).toBeDefined();
+              expect(rs.rows.length).toBe(1);
+              expect(rs.rows.item(0).cnt).toBe(0);
+
+              // Close (plugin only) & finish:
+              (isWebSql) ? done() : db.close(done, done);
+            });
+          }, function(e) {
+            // ERROR RESULT (NOT EXPECTED):
+            expect(false).toBe(true);
+            expect(e).toBeDefined();
+            expect(e.message).toBe('--');
+
+            // Close (plugin only) & finish:
+            (isWebSql) ? done() : db.close(done, done);
+          });
         }, MYTIMEOUT);
 
       });

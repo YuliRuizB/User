@@ -30,8 +30,11 @@ import { AngularFireAuthGuard, AngularFireAuthGuardModule } from '@angular/fire/
 import { AngularFireStorageModule } from '@angular/fire/storage';
 
 
-//FCM
-import { FCM } from '@ionic-native/fcm/ngx';
+//FCM // OLD Cordova 9
+//import { FCM } from '@ionic-native/fcm/ngx';
+
+//FCM // New Cordova 12
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { HttpClientModule } from '@angular/common/http';
 
 //Device Id
@@ -70,7 +73,8 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
     StatusBar,
     SplashScreen,
     Geolocation,
-    FCM,
+    // FCM,
+		FirebaseX,
     Device,
     SocialSharing,
     Camera,

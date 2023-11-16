@@ -23,7 +23,8 @@ import { map, take, filter } from "rxjs/operators";
 import { UsersService } from "../services/firebase/users.service";
 import { StorageService } from "../services/storage/storage.service";
 import { StationInfoPage } from "./station-info/station-info.page";
-import { FCM } from "@ionic-native/fcm/ngx";
+// import { FCM } from "@ionic-native/fcm/ngx";
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { OsrmService } from "../services/osrm/osrm.service";
 import esLocale from "date-fns/locale/es";
 import { id } from "date-fns/locale";
@@ -84,22 +85,23 @@ export class HomePage implements OnInit, OnDestroy {
     public alertController: AlertController,
     private usersService: UsersService,
     private storageService: StorageService,
-    private fcm: FCM,
+    private fcm: FirebaseX,
     private osrmService: OsrmService,
     private routerOutlet: IonRouterOutlet,
     private http: HttpClient,
     private webSocketService: WebsocketService
   ) { }
 
-  ionViewDidEnter() {  
+  async ionViewDidEnter() {  
      
-
+		
     //console.log("aqui");
     //console.log("ionviewdidenter");
-    this.storageService.getItem("userData").then((userData) => {
+    this.storageService.getItem("userData").then(async (userData) => {
       this.user = JSON.parse(userData);
       // this.canShowDevices();
       this.validateTerms();
+			await this.geolocation.getCurrentPosition();
       this.getSubscriptions();
       this.validateToken();
 
@@ -213,8 +215,8 @@ socket$.subscribe(
   }
 
   validateTerms() {
-		console.log('llega aqui1')
-		console.log(this.user);
+		// console.log('llega aqui1')
+		//console.log(this.user);
     const uid = this.user.id;
     this.usersService
       .getUser(uid)
@@ -226,27 +228,34 @@ socket$.subscribe(
         })
       )
       .subscribe((dataUser) => {
-				console.log('esto1');
-				console.log(dataUser)
+				// console.log('esto1');
+				//console.log(dataUser)
         let result = dataUser.hasOwnProperty('terms');
-				console.log(result)
+				// console.log(result)
         this.edited = result;
         //console.log('has terms :' + result);
       });
   }
-  validateToken() {
+
+  async validateToken() {
+		const aux  = await this.fcm.hasPermission();
+		console.log('veo el perimso');
+		console.log(aux)
     this.fcm.getToken().then((token) => {
       console.log("getToken() from homepage");
+			console.log(token);
       this.usersService.registerToken(this.user.uid, token);
     });
     this.fcm.onTokenRefresh().subscribe((token) => {
       console.log("onTokenRefresh() from homepage");
+			console.log(token)
       this.usersService.registerToken(this.user.uid, token);
     });
-    this.fcm.getAPNSToken().then((token) => {
+    /*this.fcm.getAPNSToken().then((token) => {
       console.log("getAPNSToken() from homepage");
+			console.log(token)
       this.usersService.registerAPNSToken(this.user.uid, token);
-    });
+    });*/
   }
 
   async requestDefaultRoute() {

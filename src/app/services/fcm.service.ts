@@ -6,8 +6,8 @@ import { tap, map } from 'rxjs/operators';
 // Import firebase to fix temporary bug in AngularFire
 import * as app from 'firebase';
 import { Observable, of } from 'rxjs';
-import { FCM } from '@ionic-native/fcm/ngx';
-
+// import { FCM } from '@ionic-native/fcm/ngx';
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 @Injectable({
   providedIn: 'root'
 })
@@ -18,7 +18,7 @@ export class FcmService {
   canShowMessages: Observable<any>;
 
   constructor(
-    private afMessaging: FCM,
+    private afMessaging: FirebaseX,
     private fun: AngularFireFunctions,
     private toastController: ToastController
   ) {

@@ -14,7 +14,8 @@ import { UsersService } from '../services/firebase/users.service';
 import { StorageService } from '../services/storage/storage.service';
 // import { FilterOptionsComponent } from '@app/components/filter-options/filter-options.component';
 import { StationInfoPage } from './station-info/station-info.page';
-import { FCM } from '@ionic-native/fcm/ngx';
+// import { FCM } from '@ionic-native/fcm/ngx';
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { OsrmService } from '../services/osrm/osrm.service';
 import esLocale from 'date-fns/locale/es';
 import { AuthService } from '../services/firebase/auth.service';
@@ -62,7 +63,7 @@ export class HomePage implements OnInit {
     public alertController: AlertController,
     private usersService: UsersService,
     private storageService: StorageService,
-    private fcm: FCM,
+    private fcm: FirebaseX,
     private osrmService: OsrmService,
     private routerOutlet: IonRouterOutlet
   ) {
