@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-camera",
-  "version": "4.1.0",
+  "version": "7.0.0",
   "description": "Cordova Camera Plugin",
   "types": "./types/index.d.ts",
   "cordova": {
@@ -8,31 +8,22 @@
     "platforms": [
       "android",
       "ios",
-      "browser",
-      "windows",
-      "osx"
+      "browser"
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/apache/cordova-plugin-camera"
-  },
-  "bugs": {
-    "url": "https://github.com/apache/cordova-plugin-camera/issues"
-  },
+  "repository": "github:apache/cordova-plugin-camera",
+  "bugs": "https://github.com/apache/cordova-plugin-camera/issues",
   "keywords": [
     "cordova",
     "camera",
     "ecosystem:cordova",
     "cordova-android",
     "cordova-ios",
-    "cordova-browser",
-    "cordova-windows",
-    "cordova-osx"
+    "cordova-browser"
   ],
   "scripts": {
-    "test": "npm run eslint",
-    "eslint": "node node_modules/eslint/bin/eslint www && node node_modules/eslint/bin/eslint src && node node_modules/eslint/bin/eslint tests"
+    "test": "npm run lint",
+    "lint": "eslint ."
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
@@ -46,17 +37,31 @@
         "cordova": ">=7.1.0"
       },
       "5.0.0": {
+        "cordova-android": ">=9.0.0",
+        "cordova-ios": ">=5.1.0",
+        "cordova": ">=9.0.0"
+      },
+      "5.0.4-dev": {
+        "cordova-android": "<10.0.0",
+        "cordova-ios": ">=5.1.0",
+        "cordova": ">=9.0.0"
+      },
+      "6.0.0": {
+        "cordova-android": ">=10.0.0",
+        "cordova-ios": ">=5.1.0",
+        "cordova": ">=9.0.0"
+      },
+      "7.0.0": {
+        "cordova-android": ">=12.0.0",
+        "cordova-ios": ">=5.1.0",
+        "cordova": ">=9.0.0"
+      },
+      "8.0.0": {
         "cordova": ">100"
       }
     }
   },
   "devDependencies": {
-    "eslint": "^4.3.0",
-    "eslint-config-semistandard": "^11.0.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.3.0",
-    "eslint-plugin-node": "^5.0.0",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "@cordova/eslint-config": "^5.0.0"
   }
 }
