@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ContactusService } from '../services/firebase/contactus.service';
+import { ContactusService } from '../../services/firebase/contactus.service';
 import { map } from 'rxjs/operators';
-import { StorageService } from '../services/storage/storage.service';
+import { StorageService } from '../../services/storage/storage.service';
 import { ToastController } from '@ionic/angular';
 
 @Component({

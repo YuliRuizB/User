@@ -3,22 +3,22 @@ import * as L from 'leaflet';
 import { Map, latLng, tileLayer, Layer, marker } from 'leaflet';
 import 'leaflet-rotatedmarker';
 import 'leaflet.marker.slideto';
-import { OnemapService } from '../services/data/onemap.service';
+import { OnemapService } from '../../services/data/onemap.service';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { ToastController, ModalController, AlertController, IonRouterOutlet } from '@ionic/angular';
 import * as _ from 'lodash';
 import { format, setHours, setMinutes, isWithinInterval, formatDistance, formatDistanceToNow, isThisSecond } from 'date-fns';
-import { BusesService } from '../services/firebase/buses.service';
+import { BusesService } from '../../services/firebase/buses.service';
 import { map, take } from 'rxjs/operators';
-import { UsersService } from '../services/firebase/users.service';
-import { StorageService } from '../services/storage/storage.service';
+import { UsersService } from '../../services/firebase/users.service';
+import { StorageService } from '../../services/storage/storage.service';
 // import { FilterOptionsComponent } from '@app/components/filter-options/filter-options.component';
 import { StationInfoPage } from './station-info/station-info.page';
 // import { FCM } from '@ionic-native/fcm/ngx';
 import { FirebaseX } from "@ionic-native/firebase-x/ngx";
-import { OsrmService } from '../services/osrm/osrm.service';
+import { OsrmService } from '../../services/osrm/osrm.service';
 import esLocale from 'date-fns/locale/es';
-import { AuthService } from '../services/firebase/auth.service';
+import { AuthService } from '../../services/firebase/auth.service';
 
 @Component({
   selector: 'app-home',

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, NavParams, IonSlides } from '@ionic/angular';
 import { BusesService } from 'src/app/services/firebase/buses.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
-import { IUserData } from '../../models/models'; 
+import { IUserData } from '../../../models/models'; 
 import { map } from 'rxjs/operators';
 import * as _ from 'lodash';
 

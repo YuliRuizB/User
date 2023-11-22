@@ -3,7 +3,7 @@ import * as L from "leaflet";
 import { Map, tileLayer } from "leaflet";
 import "leaflet-rotatedmarker";
 import "leaflet.marker.slideto";
-import { OnemapService } from "../services/data/onemap.service";
+import { OnemapService } from "../../services/data/onemap.service";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
 import {
   ToastController,
@@ -18,21 +18,21 @@ import {
   formatDistance,
   formatDistanceToNow,
 } from "date-fns";
-import { BusesService } from "../services/firebase/buses.service";
+import { BusesService } from "../../services/firebase/buses.service";
 import { map, take, filter } from "rxjs/operators";
-import { UsersService } from "../services/firebase/users.service";
-import { StorageService } from "../services/storage/storage.service";
+import { UsersService } from "../../services/firebase/users.service";
+import { StorageService } from "../../services/storage/storage.service";
 import { StationInfoPage } from "./station-info/station-info.page";
 // import { FCM } from "@ionic-native/fcm/ngx";
 import { FirebaseX } from "@ionic-native/firebase-x/ngx";
-import { OsrmService } from "../services/osrm/osrm.service";
+import { OsrmService } from "../../services/osrm/osrm.service";
 import esLocale from "date-fns/locale/es";
 import { id } from "date-fns/locale";
 import { Subscription } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { webSocket } from 'rxjs/webSocket';
-import { WebsocketService } from "../services/onemap/websocket.service";
+import { WebsocketService } from "../../services/onemap/websocket.service";
 @Component({
   selector: "app-home",
   templateUrl: "home.page.html",
