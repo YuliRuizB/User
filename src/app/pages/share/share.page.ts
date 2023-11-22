@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { ShareService } from '../services/share/share.service';
-import { StorageService } from '../services/storage/storage.service';
-import { IUserData } from '../models/models';
+import { ShareService } from '../../services/share/share.service';
+import { StorageService } from '../../services/storage/storage.service';
+import { IUserData } from '../../models/models';
 import { map } from 'rxjs/operators';
 
 @Component({

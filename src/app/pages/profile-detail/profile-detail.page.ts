@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { UsersService } from '../services/firebase/users.service';
+import { UsersService } from '../../services/firebase/users.service';
 import {  map } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
-import { IUserData } from '../models/models';
+import { IUserData } from '../../models/models';
 
 @Component({
   selector: 'app-profile-detail',

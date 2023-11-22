@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { HomePage } from './home.page';
 import { StationInfoPage } from './station-info/station-info.page';
 import { BusInfoPage } from './bus-info/bus-info.page';
-import { WebsocketService } from '../services/onemap/websocket.service';
+import { WebsocketService } from '../../services/onemap/websocket.service';
 
 @NgModule({
   imports: [

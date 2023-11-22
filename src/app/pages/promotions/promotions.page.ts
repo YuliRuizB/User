@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { PromotionsService } from '../services/promotions.service';
-import { IUserData } from '../models/models';
-import { StorageService } from '../services/storage/storage.service';
+import { PromotionsService } from '../../services/promotions.service';
+import { IUserData } from '../../models/models';
+import { StorageService } from '../../services/storage/storage.service';
 import { map } from 'rxjs/operators';
 import { ModalController, IonRouterOutlet } from '@ionic/angular';
 import { PromotionDetailsPage } from './promotion-details/promotion-details.page';

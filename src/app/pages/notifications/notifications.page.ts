@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { UsersService } from '../services/firebase/users.service';
-import { StorageService } from '../services/storage/storage.service';
-import { IUserData } from '../models/models';
+import { UsersService } from '../../services/firebase/users.service';
+import { StorageService } from '../../services/storage/storage.service';
+import { IUserData } from '../../models/models';
 import { map } from 'rxjs/operators';
 import { AlertController } from '@ionic/angular';
 // import { FCM } from '@ionic-native/fcm/ngx';

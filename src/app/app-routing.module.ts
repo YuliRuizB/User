@@ -14,85 +14,85 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
+    loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'list',
-    loadChildren: () => import('./list/list.module').then(m => m.ListPageModule),
+    loadChildren: () => import('./pages/list/list.module').then(m => m.ListPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'purchases',
-    loadChildren: () => import('./purchases/main/main.module').then( m => m.MainPageModule),
+    loadChildren: () => import('./pages/purchases/main/main.module').then( m => m.MainPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'products',
-    loadChildren: () => import('./purchases/products/products.module').then( m => m.ProductsPageModule),
+    loadChildren: () => import('./pages/purchases/products/products.module').then( m => m.ProductsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'auth',
-    loadChildren: () => import('./auth/auth.module').then( m => m.AuthModule)
+    loadChildren: () => import('./pages/auth/auth.module').then( m => m.AuthModule)
   },
   {
     path: 'card/purchase',
-    loadChildren: () => import('./purchases/cards/purchase/purchase.module').then( m => m.PurchasePageModule),
+    loadChildren: () => import('./pages/purchases/cards/purchase/purchase.module').then( m => m.PurchasePageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'cards',
-    loadChildren: () => import('./purchases/cards/cards/cards.module').then( m => m.CardsPageModule),
+    loadChildren: () => import('./pages/purchases/cards/cards/cards.module').then( m => m.CardsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'reference/purchase',
-    loadChildren: () => import('./purchases/reference/purchase/purchase.module').then( m => m.PurchasePageModule),
+    loadChildren: () => import('./pages/purchases/reference/purchase/purchase.module').then( m => m.PurchasePageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'reference/list',
-    loadChildren: () => import('./purchases/reference/list/list.module').then( m => m.ListPageModule)
+    loadChildren: () => import('./pages/purchases/reference/list/list.module').then( m => m.ListPageModule)
   },
   {
     path: 'profile',
-    loadChildren: () => import('./profile/profile/profile.module').then( m => m.ProfilePageModule),
+    loadChildren: () => import('./pages/profile/profile/profile.module').then( m => m.ProfilePageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'notifications',
-    loadChildren: () => import('./notifications/notifications.module').then( m => m.NotificationsPageModule),
+    loadChildren: () => import('./pages/notifications/notifications.module').then( m => m.NotificationsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'share',
-    loadChildren: () => import('./share/share.module').then( m => m.SharePageModule),
+    loadChildren: () => import('./pages/share/share.module').then( m => m.SharePageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'contact-us',
-    loadChildren: () => import('./contact-us/contact-us.module').then( m => m.ContactUsPageModule),
+    loadChildren: () => import('./pages/contact-us/contact-us.module').then( m => m.ContactUsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'regulation',
-    loadChildren: () => import('./regulation/regulation.module').then( m => m.RegulationPageModule),
+    loadChildren: () => import('./pages/regulation/regulation.module').then( m => m.RegulationPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'faq',
-    loadChildren: () => import('./faq/faq.module').then( m => m.FAQPageModule),
+    loadChildren: () => import('./pages/faq/faq.module').then( m => m.FAQPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'promotions',
-    loadChildren: () => import('./promotions/promotions.module').then( m => m.PromotionsPageModule),
+    loadChildren: () => import('./pages/promotions/promotions.module').then( m => m.PromotionsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'profile-detail',
-    loadChildren: () => import('./profile-detail/profile-detail.module').then( m => m.ProfileDetailPageModule)
+    loadChildren: () => import('./pages/profile-detail/profile-detail.module').then( m => m.ProfileDetailPageModule)
   }
 ];
 
