@@ -9,7 +9,7 @@ import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 
 import { UsersService } from './services/firebase/users.service';
 import { Router } from '@angular/router';
-
+import { IUserData, IRoles } from '../app/models/models';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -18,17 +18,81 @@ import { Router } from '@angular/router';
 
 export class AppComponent {
 
-  user: any;
+  user: IUserData = {
+		status: '',
+		address: {
+			addressLine: '',
+			city: '',
+			postCode: '',
+			state: ''
+		},
+		customerId: '',
+		customerName: '',
+		displayName: '',
+		defaultRoute: '',
+		defaultRound: '',
+		defaultRouteName: '',
+		defaultStopName: '',
+		email: '',
+		emailVerified: false,
+		firstName: '',
+		id: '',
+		lastName: '',
+		occupation: '',
+		openpay: {
+			address: '',
+			clabe: '',
+			creation_date: '',
+			email: '',
+			external_id: '',
+			id: '',
+			last_name: '',
+			name: '',
+			phone_number: ''
+		},
+		phone: '',
+		photoURL: '',
+		refreshToken: '',
+		roles: [],
+		socialNetworks: {
+			apple: '',
+			facebook: '',
+			google: '',
+			instagram: '',
+			linkedIn: '',
+			twitter: ''
+		},
+		studentId: '',
+		uid: '',
+		username: '',
+		_isEditMode: false,
+		_userId: '',
+		dateCreateUserFormat: '',
+		dateCreateUserFull: '',
+		phoneNumber: '',
+		roundTrip: '',
+		turno: ''
+	};
 
   public appPages = [
+		{
+			id: 1,
+      title: 'Ruta en proceso',
+      subtitle: 'Revisa el seguimiento de tu ruta, podras ver la cantidad de personas en la ruta.',
+      url: '/check-request-pre-register',
+      icon: 'checkbox',
+      color: 'success'
+    },
     {
+			id: 2,
       title: 'Paradas Cercanas',
       subtitle: 'Ver todas las paradas cercanas',
       url: '/home',
       icon: 'navigate-circle',
       color: 'primary'
     },
-    {
+    {	
+			id: 3,
       title: 'Mensajes',
       subtitle: 'Centro de mensajes',
       url: '/notifications/messages',
@@ -36,6 +100,7 @@ export class AppComponent {
       color: 'primary'
     },
     {
+			id: 4,
       title: 'Promociones',
       subtitle: 'Checa las promociones que tenemos para tí',
       url: '/promotions',
@@ -43,6 +108,7 @@ export class AppComponent {
       color: 'success'
     },
     {
+			id: 5,
       title: 'Compartir',
       subtitle: 'Comparte la app con tus padres y compañeros',
       url: '/share',
@@ -50,6 +116,7 @@ export class AppComponent {
       color: 'primary'
     },
     {
+			id: 6,
       title: 'Mis pases',
       subtitle: 'No pierdas el bus, administra tus pagos',
       url: '/purchases',
@@ -57,6 +124,7 @@ export class AppComponent {
       color: 'primary'
     },
     {
+			id: 7,
       title: 'Preguntas Frecuentes',
       subtitle: 'Tus dudas pueden resolverse, consulta aqui',
       url: '/faq',
@@ -64,6 +132,7 @@ export class AppComponent {
       color: 'primary'
     },
     {
+			id: 8,
       title: 'Reglamento',
       subtitle: 'Reglamento de Bus2U',
       url: '/regulation',
@@ -71,6 +140,7 @@ export class AppComponent {
       color: 'primary'
     },
     {
+			id: 9,
       title: 'Contactémonos',
       subtitle: 'Tus comentarios son importantes',
       url: '/contact-us',

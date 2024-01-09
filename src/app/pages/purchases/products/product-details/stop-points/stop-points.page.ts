@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, NavParams, IonSlides } from '@ionic/angular';
 import { BusesService } from 'src/app/services/firebase/buses.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
-import { IUserData } from '../../../../../models/models'; 
+import { IUserData } from '../../../../../models/models'; //IRouteStopsCustomer
 import { map } from 'rxjs/operators';
 import * as _ from 'lodash';
 
@@ -78,7 +78,8 @@ export class StopPointsPage implements OnInit {
         return { id, ...data };
       }))
     )
-    .subscribe( (stops) => {
+    .subscribe( (stops: any) => { //Array<IRouteStopsCustomer>
+			console.log('stopsss')
       console.log(stops);
       this.routeStops = _.orderBy(stops, ['order'],['asc']);
       this.loading = false;
@@ -93,7 +94,9 @@ export class StopPointsPage implements OnInit {
     });
   }
 
-  getSelectedStopPoint(stopPoint: any) {
+  getSelectedStopPoint(stopPoint: any) { //IRouteStopsCustomer
+		console.log('esto selecciona');
+		console.log(stopPoint)
     stopPoint.routeId = this.currentRoute;
     stopPoint.routeName = this.currentRouteName;
     this.modalController.dismiss({

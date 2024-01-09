@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { ProductsService } from 'src/app/services/firebase/products.service';
 import * as _ from 'lodash';
 import { StorageService } from 'src/app/services/storage/storage.service';
+import { IUserData } from '../../../../models/models'
 @Component({
   selector: 'app-historic',
   templateUrl: './historic.page.html',
@@ -27,7 +28,7 @@ export class HistoricPage implements OnInit {
     spaceBetween: 2,
     centeredSlides: true
   };
-  user: any;
+  user: IUserData;
 
   title = 'app';
   elementType = 'url';

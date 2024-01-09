@@ -1,3 +1,12 @@
+*** Keystore ***
+
+keytool -genkey -v -keystore bus2uUsers.keystore -alias bus2u -keyalg RSA -keysize 2048 -validity 10000
+
+Keystore password: bus2u2024
+alias: bus2u
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore bus2uUsers.keystore app-release.aab  bus2u 
+
 ***  Notas  ***
 
 

@@ -8,12 +8,13 @@ import { HomePage } from './home.page';
 import { StationInfoPage } from './station-info/station-info.page';
 import { BusInfoPage } from './bus-info/bus-info.page';
 import { WebsocketService } from '../../services/onemap/websocket.service';
-
+import { InfoUserPreRegisterModalPageModule } from '../../modals/info-user-pre-register-modal/info-user-pre-register-modal.module';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+		// InfoUserPreRegisterModalPageModule,
     RouterModule.forChild([
       {
         path: '',

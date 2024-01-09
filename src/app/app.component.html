@@ -24,13 +24,24 @@
             </ion-menu-toggle>
           </div>
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-            <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" detail="false">
-              <ion-icon slot="start" [name]="p.icon" [color]="p.color"></ion-icon>
-              <ion-label>
-                {{p.title}}
-                <p class="ion-text-wrap">{{ p.subtitle }}</p>
-              </ion-label>
-            </ion-item>
+						<div *ngIf="p.id === 1 && user.status === 'preRegister'">
+							<ion-item [routerDirection]="'root'" [routerLink]="[p.url]" detail="false">
+								<ion-icon slot="start" [name]="p.icon" [color]="p.color"></ion-icon>
+								<ion-label>
+									{{p.title}}
+									<p class="ion-text-wrap">{{ p.subtitle }}</p>
+								</ion-label>
+							</ion-item>
+						</div>
+						<div *ngIf="p.id !== 1">
+							<ion-item [routerDirection]="'root'" [routerLink]="[p.url]" detail="false">
+								<ion-icon slot="start" [name]="p.icon" [color]="p.color"></ion-icon>
+								<ion-label>
+									{{p.title}}
+									<p class="ion-text-wrap">{{ p.subtitle }}</p>
+								</ion-label>
+							</ion-item>
+						</div>
           </ion-menu-toggle>
           <ion-menu-toggle auto-hide="false">
             <ion-item menuClose (click)="signout()">

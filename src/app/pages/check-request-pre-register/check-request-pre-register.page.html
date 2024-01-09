@@ -1,0 +1,112 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="ion-no-padding">
+    <ion-buttons slot="start">
+      <ion-button [routerLink]="['/home']" routerLinkActive="router-link-active">
+        <ion-icon color="dark" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Pre Registro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<div *ngIf="loading  === 1" class="main-loading">
+		<div class="sub-main">
+			<ion-spinner name="circular"></ion-spinner>
+			<h2>Cargando</h2>
+		</div>
+	</div>
+	<div *ngIf="loading  === 2">
+		<!--<div class="box1">
+			<div class="text-box">
+				<div class="center-text">
+					<h3 class="rm-padding">Ruta</h3>
+					<h4 class="rm-padding">{{ routeData.name }}</h4>
+				</div>
+				<br>
+				<div class="center-text">
+					<h3 class="rm-padding">Turno</h3>
+					<h4 class="rm-padding">{{ user.turno }}</h4>
+				</div>
+			</div>
+		</div>
+		-->
+		<div class="box1">
+			<div class="text-box">
+				<div class="sub-box-icon">
+					<ion-icon name="map" class="size-icon"></ion-icon>
+					<div class="center-text">
+						<p class="rm-padding stroke">Ruta</p>
+						<p class="rm-padding">{{ routeData.name }}</p>
+					</div>
+				
+				</div>
+			</div>
+			<div class="text-box">
+				<div class="sub-box-icon">
+					<ion-icon name="time" class="size-icon"></ion-icon>
+					<div class="center-text">
+						<p class="rm-padding stroke">Turno</p>
+						<p class="rm-padding">{{ user.turno }}</p>
+					</div>
+				
+				</div>
+			</div>
+		</div>
+	
+		<br>
+		<div class="box1">
+			<div class="sub-box1">
+				<h3>Usuarios con Pago</h3>
+					<circle-progress
+						[percent]="dataPreregisters"
+						[maxPercent]="100"
+						[radius]="100"
+						[space]="-10"
+						[outerStrokeWidth]="16"
+						[innerStrokeWidth]="8"
+						[outerStrokeColor]="'#4882c2'"
+						[outerStrokeGradientStopColor]="'#53a9ff'"
+						[innerStrokeColor]="'#e7e8ea'"
+						[animation]="true"
+						[titleFontSize]="30"
+						[unitsFontSize]="15"
+						[clockwise]="true"
+						[title]="dataPreregistersText"
+						[subtitle]="subText"
+						[subtitleFontSize]="15"
+						[animationDuration]="300"
+					></circle-progress>
+					<p class="text-info">
+						Se requiere un mínimo de 14 personas con pago inicial para abrir la ruta, actualiza el modulo para ver si hay cambios. Espera actualizaciones y notificaciones en el modulo de notificaciones para futura información
+					</p>
+			</div>
+			
+		</div>
+		<br>
+		<div class="box1">
+			<div class="sub-box1">
+				<h3>Usuarios Pre Registrados</h3>
+					<circle-progress
+						[percent]="dataPreregisters"
+						[radius]="100"
+						[space]="-10"
+						[outerStrokeWidth]="16"
+						[innerStrokeWidth]="8"
+						[outerStrokeColor]="'#4882c2'"
+						[outerStrokeGradientStopColor]="'#53a9ff'"
+						[innerStrokeColor]="'#e7e8ea'"
+						[animation]="true"
+						[titleFontSize]="30"
+						[unitsFontSize]="15"
+						[clockwise]="true"
+						[title]="dataPreregistersText"
+						[subtitle]="subText"
+						[subtitleFontSize]="15"
+						[animationDuration]="300"
+					></circle-progress>
+			</div>
+		</div>
+	</div>
+	<br>
+</ion-content>

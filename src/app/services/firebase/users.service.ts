@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument  } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import * as firebase from 'firebase/app';
+import { IUserData } from 'src/app/models/models';
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +12,89 @@ export class UsersService {
 
   users: AngularFirestoreCollection;
   user: AngularFirestoreDocument;
-
+	batch: any;
   constructor(private afs: AngularFirestore, private fbStorage: AngularFireStorage) {
     this.users = this.afs.collection('users');
+		this.batch = this.afs.firestore.batch();
+		// this.afs.firestore.batch
   }
 
   getUser(uid: string) {
+		this.afs.firestore.batch
     const user = this.afs.collection('users').doc(uid);
     return user.snapshotChanges();
+  }
+
+	// This method use for testing is not use in productions
+	getUserAllProd() {
+    const user = this.afs.collection('usersCopy08122023');
+    return user.snapshotChanges()
+  }
+
+	// This method use for testing is not use in productions
+	getUserAll2() {
+		//usersCopy05122023
+    const user = this.afs.collection('usersCopy23112023')
+    return user.snapshotChanges();
+  }
+
+	// This method use for testing is not use in productions
+	async setUserAll(uid, data) {
+		return new Promise((resolve) => {
+			const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${uid}`);
+			userRef.set(data, {merge: true}).then(() => {
+				resolve(true)
+			}).catch((err) => {
+				resolve(false)
+			})
+		})
+  }
+
+	// This method use for testing is not use in productions
+	async setUserAllProd(uid, data) {
+		return new Promise((resolve) => {
+			const userRef: AngularFirestoreDocument<any> = this.afs.doc(`usersTest/${uid}`);
+			userRef.set(data, {merge: true}).then(() => {
+				resolve(true)
+			})
+		})
+  }
+
+	// This method use for testing is not use in productions
+	async batchSet(data: any, id) {
+		const batch = this.afs.firestore.batch();
+		const insert =  this.afs.collection('usersCopy23112023').doc(id).ref; // Don't forget this ".ref"
+		batch.set(insert, data);
+		return this.batch.commit()
+	}
+
+	// This method use for testing is not use in productions
+	updateUserId(uid: any) {
+    const user = this.afs.collection('users').doc(uid);
+    return user.update({
+			roundTrip: '',
+			status: 'inactive'
+		});
+  }
+
+	getUserPreregisterByRoute(user: IUserData) {
+		console.log(user);
+		return new Promise((resolve, reject) => {
+			this.afs.collection('users').ref.where("status","==", "preRegister").where("defaultRoute", "==" ,user.defaultRoute).where("turno", "==", user.turno)
+			.get().then((doc) => {
+				if(doc.empty){
+					resolve(false);
+				}else{
+					let filterData = []
+					doc.forEach(element => {
+						filterData.push(element.data());
+					});
+					resolve(filterData)
+				}
+			}).catch((error) => {
+				console.log(error)
+			})
+		})
   }
 
   registerToken(uid: string, token: string) {

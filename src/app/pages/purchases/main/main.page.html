@@ -7,6 +7,12 @@
       Mis Pases de Abordar
     </ion-title>
   </ion-toolbar>
+	<ion-toolbar>
+		<ion-button expand="block" class="ion-margin" [routerLink]="['/products']" routerLinkActive="router-link-active">
+			<ion-icon name="add-circle" slot="start"></ion-icon>
+      Comprar Pases
+		</ion-button>
+	</ion-toolbar>
 </ion-header>
 
 <ion-content>
@@ -15,7 +21,7 @@
     <ion-slides class="ion-margin" [options]="sliderConfig" (ionSlideTransitionStart)="boardingPassSelected = false; isBoardingPassValid = false; showQRCode = false">
       <ion-slide *ngFor="let card of purchases">
 
-        <ion-card button (click)="showDetails(card)">
+        <ion-card class="custom-card" button (click)="showDetails(card)">
           <ion-card-header>
             <ion-card-subtitle>{{ card.category }}</ion-card-subtitle>
             <ion-card-title>
@@ -25,25 +31,74 @@
             </ion-card-title>
           </ion-card-header>
 
-          <ngx-qrcode *ngIf="showQRCode" [qrc-element-type]="elementType" qrc-version = "5" qrc-value="{{user.uid}},{{card.id}}"
-        qrc-class="qrCode-size" qrc-errorCorrectionLevel="Q">
-      </ngx-qrcode>
+					<!--*ngIf="card.type === 'Producto'"-->
+					<div >
+						<ngx-qrcode *ngIf="showQRCode" [qrc-element-type]="elementType" qrc-version = "5" qrc-value="{{user.uid}}-{{card.idBoardingPass}}"
+        			qrc-class="qrCode-size" qrc-errorCorrectionLevel="Q">
+      			</ngx-qrcode>
+					</div>
 
-          <ion-card-content *ngIf="!showQRCode">
+
+					<div *ngIf="showQRCode" >
+						<div  class="qrnone-box" *ngIf="card.type === 'Servicio'">
+							<div class="qrnone-box1">
+								<div >
+									<p>El QR no esta disponible para servicios</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+          
+
+          <ion-card-content *ngIf="!showQRCode" class="size-description">
             {{ card.stopDescription }}
           </ion-card-content>
-          <ion-item lines="none">
-            <ion-icon name="alarm" slot="start"></ion-icon>
-            <ion-label>{{ card.round }}</ion-label>
+					
+					<ion-item lines="none">
+						<div class="box-text">
+							<p class="center">Tipo</p>
+							<div class="box-text1">
+								<ion-icon name="attach" slot="start"></ion-icon>
+								<ion-label>{{ card.type }}</ion-label>
+							</div>
+						</div>
           </ion-item>
+					<br>
           <ion-item lines="none">
-            <ion-icon name="bus" slot="start"></ion-icon>
-            <ion-label>{{ card.stopName }}</ion-label>
+						<div class="box-text">
+							<p class="center">Turno</p>
+							<div class="box-text1">
+								<ion-icon name="alarm" slot="start"></ion-icon>
+								<ion-label>{{ card.round }}</ion-label>
+							</div>
+						</div>
           </ion-item>
+					<br>
+          <ion-item lines="none">
+						<div class="box-text">
+							<p class="center">Parada</p>
+							<div class="box-text1">
+								<ion-icon name="bus" slot="start"></ion-icon>
+								<ion-label>{{ card.stopName }}</ion-label>
+							</div>
+						</div>
+          </ion-item>
+					<br>
+					<ion-item lines="none">
+						<div class="box-text">
+							<p class="center">Fecha de Compra</p>
+							<div >
+								<ion-label style="text-align: center;">{{ fotmatDate(card.creation_date) }}</ion-label>
+							</div>
+						</div>
+          </ion-item>
+					<br>
         </ion-card>
 
       </ion-slide>
 
+			<!--
       <ion-slide>
         <ion-card button [routerLink]="['/products']" routerLinkActive="router-link-active">
           <ion-card-header>
@@ -67,14 +122,15 @@
             </ion-avatar>
             <ion-label><ion-skeleton-text style="width: 50%"></ion-skeleton-text></ion-label>
           </ion-item>
+					
           <ion-item class="activated" color="primary">
             <ion-icon name="add-circle" slot="start"></ion-icon>
             <ion-label>Comprar Pase</ion-label>
           </ion-item>
+					
         </ion-card>
-
-
       </ion-slide>
+		-->
     </ion-slides>
 
     <div *ngIf="boardingPassSelected">
@@ -151,9 +207,8 @@
   <div *ngIf="purchases.length === 0">
     <ion-img class="ion-margin ion-padding" src="assets/img/todolist.jpg"></ion-img>
     <h1 class="ion-text-center">Aún no tienes <br> pases de abordar</h1>
-    <ion-button expand="block" class="ion-margin" [routerLink]="['/products']" routerLinkActive="router-link-active">
-      Comprar</ion-button>
   </div>
+	
 
 </ion-content>
 

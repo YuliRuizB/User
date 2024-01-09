@@ -76,9 +76,9 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLanding)
   },
   {
-    path: 'regulation',
+    path: 'regulation/:from',
     loadChildren: () => import('./pages/regulation/regulation.module').then( m => m.RegulationPageModule),
-    ...canActivate(redirectUnauthorizedToLanding)
+		// ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'faq',
@@ -93,7 +93,16 @@ const routes: Routes = [
   {
     path: 'profile-detail',
     loadChildren: () => import('./pages/profile-detail/profile-detail.module').then( m => m.ProfileDetailPageModule)
+  },
+  {
+    path: 'info-user-pre-register-modal',
+    loadChildren: () => import('./modals/info-user-pre-register-modal/info-user-pre-register-modal.module').then( m => m.InfoUserPreRegisterModalPageModule)
+  },
+  {
+    path: 'check-request-pre-register',
+    loadChildren: () => import('./pages/check-request-pre-register/check-request-pre-register.module').then( m => m.CheckRequestPreRegisterPageModule)
   }
+
 ];
 
 @NgModule({

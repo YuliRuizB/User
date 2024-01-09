@@ -67,6 +67,8 @@ export class ListPage implements OnInit, OnDestroy {
     if (!!this.product) {
       this.product.active = false;
       localStorage.setItem('payNowReference', JSON.stringify(this.product));
+			console.log('payNowReference2')
+			console.log(this.product)
       console.log('onDestroy');
     }
   }
@@ -88,6 +90,8 @@ export class ListPage implements OnInit, OnDestroy {
 
   payThisReference(reference: object) {
     localStorage.setItem('payNowReference', JSON.stringify(reference));
+		console.log('payNowReference3')
+		console.log(reference)
     this.navController.navigateForward('reference/purchase/payment');
   }
 

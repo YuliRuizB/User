@@ -4,6 +4,8 @@ import { map } from 'rxjs/operators';
 import { ProductsService } from 'src/app/services/firebase/products.service';
 import * as _ from 'lodash';
 import { StorageService } from 'src/app/services/storage/storage.service';
+import * as moment from 'moment';
+import { IUserData, IRoles } from '../../../../app/models/models';
 
 @Component({
   selector: 'app-main',
@@ -29,7 +31,7 @@ export class MainPage implements OnInit {
     centeredSlides: true,
 
   };
-  user: any;
+  user: IUserData;
 
   title = 'app';
   elementType = 'url';
@@ -60,26 +62,32 @@ export class MainPage implements OnInit {
     this.purchasesService.getCustomerActivePurchases(this.user.uid).pipe(
       map(actions => actions.map(({ payload:{ doc }}) => {
         const data = doc.data() as any;
-        const id = doc.id;
-        return { id, ...data };
+        const idQr = doc.id;
+        return { idQr, ...data };
       }))
     ).subscribe((purchases: any) => {
       this.purchases = [];
       setTimeout(() => {
         console.log(purchases);
       this.purchases = purchases;
+			//this.purchases[]
       this.loading = false;
       }, 50);
     })
 
   }
 
+	fotmatDate(date: string) {
+		return moment(date).format('MM/DD/YYYY, h:mm a');
+	}
+
+
   getSubscriptions() {
     this.loading = true;
     this.purchasesService.getCustomerActiveChargeRequests(this.user.uid).pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as any;
-        const id = a.payload.doc.id;
+        const id = a.payload.doc.id; 
         return { id, ...data };
       }))
     ).subscribe((purchaseRequests: any) => {

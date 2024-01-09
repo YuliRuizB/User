@@ -6,6 +6,7 @@ import { ToastService } from 'src/app/services/toast.service';
 import { UsersService } from 'src/app/services/firebase/users.service';
 import { map } from 'rxjs/operators';
 import { StorageService } from 'src/app/services/storage/storage.service';
+import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
 
 @Component({
   selector: 'app-signin',
@@ -35,7 +36,8 @@ export class SigninPage implements OnInit {
     private toastService: ToastService,
     private usersService: UsersService,
     private storageService: StorageService,
-		private _LoadingController:LoadingController
+		private _LoadingController:LoadingController,
+		private _AndroidPermissions: AndroidPermissions
   ) {
     this.loginForm = fb.group({
 			email: ['', Validators.compose([Validators.required, Validators.email, Validators.minLength(3),Validators.maxLength(35)])],
@@ -43,7 +45,41 @@ export class SigninPage implements OnInit {
 		});
    }
 
-  ngOnInit() {
+  async ngOnInit() {
+		const accessCoarseLocation = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.ACCESS_COARSE_LOCATION);
+		if (!accessCoarseLocation.hasPermission) {
+			await this._AndroidPermissions.requestPermissions([this._AndroidPermissions.PERMISSION.ACCESS_COARSE_LOCATION, this._AndroidPermissions.PERMISSION.ACCESS_FINE_LOCATION]);
+		}
+
+		/*const accessPermission = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.POST_NOTIFICATIONS);
+		console.log('leyenda')
+		console.log(accessPermission)
+		if (!accessPermission.hasPermission) {
+			this._AndroidPermissions.requestPermission(this._AndroidPermissions.PERMISSION.POST_NOTIFICATIONS).then((resp) => {
+				console.log('yas')
+				console.log(resp)
+			}).catch((error) => {
+				console.log(error);
+				console.log('el error')
+			})
+			
+		}*/
+		var permissions = this._AndroidPermissions.PERMISSION;
+		console.log(permissions)
+		const accessPermission = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.POST_NOTIFICATIONS);
+		console.log('leyenda')
+		console.log(accessPermission)
+		if (!accessPermission.hasPermission) {
+			this._AndroidPermissions.requestPermission(this._AndroidPermissions.PERMISSION.POST_NOTIFICATIONS).then((resp) => {
+				console.log('yas')
+				console.log(resp)
+			}).catch((error) => {
+				console.log(error);
+				console.log('el error')
+			})
+			
+		}
+   
   }
 
   async signin() {

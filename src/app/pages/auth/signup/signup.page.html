@@ -38,6 +38,12 @@
           </ion-input>
         </ion-item>
 
+				<ion-item>
+          <ion-icon slot="start" name="call"></ion-icon>
+          <ion-input value=""  formControlName="phone"  type="tel" maxlength="10" placeholder="Numero de Telefono" required >
+          </ion-input>
+				</ion-item>
+
         <ion-item>
           <ion-icon slot="start" name="bookmarks"></ion-icon>
           <ion-input value="" formControlName="studentId" type="text" placeholder="Matrícula" required></ion-input>
@@ -53,6 +59,40 @@
           </ion-select>
         </ion-item>
 
+				<ion-item>
+          <ion-icon slot="start" name="car"></ion-icon>
+          <ion-label>
+              Rutas
+          </ion-label>
+					<p *ngIf="!routes.length" style="font-size: 14px;">Selecciona una escuela/empresa</p>
+          <ion-select *ngIf="routes.length" cancelText="Cancelar"  okText="Seleccionar" placeholder="Seleccionar" formControlName="route">
+            <ion-select-option *ngFor="let c of routes" value="{{c.id}}">{{ c.name }}</ion-select-option>
+          </ion-select>
+				
+        </ion-item>
+
+				<ion-item>
+          <ion-icon slot="start" name="time"></ion-icon>
+          <ion-label>
+              Turno
+          </ion-label>
+          <ion-select  cancelText="Cancelar"  okText="Seleccionar" placeholder="Seleccionar" formControlName="turn">
+            <ion-select-option *ngFor="let c of turn" value="{{c.id}}">{{ c.name }}</ion-select-option>
+          </ion-select>
+				
+        </ion-item>
+
+				<ion-item>
+          <ion-icon slot="start" name="today"></ion-icon>
+          <ion-label>
+              Tipo de Viaje
+          </ion-label>
+          <ion-select  cancelText="Cancelar"  okText="Seleccionar" placeholder="Seleccionar" formControlName="typeTrip">
+            <ion-select-option *ngFor="let c of typeTrip" value="{{c.name}}">{{ c.name }}</ion-select-option>
+          </ion-select>
+				
+        </ion-item>
+
         <ion-item>
           <ion-icon slot="start" name="finger-print"></ion-icon>
           <ion-input type="password" clearInput value="" formControlName="password" placeholder="Contraseña 8 dígitos" required>
@@ -65,7 +105,7 @@
             placeholder="Confirmar contraseña 8 dígitos" required>
           </ion-input>
         </ion-item>
-        <ion-item>
+        <ion-item style="display: flex; align-items: center;">
           <ion-checkbox slot="start" checked="false" formControlName="verifyTerms" required></ion-checkbox>
           <h5 [routerLink]="['/auth/terms/2']" routerLinkActive="router-link-active"  text-center>
             <span>
@@ -78,6 +118,21 @@
             <ion-textarea class = "italic" rows="10" cols="5" autoGrow="false" maxlength = "200"></ion-textarea> 
            </ion-col>
         </ion-item>
+
+				<ion-item style="display: flex; align-items: center;">
+          <ion-checkbox slot="start" checked="false" formControlName="verifyRules" required></ion-checkbox>
+          <h5 [routerLink]="['/regulation/1']"  text-center>
+            <span>
+              <ion-text class="term-cond" color="primary">
+                Reglamento
+              </ion-text>
+            </span>
+          </h5>
+          <ion-col size-md = "12" id="termsInfo" hidden="">
+            <ion-textarea class = "italic" rows="10" cols="5" autoGrow="false" maxlength = "200"></ion-textarea> 
+           </ion-col>
+        </ion-item>
+
       </ion-list>
       <ion-button expand="block" size="large" class="" type="submit" [disabled]="!signupForm.valid">Registrarme</ion-button>
     </div>

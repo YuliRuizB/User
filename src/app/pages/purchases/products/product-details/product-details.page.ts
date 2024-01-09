@@ -9,7 +9,7 @@ import { ModalController, ActionSheetController, NavController } from '@ionic/an
 import { StopPointsPage } from './stop-points/stop-points.page';
 import { PaymentMethodsService } from 'src/app/services/firebase/payment-methods.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
-
+import { IUserData, IRoles,IProduct, IPayNowReference } from '../../../../models/models';
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.page.html',
@@ -20,11 +20,44 @@ export class ProductDetailsPage implements OnInit {
   productId = null;
   paymentMethods: any;
   paymentMethodsButtons: any = [];
-  product: any = {};
+  product: IProduct = {
+		id: '',
+		validTo: {
+			seconds: 0,
+			nanoseconds: 0
+		},
+		timesSold: 0,
+		rangeDatePicker: [
+			{
+				seconds: 0,
+				nanoseconds: 0
+			},
+			{
+				seconds: 0,
+				nanoseconds: 0
+			}
+		],
+		price: 0,
+		date_created: {
+			seconds: 0,
+			nanoseconds: 0
+		},
+		type: '',
+		isTaskOut: false,
+		validFrom: {
+			seconds: 0,
+			nanoseconds: 0
+		},
+		category: '',
+		name: '',
+		active: false,
+		description: '',
+		isTaskIn: false
+	};
   stopPoints: any = [];
   loading = true;
   productDetailsForm: FormGroup;
-  user: any;
+  user: IUserData;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -62,7 +95,8 @@ export class ProductDetailsPage implements OnInit {
         const id = action.payload.id;
         return { id, ...data };
     })
-    ).subscribe( (product) => {
+    ).subscribe( (product: IProduct) => {
+			console.log('este es el producto payNow')
       console.log(product);
       this.product = product;
       this.loading = false;
@@ -124,9 +158,12 @@ export class ProductDetailsPage implements OnInit {
       }
     });
     
-    modal.onWillDismiss().then(stopPoint => {
+    modal.onWillDismiss().then((stopPoint) => {
       const stopPointSelected = stopPoint.data.data;
+			console.log('stopPointSelected')
       console.log(stopPointSelected);
+			//Se arma esta estructura 
+			// { stopName: '', stopId: '', stopDescription: '', routeId: '', routeName: ''}
       this.productDetailsForm.controls['stopName'].setValue(stopPointSelected.name);
       this.productDetailsForm.controls['stopId'].setValue(stopPointSelected.id);
       this.productDetailsForm.controls['stopDescription'].setValue(stopPointSelected.description);
@@ -140,9 +177,14 @@ export class ProductDetailsPage implements OnInit {
 
   submitForm() {
     console.log(this.productDetailsForm.value);
-    const purchaseRequest = {...this.product, ...this.productDetailsForm.value, active: true};
+    const purchaseRequest: IPayNowReference = {...this.product, ...this.productDetailsForm.value, active: true};
+		console.log('payNowReference4 llenado');
+		console.log(this.product)
+		console.log(this.productDetailsForm.value)
     console.log(purchaseRequest);
     localStorage.setItem('payNowReference', JSON.stringify(purchaseRequest));
+		console.log('payNowReference4');
+		console.log(purchaseRequest);
     this.presentActionSheet(purchaseRequest);
   }
 

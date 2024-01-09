@@ -19,6 +19,8 @@ import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { OsrmService } from '../../services/osrm/osrm.service';
 import esLocale from 'date-fns/locale/es';
 import { AuthService } from '../../services/firebase/auth.service';
+import { IUserData, IRoles } from '../../../app/models/models';
+
 
 @Component({
   selector: 'app-home',
@@ -29,7 +31,7 @@ import { AuthService } from '../../services/firebase/auth.service';
 export class HomePage implements OnInit {
 
   loading = true;
-  user: any;
+  user: IUserData;
   map: Map;
   geofences: any;
   devices: any = [];

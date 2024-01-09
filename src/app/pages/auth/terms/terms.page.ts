@@ -28,6 +28,7 @@ export class TermsPage implements OnInit {
       this.fromPage = from == 1 ? true : false;
       
       console.log(`${from}`);
+			console.log(this.fromPage)
       });
   }
 

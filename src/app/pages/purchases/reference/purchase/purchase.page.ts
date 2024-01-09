@@ -19,7 +19,7 @@ export class PurchasePage implements OnInit {
   loading = true;
   newStoreChargeRequest = {};
   storeChargeReference = {};
-  user: any;
+  user: IUserData;
   chargeRequests: any = [];
   loadingShow: HTMLIonLoadingElement;
 
@@ -52,7 +52,7 @@ export class PurchasePage implements OnInit {
         customer: {
           name: this.user.firstName,
           last_name: this.user.lastName || '',
-          phone_number: this.user.phone || '',
+          phone_number: this.user.phoneNumber || '',
           email: this.user.email
         },
         send_email: false,
@@ -86,6 +86,8 @@ export class PurchasePage implements OnInit {
   }
 
   payThisReference(reference: object) {
+		console.log('payNowReference1')
+		console.log(reference)
     localStorage.setItem('payNowReference', JSON.stringify(reference));
     this.navController.navigateForward('reference/purchase/payment');
 
