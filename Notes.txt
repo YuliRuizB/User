@@ -1,0 +1,61 @@
+*** Keystore ***
+
+keytool -genkey -v -keystore bus2uUsers.keystore -alias bus2u -keyalg RSA -keysize 2048 -validity 10000
+
+Keystore password: bus2u2024
+alias: bus2u
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore bus2uUsers.keystore app-release.aab  bus2u 
+
+***  Notas  ***
+
+
+[	
+	//Error
+	Al compilar si salen los siguientes errores
+
+	ERROR in node_modules/@ionic/storage/storage.d.ts:113:9 - error TS1086: An accessor cannot be declared in an ambient context.
+	113     get driver(): string | null;
+
+	node_modules/@types/geojson/index.d.ts:69:13 - error TS2456: Type alias 'Geometry' circularly references itself.
+	69 export type Geometry = Point | MultiPoint | LineString | MultiLineString | Polygon | MultiPolygon | GeometryCollection;
+
+
+	agregar en tsconfig.json lo siguiente
+
+	"skipLibCheck": true 
+	dentro de compiler options.
+]
+
+[
+	Cordova-android 10.0.0
+
+	error:
+	Apps targeting Android 12 and higher are required to specify an explicit value for `android:exported` when the corresponding component has an intent filter defined. See https://developer.android.com/guide/topics/manifest/activity-element#exported for details.
+
+	agregar en android manifest
+	android:exported="true"
+	en la linea de android:name="MainActivity"
+]
+
+[
+	old firebase.json
+	/*
+	{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": {
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint",
+      "npm --prefix \"$RESOURCE_DIR\" run build"
+    ]
+  }
+}
+	*/
+
+]

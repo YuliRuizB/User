@@ -1,0 +1,81 @@
+<ion-header >
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start" *ngIf="fromPage === false">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+		<ion-buttons 
+			slot="start"
+			*ngIf="fromPage === true"
+		>
+			<ion-button  [routerLink]="['/auth/signup']" routerLinkActive="router-link-active">
+				<ion-icon color="dark" name="arrow-back"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+      <ion-title>REGLAMENTO DEL ALUMNO PARA EL USO DEL TRANSPORTE</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+      <ion-card>
+        <ion-card-header style="color:black">
+        	<p style="font-size: 18px; font-weight: 600;">Para el buen uso del servicio el alumno:</p>
+        </ion-card-header>
+
+        <ion-card-content>
+					<h3>Aclaraciones</h3>
+					<ul>
+							<li>El servicio tiene un costo SEMESTRAL diferido en parcialidades las cuales deben cumplirse oportunamente en las fechas convenidas.</li>
+							<li>Nuestro servicio está diseñado para el uso de la aplicación, si requieren una credencial física pueden solicitarla en ventanilla (con un costo extra único de $100).*
+									<ul>
+											<li>*En caso de extravío la reposición de la credencial tiene un costo de $1,000.</li>
+									</ul>
+							</li>
+							<li>En caso de ser necesario darse de baja del servicio de transporte de Preparatoria 2, es obligación por parte del usuario notificar en ventanilla. De lo contrario, se le seguirá tomando en cuenta en el cobro de la siguiente parcialidad.</li>
+					</ul>
+
+					<h3>El alumno</h3>
+					<ul>
+							<li>Deberá estar en el punto de abordaje 10 minutos antes de la hora marcada.</li>
+							<li>Debe portar su código QR y/o credencial para poder ingresar la unidad, de lo contrario se le negara el servicio.</li>
+							<li>Deberá hacer buen uso de un solo asiento. No está permitido separar lugares.</li>
+							<li>Tiene prohibido compartir su código QR y/o credencial. En caso de hacerlo se cobrará una multa económica de $500 pesos por alumno.
+								Nota: De tratarse de un caso de mayor gravedad, se procederá a suspender el servicio sin derecho a reembolso.
+							</li>
+							<li>Tiene PROHIBIDO afectar la integridad de las unidades.</li>
+							<li>Una vez aborde la unidad tiene PROHIBIDO descender de la unidad. En el horario de salida los alumnos tienen permitido abordar la unidad 15 minutos antes de la hora de salida sin derecho a dejar pertenencias antes.</li>
+
+							<li>Tiene PROHIBIDO dormir dentro de la unidad.</li>
+							<li>Deberá solamente utilizar la ruta y turno seleccionado al momento de la contratación.</li>
+							<li>Solo puede abordar y descender en las paradas establecidas.</li>
+					</ul>
+
+					<h3>Por respeto a los demás usuarios:</h3>
+					<ul>
+							<li>No se debe molestar/acosar a los demás usuarios del servicio.</li>
+							<li>Se deberá mantener una relación de respeto con los operadores y el equipo de Bus2u.</li>
+							<li>No se permite desorden dentro de la unidad. </li>
+			
+							<li>Solo se permite la reproducción de música con audífonos.</li>
+							<li>Están PROHIBIDAS las muestras de afecto dentro de las unidades.</li>
+
+							<li>Tiene PROHIBIDO fumar dentro de la unidad.</li>
+							<li>Tiene PROHIBIDO ingresar con alimentos.</li>
+					</ul>
+
+					<h3>Los padres de familia:</h3>
+					<ul>
+							<li>Deberán establecer una relación de respeto con nuestros operadores.</li>
+							<li>Se deben respetar los puntos de abordaje establecidos.</li>
+							<li>No se permite desorden dentro de la unidad. </li>
+			
+							<li>Está ESTRICTAMENTE PROHIBIDO cerrar el paso con su vehículo a la unidad en trayecto. De lo contrario serán acreedores a la multa imputada por parte de movilidad.</li>
+					</ul>
+
+					<h4 style="font-weight: 600;">
+						Al infringir cualquiera de las reglas el usuario será acreedor a diferentes sanciones, las cuales pueden ir desde multas económicas hasta suspensiones del servicio.
+					</h4>
+        </ion-card-content>
+      </ion-card>
+  </ion-content>
+
+

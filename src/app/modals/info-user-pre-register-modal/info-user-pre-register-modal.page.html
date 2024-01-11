@@ -1,0 +1,31 @@
+<ion-header class="ion-no-border" >
+  <ion-toolbar color="ligth">
+		<ion-buttons slot="start" (click)="close()">
+      <ion-button  color="dark">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+		<ion-title color="dark" mode="ios"> 
+    	Pre Registro
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content >
+	<div class="padding">
+		<div >
+			<div class="center">
+				<h2>La solicitud de su ruta esta en proceso</h2>
+				<h3>Puede consultar el estatus de su ruta presionando ver ruta o en el menu ruta en proceso</h3>
+				<br>
+				<h2>Ruta Seleccionada</h2>
+				<h1>{{ routeData.name }}</h1>
+				<br>
+				<div class="custom-button" (click)="goPreregister()">
+					Ver Ruta
+				</div>
+			</div>
+		</div>
+	</div>
+</ion-content>

@@ -30,8 +30,11 @@ import { AngularFireAuthGuard, AngularFireAuthGuardModule } from '@angular/fire/
 import { AngularFireStorageModule } from '@angular/fire/storage';
 
 
-//FCM
-import { FCM } from '@ionic-native/fcm/ngx';
+//FCM // OLD Cordova 9
+//import { FCM } from '@ionic-native/fcm/ngx';
+
+//FCM // New Cordova 12
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { HttpClientModule } from '@angular/common/http';
 
 //Device Id
@@ -47,10 +50,17 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { PhoneMaskDirective } from './directives/phoneMask/phone-mask.directive';
+import { InfoUserPreRegisterModalPageModule } from './modals/info-user-pre-register-modal/info-user-pre-register-modal.module';
+import { NgCircleProgressModule } from 'ng-circle-progress';
+import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [ ],
+  declarations: [AppComponent, PhoneMaskDirective],
+  entryComponents: [],
+	exports: [
+		PhoneMaskDirective
+  ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -63,17 +73,31 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
     AngularFireStorageModule,    
     HttpClientModule,
     NgxQRCodeModule,
-    IonicStorageModule.forRoot()
+		InfoUserPreRegisterModalPageModule,
+    IonicStorageModule.forRoot(
+			{driverOrder: ['indexeddb', 'sqlite', 'websql']}
+		),
+		NgCircleProgressModule.forRoot({
+      // set defaults here
+      radius: 100,
+      outerStrokeWidth: 16,
+      innerStrokeWidth: 8,
+      outerStrokeColor: "#78C000",
+      innerStrokeColor: "#C7E596",
+      animationDuration: 300,
+    })
   ],
   providers: [
     StatusBar,
     SplashScreen,
     Geolocation,
-    FCM,
+    // FCM,
+		FirebaseX,
     Device,
     SocialSharing,
     Camera,
     File,
+		AndroidPermissions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
     { provide: LOCALE_ID, useValue: "es-MX" },

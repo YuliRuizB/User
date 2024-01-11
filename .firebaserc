@@ -1,13 +1,5 @@
 {
   "projects": {
-    "default": "Bus2U-QA",
-    "adminbus2u": "bus2u-qa-391716"
-  },
-  "Bus2U-QA": {
-    "hosting": {
-      "enlink": [
-        "bus2u-qa-391716"
-      ]
-    }
+    "default": "bus2u-qa-391716"
   }
 }

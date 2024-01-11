@@ -7,6 +7,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { OpenpayService } from '../openpay/openpay.service';
 import { UsersService } from './users.service';
 import { StorageService } from '../storage/storage.service';
+import * as moment from 'moment';
 import { map } from 'rxjs/operators';
 
 export class Credentials {
@@ -49,7 +50,7 @@ export class AuthService {
   }
 
   signin(c: Credentials) {
-
+		
     return this.auth.auth.signInWithEmailAndPassword(c.email, c.password);
   }
 
@@ -105,7 +106,15 @@ export class AuthService {
       customerName: user.customerName,
       customerId: user.customerId,
       studentId: user.studentId,
-      terms: user.verifyTerms
+      terms: user.verifyTerms,
+			rulesAccepted: user.verifyRules,
+			roundTrip: user.typeTrip,
+			defaultRoute: user.route,
+			phoneNumber: user.phone,
+			status: 'preRegister',
+			dateCreateUserFormat: moment().format('l'),
+			dateCreateUserFull: moment().format(),
+			turno: user.turn
     }
 
     // let customerRequest = {
