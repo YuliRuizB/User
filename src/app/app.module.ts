@@ -31,10 +31,10 @@ import { AngularFireStorageModule } from '@angular/fire/storage';
 
 
 //FCM // OLD Cordova 9
-//import { FCM } from '@ionic-native/fcm/ngx';
+import { FCM } from '@ionic-native/fcm/ngx';
 
 //FCM // New Cordova 12
-import { FirebaseX } from "@ionic-native/firebase-x/ngx";
+// import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { HttpClientModule } from '@angular/common/http';
 
 //Device Id
@@ -91,8 +91,8 @@ import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
     StatusBar,
     SplashScreen,
     Geolocation,
-    // FCM,
-		FirebaseX,
+    FCM,
+		// FirebaseX,
     Device,
     SocialSharing,
     Camera,

@@ -4,8 +4,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/firebase/auth.service';
 import { StorageService } from './services/storage/storage.service';
-// import { FCM } from '@ionic-native/fcm/ngx';
-import { FirebaseX } from "@ionic-native/firebase-x/ngx";
+import { FCM } from '@ionic-native/fcm/ngx';
+// import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 
 import { UsersService } from './services/firebase/users.service';
 import { Router } from '@angular/router';
@@ -157,7 +157,7 @@ export class AppComponent {
     private navController: NavController,
     private storageService: StorageService,
     private usersService: UsersService,
-    private fcm: FirebaseX,
+    private fcm: FCM,
     private router: Router,
     public toastController: ToastController
   ) {
@@ -188,6 +188,8 @@ export class AppComponent {
         };
       });*/
 			// New Code cordova 12
+
+      /*  ios
 			this.fcm.onMessageReceived().subscribe(data => {
         if (data.wasTapped) {
           console.log("Received in background", data);
@@ -196,6 +198,7 @@ export class AppComponent {
           this.makeToast(data);
         };
       });
+      */
     });
   }
 

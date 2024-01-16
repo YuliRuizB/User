@@ -25,8 +25,8 @@ import { map, take, filter } from "rxjs/operators";
 import { UsersService } from "../../services/firebase/users.service";
 import { StorageService } from "../../services/storage/storage.service";
 import { StationInfoPage } from "./station-info/station-info.page";
-// import { FCM } from "@ionic-native/fcm/ngx";
-import { FirebaseX } from "@ionic-native/firebase-x/ngx";
+import { FCM } from "@ionic-native/fcm/ngx";
+// import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { OsrmService } from "../../services/osrm/osrm.service";
 import esLocale from "date-fns/locale/es";
 import { id } from "date-fns/locale";
@@ -94,7 +94,8 @@ export class HomePage implements OnInit, OnDestroy {
     public alertController: AlertController,
     private usersService: UsersService,
     private storageService: StorageService,
-    private fcm: FirebaseX,
+    private fcm: FCM,
+    // private fcm: FirebaseX,
     private osrmService: OsrmService,
     private routerOutlet: IonRouterOutlet,
     private http: HttpClient,
@@ -348,14 +349,19 @@ socket$.subscribe(
   }
 
   async validateToken() {
-		const aux  = await this.fcm.hasPermission();
-		console.log('veo el perimso');
-		console.log(aux)
+
+		// const aux  = await this.fcm.hasPermission();
+		// console.log('veo el perimso');
+		// console.log(aux)
+    console.log('alientro');
     this.fcm.getToken().then((token) => {
       console.log("getToken() from homepage");
 			console.log(token);
+      console.log('ali:'+token);
       this.usersService.registerToken(this.user.uid, token);
-    });
+    }).catch((e) => {
+      console.log('alierror'+e)
+    })
     this.fcm.onTokenRefresh().subscribe((token) => {
       console.log("onTokenRefresh() from homepage");
 			console.log(token)
