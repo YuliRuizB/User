@@ -55,13 +55,13 @@ export class NotificationsPage implements OnInit {
     })
   }
 
-  moreOptions(slidingItem: HTMLIonItemSlidingElement, reminder) {
+  moreOptions(slidingItem: any, reminder) { //HTMLIonItemSlidingElement
     slidingItem.open('end').then(() => {
       console.log('opened', reminder);
     })
   }
 
-  toggleActive(slidingItem: HTMLIonItemSlidingElement, reminder) {
+  toggleActive(slidingItem: any, reminder) { //HTMLIonItemSlidingElement
     reminder.active = !reminder.active;
     this.usersService.updateReminder(this.user.uid, reminder.id, reminder).then((response) => {
       console.log(response);
@@ -90,7 +90,7 @@ export class NotificationsPage implements OnInit {
 		this.fcm.unsubscribe(topic);
   }
 
-  async deleteReminder(slidingItem: HTMLIonItemSlidingElement, reminder) {
+  async deleteReminder(slidingItem: any, reminder) { //HTMLIonItemSlidingElement
     const alert = await this.alertController.create({
       header: 'Eliminar',
       message: '¿Estás seguro de <strong>eliminar</strong> este recordatorio?',

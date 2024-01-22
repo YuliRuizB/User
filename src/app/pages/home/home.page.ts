@@ -6,6 +6,7 @@ import "leaflet.marker.slideto";
 import { OnemapService } from "../../services/data/onemap.service";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
 import {
+	Platform,
   ToastController,
   ModalController,
   AlertController,
@@ -39,6 +40,9 @@ import { InfoUserPreRegisterModalPage } from '../../modals/info-user-pre-registe
 import { AuthService } from '../../services/firebase/auth.service';
 import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
 import { IUserData, IRoles } from '../../../app/models/models';
+import { Device } from '@ionic-native/device/ngx';
+import * as moment from 'moment';
+
 
 @Component({
   selector: "app-home",
@@ -102,15 +106,17 @@ export class HomePage implements OnInit, OnDestroy {
 		private _NavController: NavController,
 		private _AuthService: AuthService,
 		private _AndroidPermissions:AndroidPermissions,
-		private _LoadingController: LoadingController
+		private _LoadingController: LoadingController,
+		private _Platform: Platform,
+		private _Device: Device
   ) { }
 
 
 
   async ionViewDidEnter() {  
+		// 
     this.storageService.getItem("userData").then(async (userData) => {
       this.user = JSON.parse(userData);
-			console.log('esto veo');
 			console.log(this.user)
 			//Validate if data user is null 
 			if (this.user === null) {
@@ -119,37 +125,35 @@ export class HomePage implements OnInit, OnDestroy {
 					this._NavController.navigateBack('auth');
 				})
 			}
-
+			console.log('loading 1');
+			console.log(this.user)
+			const ff = await this.validateTerms();
+			console.log('mm'+ff)
+			this.storageService.setItem("userData", JSON.stringify(this.user));
+			// await this.getFireUser();
+			console.log('loading2')
+			console.log(this.user);
 			const loading = await this._LoadingController.create({
 				message: 'Obteniendo su Ubicacion...',
 			});
 			await loading.present();
-			console.log('veo el gps 1')
+			console.log('loading3')
+			// await this.getDataDevice();
+		
 			const gps = await this.geolocation.getCurrentPosition();
-			console.log('veo el gps 2')
-			loading.dismiss();
+			console.log('viendo el gps');
 			console.log(gps)
-			console.log(this.user)
-			console.log(this.user.status);
+			loading.dismiss();
 			if (this.user.status === 'preRegister') {
 				setTimeout(() => {
-					console.log('entro?')
+					// console.log('entro?')
 					this.showInfoPreRegisterModal();
 				},1500)
 				
 			}
-      // this.canShowDevices();
 			
-			console.log('ali 11111111')
-      await this.validateTerms();
-			console.log('ali 22222222')
-			
-			console.log('ali 3333333')
       await this.getSubscriptions();
-			console.log('ali 4444444')
       this.validateToken();
-		
-
       if (this.user && this.user.defaultRoute) {
         // this.showMapRoute();
       } else {
@@ -164,6 +168,25 @@ ngOnDestroy() {
     //this.subscription.unsubscribe();
     
   }
+	async getFireUser() {
+		console.log('alpine')
+		console.log(this.user.uid)
+		return new Promise((resolve, reject) => {
+			this.usersService
+      .getUser(this.user.uid)
+      .subscribe(async (dataUser: any) => {
+				
+				console.log('lo obtuve3333333333');
+				console.log(this.user)
+				this.user = dataUser.payload.data();
+				let dat = await this.storageService.setItem("userData", JSON.stringify(this.user));
+				resolve(true)
+				// this.fullUserAuxTest
+      },(error) => {
+				resolve(false)
+			})
+		})
+	}
 
   loadMapAfterSubscriptions() {
 		console.log('entra ali 3');
@@ -323,9 +346,9 @@ socket$.subscribe(
 
   validateTerms() {
 		return new Promise((resolve) => {
-		// console.log('llega aqui1')
-		//console.log(this.user);
-    const uid = this.user.id;
+		console.log('llega aqui1 validate terms')
+		console.log(this.user);
+    const uid = this.user.uid;
     this.usersService
       .getUser(uid)
       .pipe(
@@ -335,9 +358,11 @@ socket$.subscribe(
           return { id, ...data };
         })
       )
-      .subscribe((dataUser) => {
-				// console.log('esto1');
-				//console.log(dataUser)
+      .subscribe(async (dataUser) => {
+				// await this.storageService.setItem("userData", '');
+				console.log(dataUser)
+				this.user = dataUser;
+				// await this.storageService.setItem("userData", JSON.stringify(this.user));
         let result = dataUser.hasOwnProperty('terms');
 				// console.log(result)
         this.edited = result;
@@ -545,7 +570,7 @@ socket$.subscribe(
 
   getSubscriptions() {
 		return new Promise((resolve) => {
-			console.log('entra ali 1');
+			console.log('entra ali 1 subsssssssssssssss');
 			console.log(this.user)
 			this.busesService
 				.getUserActiveRoutes(this.user)
@@ -559,7 +584,6 @@ socket$.subscribe(
 					)
 				)
 				.subscribe((routes) => {
-					console.log('entra ali 2');
 					this.routes = routes;
 					this.loadMapAfterSubscriptions();
 					this.loading = false;
@@ -601,8 +625,6 @@ socket$.subscribe(
 
   leafletMap() {
     // In setView add latLng and zoom
-		console.log('entra ali 4');
-		console.log(this.map);
     this.map.zoomControl.remove();
     tileLayer("https://mt0.google.com/vt/lyrs=m&hl=es&x={x}&y={y}&z={z}&s=Ga", {
       maxZoom: 20,
@@ -611,10 +633,7 @@ socket$.subscribe(
     }).addTo(this.map);
 
     this.map.whenReady(() => {
-      console.log("map is ready55555555555555555");
-			console.log(this.user)
       if (this.user && this.user.defaultRoute) {
-				console.log('entra 11111111111')
         this.showMapRoute();
         this.startAutoUpdate();
       }
@@ -637,7 +656,8 @@ socket$.subscribe(
   }
 
 	async showInfoPreRegisterModal() {
-		console.log('entra');
+		console.log('entra modal');
+		console.log(this.user)
     const modal = await this.modalController.create({
       component: InfoUserPreRegisterModalPage,
       componentProps: { value: this.user },

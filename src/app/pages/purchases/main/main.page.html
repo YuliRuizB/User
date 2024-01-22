@@ -38,8 +38,8 @@
       			</ngx-qrcode>
 					</div>
 
-
-					<div *ngIf="showQRCode" >
+					<!--
+						<div *ngIf="showQRCode" >
 						<div  class="qrnone-box" *ngIf="card.type === 'Servicio'">
 							<div class="qrnone-box1">
 								<div >
@@ -48,6 +48,8 @@
 							</div>
 						</div>
 					</div>
+					-->
+					
 					
           
 
@@ -77,7 +79,7 @@
 					<br>
           <ion-item lines="none">
 						<div class="box-text">
-							<p class="center">Parada</p>
+							<p class="center">Ruta</p>
 							<div class="box-text1">
 								<ion-icon name="bus" slot="start"></ion-icon>
 								<ion-label>{{ card.stopName }}</ion-label>

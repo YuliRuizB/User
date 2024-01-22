@@ -7,9 +7,9 @@
         </ion-toolbar>
       </ion-header>
       
-      <ion-content>
+      <ion-content *ngIf="validUser !== '[]'">
         <ion-list lines="none">
-          <div *ngIf="user">
+          <div >
             <ion-menu-toggle auto-hide="false">
               <ion-item lines="none" menuClose detail="false" [routerLink]="['/profile']"
                 routerLinkActive="router-link-active">
@@ -24,7 +24,7 @@
             </ion-menu-toggle>
           </div>
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-						<div *ngIf="p.id === 1 && user.status === 'preRegister'">
+						<div *ngIf="p.id === 1  && user.status === 'preRegister'">
 							<ion-item [routerDirection]="'root'" [routerLink]="[p.url]" detail="false">
 								<ion-icon slot="start" [name]="p.icon" [color]="p.color"></ion-icon>
 								<ion-label>
@@ -33,7 +33,22 @@
 								</ion-label>
 							</ion-item>
 						</div>
-						<div *ngIf="p.id !== 1">
+
+						
+
+						<div *ngIf="p.id !== 1 && p.id !== 10">
+							<ion-item [routerDirection]="'root'" [routerLink]="[p.url]" detail="false">
+								<ion-icon slot="start" [name]="p.icon" [color]="p.color"></ion-icon>
+								<ion-label>
+									{{p.title}}
+									<p class="ion-text-wrap">{{ p.subtitle }}</p>
+								</ion-label>
+							</ion-item>
+						</div>
+
+						<!--Admin .platformPermisionStatus.id === 0-->
+						<!---->
+						<div *ngIf="p.id === 10 && user.deviceInfo.platformPermisionStatus.id === 0">
 							<ion-item [routerDirection]="'root'" [routerLink]="[p.url]" detail="false">
 								<ion-icon slot="start" [name]="p.icon" [color]="p.color"></ion-icon>
 								<ion-label>

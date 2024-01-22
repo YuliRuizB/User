@@ -75,6 +75,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/contact-us/contact-us.module').then( m => m.ContactUsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
+	{
+    path: 'history-login',
+    loadChildren: () => import('./pages/super-admin/history-login/history-login.module').then( m => m.HistoryLoginPageModule),
+    ...canActivate(redirectUnauthorizedToLanding)
+  },
   {
     path: 'regulation/:from',
     loadChildren: () => import('./pages/regulation/regulation.module').then( m => m.RegulationPageModule),
@@ -101,7 +106,12 @@ const routes: Routes = [
   {
     path: 'check-request-pre-register',
     loadChildren: () => import('./pages/check-request-pre-register/check-request-pre-register.module').then( m => m.CheckRequestPreRegisterPageModule)
+  },
+  {
+    path: 'history-login',
+    loadChildren: () => import('./pages/super-admin/history-login/history-login.module').then( m => m.HistoryLoginPageModule)
   }
+
 
 ];
 

@@ -71,7 +71,30 @@ export class AppComponent {
 		dateCreateUserFull: '',
 		phoneNumber: '',
 		roundTrip: '',
-		turno: ''
+		turno: '',
+		deviceInfo:  {
+			lastDataConnectWithHour: '',
+			lastDateConnect: '',
+			lastDateConnectFull: '',
+			manufacturer: '',
+			model: '',
+			platform: '',
+			versionPlatformAppStore: '',
+			versionPlatformAppStoreString: '',
+			versionPlatformDevice: '',
+			platformPermisionStatus: {
+				businesName: '',
+				id: null,
+				idDoc: ''
+			},
+			businesPlatform: {
+				businesName: '',
+				businesType: '',
+				currentVersion: '',
+				id: null,
+				idDoc: '',
+			}
+		}
 	};
 
   public appPages = [
@@ -135,7 +158,7 @@ export class AppComponent {
 			id: 8,
       title: 'Reglamento',
       subtitle: 'Reglamento de Bus2U',
-      url: '/regulation',
+      url: '/regulation/2',
       icon: 'newspaper',  
       color: 'primary'
     },
@@ -146,9 +169,17 @@ export class AppComponent {
       url: '/contact-us',
       icon: 'chatbubbles',
       color: 'warning'
+    },
+		{
+			id: 10,
+      title: 'Historial de Inicios de Sesion',
+      subtitle: 'Administracion',
+      url: '/history-login',
+      icon: 'list',
+      color: 'warning'
     }
   ];
-
+	validUser: any = '[]';
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -163,10 +194,29 @@ export class AppComponent {
   ) {
     this.authService.getUserFromDB().subscribe( (user) => {
       this.user = user;
-      //console.log("1-" + this.user);
+    console.log("1-" + this.user);
       if(this.user === undefined) {
+				this.clear();
         this.signout();
       }
+
+			if(JSON.stringify(user) === '[]') {
+				console.log('limpia 1')
+				this.validUser = JSON.stringify(user);
+				// this.clear();
+        // this.signout();
+      }else{
+				this.validUser = JSON.stringify(user);
+				console.log('limpia 2')
+			}
+			/*if(JSON.stringify(user) === '[]') {
+				console.log('limpia 1')
+				// this.clear();
+        // this.signout();
+      }else{
+				this.user = user;
+				console.log('limpia 2')
+			}*/
     })
     setTimeout(() => {
       this.initializeApp();
@@ -177,6 +227,7 @@ export class AppComponent {
     this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+			this.clear();
 			// await this.storageService.forceSettings();
 			// Old code cordova 9 
       /*this.fcm.onNotification().subscribe(data => {
@@ -201,6 +252,7 @@ export class AppComponent {
 
   signout() {
     this.authService.signout().then( () => {
+			this.clear();
       this.storageService.forceSettings();
       this.navController.navigateBack('auth');
     })
@@ -234,4 +286,85 @@ export class AppComponent {
 
     toast.present();
   }
+
+	clear() {
+		this.user  = {
+			status: '',
+			address: {
+				addressLine: '',
+				city: '',
+				postCode: '',
+				state: ''
+			},
+			customerId: '',
+			customerName: '',
+			displayName: '',
+			defaultRoute: '',
+			defaultRound: '',
+			defaultRouteName: '',
+			defaultStopName: '',
+			email: '',
+			emailVerified: false,
+			firstName: '',
+			id: '',
+			lastName: '',
+			occupation: '',
+			openpay: {
+				address: '',
+				clabe: '',
+				creation_date: '',
+				email: '',
+				external_id: '',
+				id: '',
+				last_name: '',
+				name: '',
+				phone_number: ''
+			},
+			phone: '',
+			photoURL: '',
+			refreshToken: '',
+			roles: [],
+			socialNetworks: {
+				apple: '',
+				facebook: '',
+				google: '',
+				instagram: '',
+				linkedIn: '',
+				twitter: ''
+			},
+			studentId: '',
+			uid: '',
+			username: '',
+			_isEditMode: false,
+			_userId: '',
+			dateCreateUserFormat: '',
+			dateCreateUserFull: '',
+			phoneNumber: '',
+			roundTrip: '',
+			turno: '',
+			deviceInfo:  {
+				lastDataConnectWithHour: '',
+				lastDateConnect: '',
+				lastDateConnectFull: '',
+				manufacturer: '',
+				model: '',
+				platform: '',
+				versionPlatformAppStore: '',
+				versionPlatformAppStoreString: '',
+				versionPlatformDevice: '',
+				platformPermisionStatus: {
+					businesName: '',
+					id: 5,
+					idDoc: ''
+				},
+				businesPlatform: {
+					businesName: '',
+					businesType: '',
+					currentVersion: '',
+					id: null,
+					idDoc: '',
+				}
+			}
+		}
+	}
 }

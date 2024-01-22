@@ -54,7 +54,11 @@ import { PhoneMaskDirective } from './directives/phoneMask/phone-mask.directive'
 import { InfoUserPreRegisterModalPageModule } from './modals/info-user-pre-register-modal/info-user-pre-register-modal.module';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
-
+import { StopsListPageModule }  from '../app/pages/notifications/stops-list/stops-list.module';
+import { StopPointsPageModule } from '../app/pages/purchases/products/product-details/stop-points/stop-points.module';
+import { BusInfoPageModule } from '../app/pages/home/bus-info/bus-info.module'
+import { StationInfoPageModule } from '../app/pages/home/station-info/station-info.module'
+import  { PromotionDetailsPageModule } from '../app/pages/promotions/promotion-details/promotion-details.module'
 @NgModule({
   declarations: [AppComponent, PhoneMaskDirective],
   entryComponents: [],
@@ -74,6 +78,11 @@ import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
     HttpClientModule,
     NgxQRCodeModule,
 		InfoUserPreRegisterModalPageModule,
+		StopsListPageModule,
+		StopPointsPageModule,
+		BusInfoPageModule,
+		StationInfoPageModule,
+		PromotionDetailsPageModule,
     IonicStorageModule.forRoot(
 			{driverOrder: ['indexeddb', 'sqlite', 'websql']}
 		),

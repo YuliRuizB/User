@@ -71,7 +71,7 @@ export class StorageService {
     }
   }
 
-  setItem(storageKey, storageValue) {
+  async setItem(storageKey, storageValue) {
 		/*return new Promise((resolve) => {
 			this.storage.set(storageKey, storageValue).then((resp) => {
 				resolve(true)
@@ -79,7 +79,12 @@ export class StorageService {
 				resolve(false)
 			})
 		})*/
-		return this.storage.set(storageKey, storageValue);
+		return await this.storage.set(storageKey, storageValue);
+  }
+
+	async setItem2(storageKey) {
+
+		return await this.storage.set(storageKey, '');
   }
 
   getItem(storageKey) {

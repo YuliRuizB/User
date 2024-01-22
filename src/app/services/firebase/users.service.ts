@@ -13,6 +13,25 @@ export class UsersService {
   users: AngularFirestoreCollection;
   user: AngularFirestoreDocument;
 	batch: any;
+	businesPlatform: any = [
+		{
+			id: 1,
+			idDoc: '',
+			businesName: 'bus2u',
+			businesType: 'users',
+			currentVersion: '0'
+		}
+	];
+
+	platformPermisionStatus: any = [
+		{
+			id: 1,
+			idDoc: '',
+			businesName: 'user'
+		}
+	];
+	versionPlatformAppStoreAndroid: string =  '1.0.0';
+	versionPlatformAppStoreIos: string =  '1.0.0';
   constructor(private afs: AngularFirestore, private fbStorage: AngularFireStorage) {
     this.users = this.afs.collection('users');
 		this.batch = this.afs.firestore.batch();
@@ -97,12 +116,129 @@ export class UsersService {
 		})
   }
 
+	async getListLoginHistory(date: string) {
+		return new Promise((resolve, reject) => {
+			this.afs.collection('loginHistory').ref.where("lastDateConnect","==", date)
+			.get().then((doc) => {
+				if(doc.empty){
+					resolve(false);
+				}else{
+					let filterData = []
+					doc.forEach(element => {
+						filterData.push(element.data());
+					});
+					resolve(filterData)
+				}
+			}).catch((error) => {
+				console.log(error)
+			})
+		})
+  }
+
+	async loginHistoryUser(uid: string, data: any, user: any, plat: any) {
+		return new Promise((resolve, reject) => {
+			let fire1 = this.afs;
+   	 	let fire2 = this.afs;
+				let valid = null
+				if (user.deviceInfo !== undefined) {
+					if (user.deviceInfo.platformPermisionStatus.id !== 0) {
+						valid = this.platformPermisionStatus[0];
+					}else {
+						valid = user.deviceInfo.platformPermisionStatus;
+					}
+				}	
+			let platIdVersion: any = null;
+			let platStringVersion = '';
+			if (plat === 1) {
+				 platIdVersion = this.versionPlatformAppStoreAndroid;
+				 platStringVersion = 'Android';
+			}else
+			if(plat === 2){
+				platIdVersion = this.versionPlatformAppStoreIos;
+				platStringVersion = 'IOS'
+			}else{
+				platIdVersion = '0';
+				platStringVersion = 'browser'
+			}
+			fire1.collection('loginHistory').add(({
+				lastDateConnectFull: data.lastDateConnectFull,
+				lastDateConnect: data.lastDateConnect,
+				lastDataConnectWithHour: data.lastDataConnectWithHour,
+				platform: data.platform,
+				manufacturer: data.manufacturer,
+				model: data.model,
+				versionPlatformDevice: data.versionPlatformDevice,
+				versionPlatformAppStore: platIdVersion,
+				versionPlatformAppStoreString: platStringVersion,
+				// versionPlatformAppStoreIos: this.versionPlatformAppStoreAndroidIos,
+				uuidUser: uid,
+				idDocLoginHistory: '',
+				name: user.firstName,
+				lastName: user.lastName,
+				email: user.email,
+				status: user.status,
+				platformPermisionStatus: valid,
+			})).then((response) => {
+				fire2.collection('loginHistory').doc(response.id).update(({
+					idDocLoginHistory: response.id
+				})).then((response2) => {
+					resolve(true);
+				}).catch((error) => {
+					resolve(false);
+				})
+			}).catch((error) => {
+				resolve(false);
+			})
+		})
+    
+  }
+
+	async updateAccesAppDevice(uid: string, data: any, user2: any, plat: any) {
+    const user = this.afs.collection('users').doc(uid);
+
+		let platIdVersion: any = null;
+		let platStringVersion = '';
+		if (plat === 1) {
+			platIdVersion = this.versionPlatformAppStoreAndroid;
+			platStringVersion = 'Android';
+		}else
+		if(plat === 2){
+			platIdVersion = this.versionPlatformAppStoreIos;
+			platStringVersion = 'IOS'
+		}else{
+			platIdVersion = '0';
+			platStringVersion = 'browser'
+		}
+		let valid = null;
+	if (user2.deviceInfo !== undefined) {
+		if (user2.deviceInfo.platformPermisionStatus.id === 0) {
+			valid = user2.deviceInfo.platformPermisionStatus;  this.platformPermisionStatus[0];
+		}else {
+			valid = this.platformPermisionStatus[0];
+		}
+	}else{
+		valid = this.platformPermisionStatus[0];
+	}	
+
+		// this.businesPlatform[0].currentVersion = this.versionPlatformAppStore
+		data['businesPlatform'] = this.businesPlatform[0]
+		data['platformPermisionStatus'] = valid,
+		data['versionPlatformAppStore'] = platIdVersion;
+		data['versionPlatformAppStoreString'] = platStringVersion;
+    return await user.update({
+      deviceInfo: data,
+    });
+  }
+
   registerToken(uid: string, token: string) {
     console.log('got a new token for ', uid, ', token is: ', token);
     const user = this.afs.collection('users').doc(uid);
     return user.update({
       token: token
-    });
+    }).catch((error) => {
+			console.log('error100')
+			console.log(error)
+		})
   }
 
   registerAPNSToken(uid: string, token: string) {
