@@ -66,6 +66,10 @@ export class AuthService {
     return this.auth.auth.currentUser.sendEmailVerification();
   }
 
+	sendVerificationMail2() {
+   // return this.auth.auth
+  }
+
   sendPasswordResetEmail(email: string) {
     return this.auth.auth.sendPasswordResetEmail(email);
   }

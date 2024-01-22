@@ -89,8 +89,11 @@ export class SigninPage implements OnInit {
 			await loading.present();
       this.authService.signin(this.loginForm.value).then((response:any) => {
         // if (response.user) {
+					console.log('entrta aqu4?');
+					console.log(response)
           const user = response.user;
           if (!user.emailVerified) {
+						// this.authService.sendVerificationMail();
 						this.toastService.presentToast('Su cuenta requeire ser verificada', 3000, 'warning')
 						loading.dismiss();
             this.navController.navigateForward('auth/verify');
@@ -103,6 +106,8 @@ export class SigninPage implements OnInit {
                 return { id, ...data };
               })
             ).subscribe((userR) => {
+							console.log('viendo el userR')
+							console.log(userR)
               const roles: any[] = userR.roles;
               const isUser = roles.includes('user');
               const disabled = userR.disabled || false;
@@ -135,6 +140,7 @@ export class SigninPage implements OnInit {
               }
 							loading.dismiss();
             },(error) => {
+							console.log('entrta aqui1?');
 							loading.dismiss();
 							this.toastService.presentToast(error, 3000, 'danger')
 						})
@@ -143,6 +149,7 @@ export class SigninPage implements OnInit {
 					this.toastService.presentToast('Opss! Error al iniciar sesion', 3000, 'danger')
         }*/
       }).catch( err => {
+				console.log('entrta aqui?');
 				loading.dismiss();
 				this.toastService.presentToast(err, 3000, 'danger')
 			})
