@@ -1,8 +1,18 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="ion-no-padding">
-    <ion-buttons slot="start">
+    <ion-buttons slot="start" *ngIf="fromPage">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+
+		<ion-buttons 
+			slot="start"
+			*ngIf="!fromPage"
+		>
+			<ion-button  [routerLink]="['/auth/signup']" routerLinkActive="router-link-active">
+				<ion-icon color="dark" name="arrow-back"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+
     <ion-title>Términos y Condiciones</ion-title>
   </ion-toolbar>
 </ion-header>

@@ -4,7 +4,7 @@ import { ProductsService } from 'src/app/services/firebase/products.service';
 import { map } from 'rxjs/operators';
 import { PaymentMethodsService } from 'src/app/services/firebase/payment-methods.service';
 import { StorageService } from 'src/app/services/storage/storage.service';
-
+import { IUserData, IRoles } from '../../../../app/models/models';
 @Component({
   selector: 'app-products',
   templateUrl: './products.page.html',
@@ -16,7 +16,7 @@ export class ProductsPage implements OnInit {
   paymentMethods: any;
   paymentMethodsButtons: any = [];
   loading = true;
-  user: any;
+  user: IUserData;
 
   constructor(
     private alertController: AlertController,

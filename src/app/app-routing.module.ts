@@ -75,10 +75,15 @@ const routes: Routes = [
     loadChildren: () => import('./pages/contact-us/contact-us.module').then( m => m.ContactUsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
-  {
-    path: 'regulation',
-    loadChildren: () => import('./pages/regulation/regulation.module').then( m => m.RegulationPageModule),
+	{
+    path: 'history-login',
+    loadChildren: () => import('./pages/super-admin/history-login/history-login.module').then( m => m.HistoryLoginPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
+  },
+  {
+    path: 'regulation/:from',
+    loadChildren: () => import('./pages/regulation/regulation.module').then( m => m.RegulationPageModule),
+		// ...canActivate(redirectUnauthorizedToLanding)
   },
   {
     path: 'faq',
@@ -93,7 +98,21 @@ const routes: Routes = [
   {
     path: 'profile-detail',
     loadChildren: () => import('./pages/profile-detail/profile-detail.module').then( m => m.ProfileDetailPageModule)
+  },
+  {
+    path: 'info-user-pre-register-modal',
+    loadChildren: () => import('./modals/info-user-pre-register-modal/info-user-pre-register-modal.module').then( m => m.InfoUserPreRegisterModalPageModule)
+  },
+  {
+    path: 'check-request-pre-register',
+    loadChildren: () => import('./pages/check-request-pre-register/check-request-pre-register.module').then( m => m.CheckRequestPreRegisterPageModule)
+  },
+  {
+    path: 'history-login',
+    loadChildren: () => import('./pages/super-admin/history-login/history-login.module').then( m => m.HistoryLoginPageModule)
   }
+
+
 ];
 
 @NgModule({

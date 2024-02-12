@@ -55,11 +55,22 @@ export class PurchasesService {
     return this.chargeRequests.snapshotChanges();
   }
 
-  setCustomerChargeRequest(uid: string, chargeRequest: any) {
-    console.log(chargeRequest);
-    let chargeRequestDoc = this.afs.collection('users').doc(uid).collection('purchaseRequests').doc(chargeRequest.id);
+  async setCustomerChargeRequest(uid: string, chargeRequest: any) {
+		console.log('llega aqui?');
+    console.log(chargeRequest.idPurchasteRequest);
+    let chargeRequestDoc = this.afs.collection('users').doc(uid).collection('purchaseRequests').doc(chargeRequest.idPurchasteRequest);
     return chargeRequestDoc.set(Object.assign({}, chargeRequest));
-
-
   }
+
+	updateStoreChargeRequests(uid: string, chargeRequest: any) {
+		console.log('terran');
+		console.log(chargeRequest.idPurchasteRequest)
+    let chargeRequestDoc = this.afs.collection('storeChargeRequests').doc(chargeRequest.idPurchasteRequest)
+    return chargeRequestDoc.update({
+			routeId: chargeRequest.routeId,
+			idStoreChargeRequests: chargeRequest.idPurchasteRequest
+		});
+  }
+
+
 }

@@ -50,9 +50,21 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { PhoneMaskDirective } from './directives/phoneMask/phone-mask.directive';
+import { InfoUserPreRegisterModalPageModule } from './modals/info-user-pre-register-modal/info-user-pre-register-modal.module';
+import { NgCircleProgressModule } from 'ng-circle-progress';
+import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
+import { StopsListPageModule }  from '../app/pages/notifications/stops-list/stops-list.module';
+import { StopPointsPageModule } from '../app/pages/purchases/products/product-details/stop-points/stop-points.module';
+import { BusInfoPageModule } from '../app/pages/home/bus-info/bus-info.module'
+import { StationInfoPageModule } from '../app/pages/home/station-info/station-info.module'
+import  { PromotionDetailsPageModule } from '../app/pages/promotions/promotion-details/promotion-details.module'
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [ ],
+  declarations: [AppComponent, PhoneMaskDirective],
+  entryComponents: [],
+	exports: [
+		PhoneMaskDirective
+  ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -65,9 +77,24 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
     AngularFireStorageModule,    
     HttpClientModule,
     NgxQRCodeModule,
+		InfoUserPreRegisterModalPageModule,
+		StopsListPageModule,
+		StopPointsPageModule,
+		BusInfoPageModule,
+		StationInfoPageModule,
+		PromotionDetailsPageModule,
     IonicStorageModule.forRoot(
 			{driverOrder: ['indexeddb', 'sqlite', 'websql']}
-		)
+		),
+		NgCircleProgressModule.forRoot({
+      // set defaults here
+      radius: 100,
+      outerStrokeWidth: 16,
+      innerStrokeWidth: 8,
+      outerStrokeColor: "#78C000",
+      innerStrokeColor: "#C7E596",
+      animationDuration: 300,
+    })
   ],
   providers: [
     StatusBar,
@@ -79,6 +106,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
     SocialSharing,
     Camera,
     File,
+		AndroidPermissions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
     { provide: LOCALE_ID, useValue: "es-MX" },

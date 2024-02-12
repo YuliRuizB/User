@@ -6,10 +6,13 @@ import "leaflet.marker.slideto";
 import { OnemapService } from "../../services/data/onemap.service";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
 import {
+	Platform,
   ToastController,
   ModalController,
   AlertController,
   IonRouterOutlet,
+	NavController,
+	LoadingController
 } from "@ionic/angular";
 import * as _ from "lodash";
 import {
@@ -33,6 +36,14 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { webSocket } from 'rxjs/webSocket';
 import { WebsocketService } from "../../services/onemap/websocket.service";
+import { InfoUserPreRegisterModalPage } from '../../modals/info-user-pre-register-modal/info-user-pre-register-modal.page'; 
+import { AuthService } from '../../services/firebase/auth.service';
+import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
+import { IUserData, IRoles } from '../../../app/models/models';
+import { Device } from '@ionic-native/device/ngx';
+import * as moment from 'moment';
+
+
 @Component({
   selector: "app-home",
   templateUrl: "home.page.html",
@@ -41,7 +52,7 @@ import { WebsocketService } from "../../services/onemap/websocket.service";
 })
 export class HomePage implements OnInit, OnDestroy {
   loading = true;
-  user: any;
+  user: IUserData;
   map: Map;
   geofences: any;
   devices: any = [];
@@ -73,6 +84,8 @@ export class HomePage implements OnInit, OnDestroy {
   subscription: Subscription;
   email = 'dev.bus2u@gmail.com';
   password = 'Bus2Utr@ccar';
+	auxData4: any = [];
+	fullUserAuxTest: any = [];
     private socket$: WebSocketSubject<any>;
   
 
@@ -89,29 +102,69 @@ export class HomePage implements OnInit, OnDestroy {
     private osrmService: OsrmService,
     private routerOutlet: IonRouterOutlet,
     private http: HttpClient,
-    private webSocketService: WebsocketService
+    private webSocketService: WebsocketService,
+		private _NavController: NavController,
+		private _AuthService: AuthService,
+		private _AndroidPermissions:AndroidPermissions,
+		private _LoadingController: LoadingController,
+		private _Platform: Platform,
+		private _Device: Device
   ) { }
 
+
+
   async ionViewDidEnter() {  
-     
-		
-    //console.log("aqui");
-    //console.log("ionviewdidenter");
+		// 
     this.storageService.getItem("userData").then(async (userData) => {
       this.user = JSON.parse(userData);
-      // this.canShowDevices();
-      this.validateTerms();
-			await this.geolocation.getCurrentPosition();
-      this.getSubscriptions();
-      this.validateToken();
-
-      if (this.user && this.user.defaultRoute) {
-        // this.showMapRoute();
-      } else {
-        this.requestDefaultRoute();
-      }
+			console.log(this.user)
+			//Validate if data user is null 
+			if (this.user === null) {
+				this._AuthService.signout().then( () => {
+					this.storageService.forceSettings();
+					this._NavController.navigateBack('auth');
+				})
+			}
+			console.log('loading 1');
+			console.log(this.user)
+			const ff = await this.validateTerms();
+			console.log('mm'+ff)
+			this.storageService.setItem("userData", JSON.stringify(this.user));
+			// await this.getFireUser();
+			console.log('loading2')
+			console.log(this.user);
+			const loading = await this._LoadingController.create({
+				message: 'Obteniendo su Ubicacion...',
+			});
+			await loading.present();
+			console.log('loading3')
+			// await this.getDataDevice();
+		this.geolocation.getCurrentPosition().then(async (resp) => {
+				console.log('viendo el gps');
+				console.log(resp)
+				loading.dismiss();
+				if (this.user.status === 'preRegister') {
+					setTimeout(() => {
+						// console.log('entro?')
+						this.showInfoPreRegisterModal();
+					},1500)
+					
+				}
+				
+				await this.getSubscriptions();
+				this.validateToken();
+				if (this.user && this.user.defaultRoute) {
+					// this.showMapRoute();
+				} else {
+					this.requestDefaultRoute();
+				}
+			}).catch((e) => {
+				console.log('gps error')
+				console.log(e);
+			})
+		
     }).catch((error) => {
-			console.log('error');
+			console.log('error 222');
 			console.log(error)
 		})
   }
@@ -119,8 +172,28 @@ ngOnDestroy() {
     //this.subscription.unsubscribe();
     
   }
+	async getFireUser() {
+		console.log('alpine')
+		console.log(this.user.uid)
+		return new Promise((resolve, reject) => {
+			this.usersService
+      .getUser(this.user.uid)
+      .subscribe(async (dataUser: any) => {
+				
+				console.log('lo obtuve3333333333');
+				console.log(this.user)
+				this.user = dataUser.payload.data();
+				let dat = await this.storageService.setItem("userData", JSON.stringify(this.user));
+				resolve(true)
+				// this.fullUserAuxTest
+      },(error) => {
+				resolve(false)
+			})
+		})
+	}
 
   loadMapAfterSubscriptions() {
+		console.log('entra ali 3');
     this.map = new Map("mapId").setView([25.6739571, -100.3400463], 10);
     this.stationsMarkers = L.layerGroup().addTo(this.map);
     this.busesMarkers = L.layerGroup().addTo(this.map);
@@ -129,7 +202,16 @@ ngOnDestroy() {
     this.asyncProcess = false;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+		const accessCamera = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.CAMERA);
+		console.log('camera1')
+		console.log(accessCamera)
+		if (!accessCamera.hasPermission) {
+			const camera = await this._AndroidPermissions.requestPermission(this._AndroidPermissions.PERMISSION.CAMERA);
+			console.log('camera1')
+			console.log(camera)
+		}
+		
     // this.apiService.getGeofences().then((geofences) => {
     //   this.apiService.getDevices().then((devices) => {
     //     this.devices = devices;
@@ -138,7 +220,7 @@ ngOnDestroy() {
     //   });
     // });
    // this.connectWebSocket();
-   this.authenticate();
+   // this.authenticate();
   }
   connectWebSocket() {
     /* this.socket$ = new WebSocketSubject({
@@ -214,10 +296,63 @@ socket$.subscribe(
   } */
   }
 
+	//This methos call all user for testing
+	callFullUsers() {
+		this.fullUserAuxTest = [];
+		this.usersService
+      .getUserAllProd()
+      .subscribe((dataUser) => {
+				if (dataUser.length > 5) {
+					dataUser.forEach((resp) => {
+						this.fullUserAuxTest.push(resp.payload.doc.data());				
+					})
+				}
+				// this.fullUserAuxTest
+      });
+	}
+
+	//This methos call all user for testing
+	async showFullUsers() {
+		console.log(this.fullUserAuxTest);
+		return;
+		let index = 0;
+		for await (const item of this.fullUserAuxTest) {
+				/*if (item.status === 'active') {
+					console.log('entra 1')
+					item['turno'] = 0;
+				}*/
+				if (item.turno === 0) {
+					item.turno = '0';
+				}else
+				if(item.turno === 1) {
+					item.turno = '1';
+				}else
+				if(item.turno === 2) {
+					item.turno = '2';
+				}
+
+				console.log('index2:'+index)
+				index++;
+		}
+	}
+
+	async pushCopy() {
+		console.log(this.fullUserAuxTest)
+		for (let x = 0; x < this.fullUserAuxTest.length; x ++) {
+			await this.usersService.setUserAll(this.fullUserAuxTest[x].uid,this.fullUserAuxTest[x]).then((resp) => {
+				console.log('index:'+x)
+			}).catch((error) => {
+				console.log('error 333');
+				console.log(error);
+			})
+		}
+	}
+
   validateTerms() {
-		// console.log('llega aqui1')
-		//console.log(this.user);
-    const uid = this.user.id;
+		return new Promise((resolve) => {
+		console.log('llega aqui1 validate terms')
+		console.log(this.user);
+    const uid = this.user.uid;
     this.usersService
       .getUser(uid)
       .pipe(
@@ -227,14 +362,18 @@ socket$.subscribe(
           return { id, ...data };
         })
       )
-      .subscribe((dataUser) => {
-				// console.log('esto1');
-				//console.log(dataUser)
+      .subscribe(async (dataUser) => {
+				// await this.storageService.setItem("userData", '');
+				console.log(dataUser)
+				this.user = dataUser;
+				// await this.storageService.setItem("userData", JSON.stringify(this.user));
         let result = dataUser.hasOwnProperty('terms');
 				// console.log(result)
         this.edited = result;
+				resolve(true)
         //console.log('has terms :' + result);
       });
+		})
   }
 
   async validateToken() {
@@ -310,9 +449,11 @@ socket$.subscribe(
         {
           text: "Seleccionar",
           handler: (routeId) => {
-            //console.log("seleccionar");
-            // console.log(routeId);
+            console.log("seleccionar");
+            console.log(routeId);
+						console.log(inputs)
             this.updateUserPreference({ defaultRoute: routeId }).then(() => {
+							console.log('return')
               this.stationsMarkers.eachLayer((layer) => {
                 this.stationsMarkers.removeLayer(layer);
               });
@@ -333,6 +474,7 @@ socket$.subscribe(
       .then(() => {
         this.storageService.setItem("userData", JSON.stringify(this.user));
       });
+			
   }
 
   updateUserGeolocation() {
@@ -341,8 +483,8 @@ socket$.subscribe(
     this.geolocation
       .getCurrentPosition()
       .then((resp) => {
-        console.log("respuesta get current location");
-        console.log(resp);
+        // console.log("respuesta get current location");
+        // console.log(resp);
         this.userGeoLocation = resp;
         this.hasUserGeoLocation = true;
         this.updateTimeTravel();
@@ -356,8 +498,8 @@ socket$.subscribe(
 
     const watch = this.geolocation.watchPosition();
     watch.subscribe((data: any) => {
-      console.log("data current location");
-      console.log(data);
+      // console.log("data current location");
+      // console.log(data);
       // this.updateTimeTravel();
       // const pulsingIcon = L.Icon.pulse({
       //   iconSize: [20, 20],
@@ -367,8 +509,8 @@ socket$.subscribe(
       // });
 
       //tslint:disable-next-line: no-string-literal
-      console.log("|this.markers[userPosition]");
-      console.log(this.markers["userPosition"]);
+      // console.log("|this.markers[userPosition]");
+      // console.log(this.markers["userPosition"]);
       if (!this.markers["userPosition"]) {
         // If there is no marker with this id yet, instantiate a new one.
         // tslint:disable-next-line: no-string-literal
@@ -405,23 +547,57 @@ socket$.subscribe(
     });
   }
 
-  getSubscriptions() {
-    this.busesService
-      .getUserActiveRoutes(this.user)
-      .pipe(
-        map((actions) =>
+	test1Web() {
+		this.busesService.test().pipe(
+			map((actions) =>
           actions.map((a) => {
             const data = a.payload.doc.data() as any;
             const id = a.payload.doc.id;
             return { id, ...data };
           })
         )
-      )
-      .subscribe((routes) => {
-        this.routes = routes;
-        this.loadMapAfterSubscriptions();
-        this.loading = false;
-      });
+		)
+		.subscribe((routes) => {
+			console.log('entra ali 2');
+			console.log(routes)
+			routes.forEach((item) => {
+				if (item.creation_date === '2023-12-26T20:42:09.890Z') {
+					console.log('encontro');
+					console.log(item)
+				}
+			})
+		},(error) => {
+			console.log('este error 377777');
+			console.log(error);
+		})
+	}
+
+  getSubscriptions() {
+		return new Promise((resolve) => {
+			console.log('entra ali 1 subsssssssssssssss');
+			console.log(this.user)
+			this.busesService
+				.getUserActiveRoutes(this.user)
+				.pipe(
+					map((actions) =>
+						actions.map((a) => {
+							const data = a.payload.doc.data() as any;
+							const id = a.payload.doc.id;
+							return { id, ...data };
+						})
+					)
+				)
+				.subscribe((routes) => {
+					this.routes = routes;
+					this.loadMapAfterSubscriptions();
+					this.loading = false;
+					resolve(true);
+				},(error) => {
+					console.log('este error 37');
+					console.log(error);
+				})
+		})
+
   }
 
   canShowDevices() {
@@ -453,7 +629,6 @@ socket$.subscribe(
 
   leafletMap() {
     // In setView add latLng and zoom
-
     this.map.zoomControl.remove();
     tileLayer("https://mt0.google.com/vt/lyrs=m&hl=es&x={x}&y={y}&z={z}&s=Ga", {
       maxZoom: 20,
@@ -462,7 +637,6 @@ socket$.subscribe(
     }).addTo(this.map);
 
     this.map.whenReady(() => {
-      //console.log("map is ready");
       if (this.user && this.user.defaultRoute) {
         this.showMapRoute();
         this.startAutoUpdate();
@@ -485,7 +659,29 @@ socket$.subscribe(
     await modal.present();
   }
 
+	async showInfoPreRegisterModal() {
+		console.log('entra modal');
+		console.log(this.user)
+    const modal = await this.modalController.create({
+      component: InfoUserPreRegisterModalPage,
+      componentProps: { value: this.user },
+			showBackdrop:true,
+			backdropDismiss:false,
+    });
+		modal.onDidDismiss().then((result)=>{
+			console.log('veooooo')
+			console.log(result)
+			if (result.data === 1) {
+				this._NavController.navigateForward('check-request-pre-register');
+			} else {
+		
+			}
+		});
+    await modal.present();
+  }
+
   showMapRoute() {
+		console.log('entra 2222222222')
     this.busesService
       .getUserRouteActiveStops(this.user)
       .pipe(
@@ -498,6 +694,7 @@ socket$.subscribe(
         )
       )
       .subscribe((routeStops) => {
+				console.log('entra 333333333')
        // console.log("routeStops");
        // console.log(routeStops);
         this.routeStopsList = routeStops;
@@ -537,6 +734,7 @@ socket$.subscribe(
   }
 
   addStopsToMap(stationsArray) {
+		console.log('entra 44444444444444')
     //console.log(stationsArray);
     let arrayOfLatLngs = [];
     let coordinates = "";
@@ -585,7 +783,10 @@ socket$.subscribe(
       arrayOfLatLngs.length > 0 ? new L.LatLngBounds(arrayOfLatLngs) : [];
 
     // let polyline = (encode([[38.5, -120.2], [40.7, -120.95], [43.252, -126.453]]));
-
+		console.log('entra 55555555555555')
+		console.log(coordinates.substring(0, coordinates.length - 1));
+		console.log(radiuses.substring(0, radiuses.length - 1));
+		console.log(timestamps.substring(0, timestamps.length - 1));
     this.osrmService
       .getMatchService(
         "driving",
@@ -594,7 +795,8 @@ socket$.subscribe(
         timestamps.substring(0, timestamps.length - 1)
       )
       .subscribe((response: any) => {
-        //console.log(response);
+				console.log('entra 66666666666')
+        console.log(response);
         let polylineArray = [];
         const tracepoints = response.matchings[0].geometry.coordinates;
         _.map(tracepoints, (point) => {
@@ -615,8 +817,15 @@ socket$.subscribe(
             weight: 10,
             opacity: 0.4,
           };
-        L.polyline(polylineArray, style).addTo(this.map);
-      });
+					console.log('alicarlo');
+					console.log(polylineArray)
+					console.log(style);
+					console.log(this.map)
+        	L.polyline(polylineArray, style).addTo(this.map);
+      },(error) => {
+				console.log('erroooor 777777777');
+				console.log(error)
+			})
 
     const boundsExists = arrayOfLatLngs.length > 0;
     if (boundsExists) {
@@ -641,27 +850,44 @@ socket$.subscribe(
         )
       )
       .subscribe((devices) => {
-       // console.log("devices");
-        //console.log(devices);
+       	console.log("devices");
+      	console.log(devices);
+				console.log(this.markers)
+			
 
         if (this.devices.length > 0) {
           const currentDevices = _.map(devices, (a) => {
             return a.id;
           });
           console.log("this.device(s) is greather than 0");
+					console.log(this.markers)
           console.log(this.devices);
           console.log(currentDevices);
           const difference = _.difference(this.devices, currentDevices);
           if (difference.length > 0) {
             difference.forEach((device) => {
               console.log("difference ", device);
-              this.markers[device].remove();
+							console.log(this.markers[device])
+							console.log('ali')
+							// this.markers['userPosition'].remove();
+							// this.markers.splice(device,1);
+							/*console.log(this.markers.length)*/
+							/*if (this.markers.length !== 0) {
+								console.log('entra?')
+								this.markers[device].remove();
+							}*/
+							// this.markers.remove();
+             
             });
           }
         }
         this.devices = _.map(devices, (a) => {
           return a.vehicleId;
         });
+
+				console.log('ferrari')
+				console.log(devices)
+				// console.log(this.devices)
         devices.forEach((device: any) => {
           device.occupancy = (device.count * 100) / device.capacity;
           device.availability = device.capacity - device.count;
@@ -711,6 +937,9 @@ socket$.subscribe(
             className: "custom",
           };
 
+					console.log('viendo los iconos')
+					console.log
+					console.log(iconUrl)
           // If there is no marker with this id yet, instantiate a new one.
           this.markers[device.vehicleId] = L.marker(
             [device.geopoint.latitude, device.geopoint.longitude],
@@ -730,6 +959,7 @@ socket$.subscribe(
           )
             .addTo(this.map)
             .bindPopup(customPopup); // , customOptions);
+					
         });
         this.asyncProcess = false;
       });
@@ -852,7 +1082,7 @@ socket$.subscribe(
     clearInterval(this.timer);
     this.timer = null;
     this.autoUpdateStatus = false;
-    this.map.remove();
+    // this.map.remove();
   }
 
   async presentToast(message: string, duration: number, color: string) {
