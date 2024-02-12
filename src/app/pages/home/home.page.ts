@@ -139,26 +139,30 @@ export class HomePage implements OnInit, OnDestroy {
 			await loading.present();
 			console.log('loading3')
 			// await this.getDataDevice();
-		
-			const gps = await this.geolocation.getCurrentPosition();
-			console.log('viendo el gps');
-			console.log(gps)
-			loading.dismiss();
-			if (this.user.status === 'preRegister') {
-				setTimeout(() => {
-					// console.log('entro?')
-					this.showInfoPreRegisterModal();
-				},1500)
+		this.geolocation.getCurrentPosition().then(async (resp) => {
+				console.log('viendo el gps');
+				console.log(resp)
+				loading.dismiss();
+				if (this.user.status === 'preRegister') {
+					setTimeout(() => {
+						// console.log('entro?')
+						this.showInfoPreRegisterModal();
+					},1500)
+					
+				}
 				
-			}
-			
-      await this.getSubscriptions();
-      this.validateToken();
-      if (this.user && this.user.defaultRoute) {
-        // this.showMapRoute();
-      } else {
-        this.requestDefaultRoute();
-      }
+				await this.getSubscriptions();
+				this.validateToken();
+				if (this.user && this.user.defaultRoute) {
+					// this.showMapRoute();
+				} else {
+					this.requestDefaultRoute();
+				}
+			}).catch((e) => {
+				console.log('gps error')
+				console.log(e);
+			})
+		
     }).catch((error) => {
 			console.log('error 222');
 			console.log(error)
@@ -846,27 +850,44 @@ socket$.subscribe(
         )
       )
       .subscribe((devices) => {
-       // console.log("devices");
-        //console.log(devices);
+       	console.log("devices");
+      	console.log(devices);
+				console.log(this.markers)
+			
 
         if (this.devices.length > 0) {
           const currentDevices = _.map(devices, (a) => {
             return a.id;
           });
           console.log("this.device(s) is greather than 0");
+					console.log(this.markers)
           console.log(this.devices);
           console.log(currentDevices);
           const difference = _.difference(this.devices, currentDevices);
           if (difference.length > 0) {
             difference.forEach((device) => {
               console.log("difference ", device);
-              this.markers[device].remove();
+							console.log(this.markers[device])
+							console.log('ali')
+							// this.markers['userPosition'].remove();
+							// this.markers.splice(device,1);
+							/*console.log(this.markers.length)*/
+							/*if (this.markers.length !== 0) {
+								console.log('entra?')
+								this.markers[device].remove();
+							}*/
+							// this.markers.remove();
+             
             });
           }
         }
         this.devices = _.map(devices, (a) => {
           return a.vehicleId;
         });
+
+				console.log('ferrari')
+				console.log(devices)
+				// console.log(this.devices)
         devices.forEach((device: any) => {
           device.occupancy = (device.count * 100) / device.capacity;
           device.availability = device.capacity - device.count;
@@ -916,6 +937,9 @@ socket$.subscribe(
             className: "custom",
           };
 
+					console.log('viendo los iconos')
+					console.log
+					console.log(iconUrl)
           // If there is no marker with this id yet, instantiate a new one.
           this.markers[device.vehicleId] = L.marker(
             [device.geopoint.latitude, device.geopoint.longitude],
@@ -935,6 +959,7 @@ socket$.subscribe(
           )
             .addTo(this.map)
             .bindPopup(customPopup); // , customOptions);
+					
         });
         this.asyncProcess = false;
       });

@@ -5,6 +5,9 @@
     <author email="hello@grabita.com" href="http://grabita.com/">grabita.com Team</author>
     <content src="index.html" />
     <access origin="*" />
+		<allow-navigation href="*" />
+    <allow-navigation href="https://*youtube.com/*" />
+		<allow-navigation href="https://*paynet.com.mx/*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />

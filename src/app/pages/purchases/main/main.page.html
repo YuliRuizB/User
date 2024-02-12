@@ -32,8 +32,9 @@
           </ion-card-header>
 
 					<!--*ngIf="card.type === 'Producto'"-->
+					{{user.uid}} {{card.idBoardingPass}}
 					<div >
-						<ngx-qrcode *ngIf="showQRCode" [qrc-element-type]="elementType" qrc-version = "5" qrc-value="{{user.uid}}-{{card.idBoardingPass}}"
+						<ngx-qrcode *ngIf="showQRCode"  qrc-version = "5" qrc-value="{{user.uid}}-{{card.idBoardingPass}}"
         			qrc-class="qrCode-size" qrc-errorCorrectionLevel="Q">
       			</ngx-qrcode>
 					</div>
