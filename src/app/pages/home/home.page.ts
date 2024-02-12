@@ -117,7 +117,6 @@ export class HomePage implements OnInit, OnDestroy {
 		// 
     this.storageService.getItem("userData").then(async (userData) => {
       this.user = JSON.parse(userData);
-			console.log(this.user)
 			//Validate if data user is null 
 			if (this.user === null) {
 				this._AuthService.signout().then( () => {
@@ -125,23 +124,16 @@ export class HomePage implements OnInit, OnDestroy {
 					this._NavController.navigateBack('auth');
 				})
 			}
-			console.log('loading 1');
-			console.log(this.user)
+
 			const ff = await this.validateTerms();
-			console.log('mm'+ff)
 			this.storageService.setItem("userData", JSON.stringify(this.user));
 			// await this.getFireUser();
-			console.log('loading2')
-			console.log(this.user);
 			const loading = await this._LoadingController.create({
 				message: 'Obteniendo su Ubicacion...',
 			});
 			await loading.present();
-			console.log('loading3')
 			// await this.getDataDevice();
 		this.geolocation.getCurrentPosition().then(async (resp) => {
-				console.log('viendo el gps');
-				console.log(resp)
 				loading.dismiss();
 				if (this.user.status === 'preRegister') {
 					setTimeout(() => {
@@ -159,12 +151,10 @@ export class HomePage implements OnInit, OnDestroy {
 					this.requestDefaultRoute();
 				}
 			}).catch((e) => {
-				console.log('gps error')
 				console.log(e);
 			})
 		
     }).catch((error) => {
-			console.log('error 222');
 			console.log(error)
 		})
   }
@@ -173,15 +163,10 @@ ngOnDestroy() {
     
   }
 	async getFireUser() {
-		console.log('alpine')
-		console.log(this.user.uid)
 		return new Promise((resolve, reject) => {
 			this.usersService
       .getUser(this.user.uid)
       .subscribe(async (dataUser: any) => {
-				
-				console.log('lo obtuve3333333333');
-				console.log(this.user)
 				this.user = dataUser.payload.data();
 				let dat = await this.storageService.setItem("userData", JSON.stringify(this.user));
 				resolve(true)
@@ -193,7 +178,6 @@ ngOnDestroy() {
 	}
 
   loadMapAfterSubscriptions() {
-		console.log('entra ali 3');
     this.map = new Map("mapId").setView([25.6739571, -100.3400463], 10);
     this.stationsMarkers = L.layerGroup().addTo(this.map);
     this.busesMarkers = L.layerGroup().addTo(this.map);
@@ -204,12 +188,8 @@ ngOnDestroy() {
 
   async ngOnInit() {
 		const accessCamera = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.CAMERA);
-		console.log('camera1')
-		console.log(accessCamera)
 		if (!accessCamera.hasPermission) {
 			const camera = await this._AndroidPermissions.requestPermission(this._AndroidPermissions.PERMISSION.CAMERA);
-			console.log('camera1')
-			console.log(camera)
 		}
 		
     // this.apiService.getGeofences().then((geofences) => {
@@ -313,7 +293,6 @@ socket$.subscribe(
 
 	//This methos call all user for testing
 	async showFullUsers() {
-		console.log(this.fullUserAuxTest);
 		return;
 		let index = 0;
 		for await (const item of this.fullUserAuxTest) {
@@ -340,9 +319,7 @@ socket$.subscribe(
 		console.log(this.fullUserAuxTest)
 		for (let x = 0; x < this.fullUserAuxTest.length; x ++) {
 			await this.usersService.setUserAll(this.fullUserAuxTest[x].uid,this.fullUserAuxTest[x]).then((resp) => {
-				console.log('index:'+x)
 			}).catch((error) => {
-				console.log('error 333');
 				console.log(error);
 			})
 		}
@@ -350,8 +327,6 @@ socket$.subscribe(
 
   validateTerms() {
 		return new Promise((resolve) => {
-		console.log('llega aqui1 validate terms')
-		console.log(this.user);
     const uid = this.user.uid;
     this.usersService
       .getUser(uid)
@@ -378,8 +353,6 @@ socket$.subscribe(
 
   async validateToken() {
 		const aux  = await this.fcm.hasPermission();
-		console.log('veo el perimso');
-		console.log(aux)
     this.fcm.getToken().then((token) => {
       console.log("getToken() from homepage");
 			console.log(token);
@@ -558,24 +531,19 @@ socket$.subscribe(
         )
 		)
 		.subscribe((routes) => {
-			console.log('entra ali 2');
-			console.log(routes)
+
 			routes.forEach((item) => {
 				if (item.creation_date === '2023-12-26T20:42:09.890Z') {
-					console.log('encontro');
-					console.log(item)
+
 				}
 			})
 		},(error) => {
-			console.log('este error 377777');
 			console.log(error);
 		})
 	}
 
   getSubscriptions() {
 		return new Promise((resolve) => {
-			console.log('entra ali 1 subsssssssssssssss');
-			console.log(this.user)
 			this.busesService
 				.getUserActiveRoutes(this.user)
 				.pipe(
@@ -593,7 +561,6 @@ socket$.subscribe(
 					this.loading = false;
 					resolve(true);
 				},(error) => {
-					console.log('este error 37');
 					console.log(error);
 				})
 		})
@@ -633,6 +600,7 @@ socket$.subscribe(
     tileLayer("https://mt0.google.com/vt/lyrs=m&hl=es&x={x}&y={y}&z={z}&s=Ga", {
       maxZoom: 20,
       subdomains: ["mt0", "mt1", "mt2", "mt3"],
+			// style: L.MaptilerStyle.STREETS, // optional
       // style: 'https://api.maptiler.com/maps/1ddaeb93-5681-4398-ac48-bba52a074fd3/?key=crAqHWwNhI6CF3sWYjMT#'
     }).addTo(this.map);
 
@@ -660,8 +628,6 @@ socket$.subscribe(
   }
 
 	async showInfoPreRegisterModal() {
-		console.log('entra modal');
-		console.log(this.user)
     const modal = await this.modalController.create({
       component: InfoUserPreRegisterModalPage,
       componentProps: { value: this.user },
@@ -669,8 +635,6 @@ socket$.subscribe(
 			backdropDismiss:false,
     });
 		modal.onDidDismiss().then((result)=>{
-			console.log('veooooo')
-			console.log(result)
 			if (result.data === 1) {
 				this._NavController.navigateForward('check-request-pre-register');
 			} else {
@@ -681,7 +645,6 @@ socket$.subscribe(
   }
 
   showMapRoute() {
-		console.log('entra 2222222222')
     this.busesService
       .getUserRouteActiveStops(this.user)
       .pipe(
@@ -694,12 +657,7 @@ socket$.subscribe(
         )
       )
       .subscribe((routeStops) => {
-				console.log('entra 333333333')
-       // console.log("routeStops");
-       // console.log(routeStops);
         this.routeStopsList = routeStops;
-       // console.log("stopsrouteList");
-       // console.log(this.routeStopsList);
         this.addStopsToMap(this.routeStopsList);
         if (this.hasUserGeoLocation) {
           this.updateTimeTravel();
@@ -734,8 +692,6 @@ socket$.subscribe(
   }
 
   addStopsToMap(stationsArray) {
-		console.log('entra 44444444444444')
-    //console.log(stationsArray);
     let arrayOfLatLngs = [];
     let coordinates = "";
     let radiuses = "";
@@ -783,10 +739,6 @@ socket$.subscribe(
       arrayOfLatLngs.length > 0 ? new L.LatLngBounds(arrayOfLatLngs) : [];
 
     // let polyline = (encode([[38.5, -120.2], [40.7, -120.95], [43.252, -126.453]]));
-		console.log('entra 55555555555555')
-		console.log(coordinates.substring(0, coordinates.length - 1));
-		console.log(radiuses.substring(0, radiuses.length - 1));
-		console.log(timestamps.substring(0, timestamps.length - 1));
     this.osrmService
       .getMatchService(
         "driving",
@@ -795,8 +747,6 @@ socket$.subscribe(
         timestamps.substring(0, timestamps.length - 1)
       )
       .subscribe((response: any) => {
-				console.log('entra 66666666666')
-        console.log(response);
         let polylineArray = [];
         const tracepoints = response.matchings[0].geometry.coordinates;
         _.map(tracepoints, (point) => {
@@ -817,13 +767,9 @@ socket$.subscribe(
             weight: 10,
             opacity: 0.4,
           };
-					console.log('alicarlo');
-					console.log(polylineArray)
-					console.log(style);
-					console.log(this.map)
+
         	L.polyline(polylineArray, style).addTo(this.map);
       },(error) => {
-				console.log('erroooor 777777777');
 				console.log(error)
 			})
 
@@ -850,8 +796,6 @@ socket$.subscribe(
         )
       )
       .subscribe((devices) => {
-       	console.log("devices");
-      	console.log(devices);
 				console.log(this.markers)
 			
 
@@ -859,16 +803,10 @@ socket$.subscribe(
           const currentDevices = _.map(devices, (a) => {
             return a.id;
           });
-          console.log("this.device(s) is greather than 0");
-					console.log(this.markers)
-          console.log(this.devices);
-          console.log(currentDevices);
+
           const difference = _.difference(this.devices, currentDevices);
           if (difference.length > 0) {
             difference.forEach((device) => {
-              console.log("difference ", device);
-							console.log(this.markers[device])
-							console.log('ali')
 							// this.markers['userPosition'].remove();
 							// this.markers.splice(device,1);
 							/*console.log(this.markers.length)*/
@@ -885,8 +823,6 @@ socket$.subscribe(
           return a.vehicleId;
         });
 
-				console.log('ferrari')
-				console.log(devices)
 				// console.log(this.devices)
         devices.forEach((device: any) => {
           device.occupancy = (device.count * 100) / device.capacity;
@@ -937,9 +873,6 @@ socket$.subscribe(
             className: "custom",
           };
 
-					console.log('viendo los iconos')
-					console.log
-					console.log(iconUrl)
           // If there is no marker with this id yet, instantiate a new one.
           this.markers[device.vehicleId] = L.marker(
             [device.geopoint.latitude, device.geopoint.longitude],
@@ -1095,7 +1028,6 @@ socket$.subscribe(
   }
 
   AcceptTerms() {
-    console.log(this.chkTerms);
     this.usersService
       .updateUserTerms(this.user.id, this.chkTerms)
       .then(() => {
@@ -1105,6 +1037,5 @@ socket$.subscribe(
 
   updateTerms(){
   this.chkTerms = this.termsVal;
-  console.log("terms accepted: " + this.termsVal);
   }
 }

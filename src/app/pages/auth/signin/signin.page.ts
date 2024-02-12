@@ -54,24 +54,10 @@ export class SigninPage implements OnInit {
 			await this._AndroidPermissions.requestPermissions([this._AndroidPermissions.PERMISSION.ACCESS_COARSE_LOCATION, this._AndroidPermissions.PERMISSION.ACCESS_FINE_LOCATION]);
 		}
 
-		/*const accessPermission = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.POST_NOTIFICATIONS);
-		console.log('leyenda')
-		console.log(accessPermission)
-		if (!accessPermission.hasPermission) {
-			this._AndroidPermissions.requestPermission(this._AndroidPermissions.PERMISSION.POST_NOTIFICATIONS).then((resp) => {
-				console.log('yas')
-				console.log(resp)
-			}).catch((error) => {
-				console.log(error);
-				console.log('el error')
-			})
-			
-		}*/
 		var permissions = this._AndroidPermissions.PERMISSION;
 		const accessPermission = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.POST_NOTIFICATIONS);
 		if (!accessPermission.hasPermission) {
 			this._AndroidPermissions.requestPermission(this._AndroidPermissions.PERMISSION.POST_NOTIFICATIONS).then((resp) => {
-
 			}).catch((error) => {
 				console.log(error);
 				console.log('el error')
@@ -89,67 +75,57 @@ export class SigninPage implements OnInit {
 			await loading.present();
       this.authService.signin(this.loginForm.value).then((response:any) => {
         // if (response.user) {
-					console.log('entrta aqu4?');
-					console.log(response)
-          const user = response.user;
-          if (!user.emailVerified) {
-						// this.authService.sendVerificationMail();
-						this.toastService.presentToast('Su cuenta requeire ser verificada', 3000, 'warning')
-						loading.dismiss();
-            this.navController.navigateForward('auth/verify');
-          } else {
-						let flag: any = false;
-            this.usersService.getUser(user.uid).pipe(
-              map(a => {
-                const data = a.payload.data() as any;
-                const id = a.payload.id;
-                return { id, ...data };
-              })
-            ).subscribe((userR) => {
-							console.log('viendo el userR')
-							console.log(userR)
-              const roles: any[] = userR.roles;
-              const isUser = roles.includes('user');
-              const disabled = userR.disabled || false;
-              if(isUser && !disabled) {
-                this.storageService.setItem('userData', JSON.stringify(userR));
-                this.storageService.getItem('isLoggedIn').then(async isLoggedIn => {
-                  if(!isLoggedIn) {
-                    this.storageService.setItem('isLoggedIn', true)
-                  } 
-
-									if (flag === false) {
-										console.log('viendo el flag')
-										console.log(flag)
-										flag = true;
-										console.log(flag)
-									 	this.getDataDevice(userR)
-									 // flag = check;
-									}
-                  this.navController.navigateRoot('home');
-                }).catch((err) => {
-									this.toastService.presentToast(err, 3000, 'danger')
-								})
-              } else {
-                console.log('is not a user');
-                this.toastService.presentToast('Esta aplicación es exclusiva para usuarios activos de la comunidad Bus2U. Para conductores, padres de familia y colaboradores hay otras aplicaciones.',5000,'danger').then( () => {
-                  this.authService.signout().then( () => {
-                    this.navController.navigateRoot('');
-                  })
-                })
-              }
-							loading.dismiss();
-            },(error) => {
-							console.log('entrta aqui1?');
-							loading.dismiss();
-							this.toastService.presentToast(error, 3000, 'danger')
+				const user = response.user;
+				if (!user.emailVerified) {
+					// this.authService.sendVerificationMail();
+					this.toastService.presentToast('Su cuenta requeire ser verificada', 3000, 'warning')
+					loading.dismiss();
+					this.navController.navigateForward('auth/verify');
+				} else {
+					let flag: any = false;
+					this.usersService.getUser(user.uid).pipe(
+						map(a => {
+							const data = a.payload.data() as any;
+							const id = a.payload.id;
+							return { id, ...data };
 						})
-          }
+					).subscribe((userR) => {
+						const roles: any[] = userR.roles;
+						const isUser = roles.includes('user');
+						const disabled = userR.disabled || false;
+						if(isUser && !disabled) {
+							this.storageService.setItem('userData', JSON.stringify(userR));
+							this.storageService.getItem('isLoggedIn').then(async isLoggedIn => {
+								if(!isLoggedIn) {
+									this.storageService.setItem('isLoggedIn', true)
+								} 
+
+								if (flag === false) {
+									flag = true;
+									this.getDataDevice(userR)
+									// flag = check;
+								}
+								this.navController.navigateRoot('home');
+							}).catch((err) => {
+								this.toastService.presentToast(err, 3000, 'danger')
+							})
+						} else {
+							this.toastService.presentToast('Esta aplicación es exclusiva para usuarios activos de la comunidad Bus2U. Para conductores, padres de familia y colaboradores hay otras aplicaciones.',5000,'danger').then( () => {
+								this.authService.signout().then( () => {
+									this.navController.navigateRoot('');
+								})
+							})
+						}
+						loading.dismiss();
+					},(error) => {
+						loading.dismiss();
+						this.toastService.presentToast(error, 3000, 'danger')
+					})
+				}
         /*} else {
 					this.toastService.presentToast('Opss! Error al iniciar sesion', 3000, 'danger')
         }*/
       }).catch( err => {
-				console.log('entrta aqui?');
 				loading.dismiss();
 				this.toastService.presentToast(err, 3000, 'danger')
 			})
