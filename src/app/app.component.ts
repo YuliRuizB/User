@@ -10,6 +10,7 @@ import { FCM } from '@ionic-native/fcm/ngx';
 import { UsersService } from './services/firebase/users.service';
 import { Router } from '@angular/router';
 import { IUserData, IRoles } from '../app/models/models';
+declare let window: any;
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -189,8 +190,17 @@ export class AppComponent {
       });*/
 			// New Code cordova 12
 
-      /*  ios
-			this.fcm.onMessageReceived().subscribe(data => {
+      if (this.platform.is('ios')) {
+        console.log('luna0');
+        // this.askTrackingPermission();
+        // this.readTrackingPermission();
+        setTimeout(() => {
+          this.showAppTrackingTransparency()
+        }, 10000);
+        
+      }
+    
+			this.fcm.onNotification().subscribe(data => {
         if (data.wasTapped) {
           console.log("Received in background", data);
         } else {
@@ -198,7 +208,7 @@ export class AppComponent {
           this.makeToast(data);
         };
       });
-      */
+    
     });
   }
 
@@ -236,5 +246,64 @@ export class AppComponent {
     });
 
     toast.present();
+  }
+
+  askTrackingPermission() {
+    console.log('luna1');
+    if (this.platform.is('cordova') && this.platform.is('ios')) {
+      console.log('luna2');
+      if (window.cordova) {
+        console.log('luna3');
+        console.log('trying to request permission ');
+        window.cordova.exec(win, fail, 'idfa', "requestPermission", []);
+      }
+    }
+
+    function win(res) {
+      console.log('luna4' + JSON.stringify(res));
+    }
+    function fail(res) {
+      console.log('luna5' + JSON.stringify(res));
+    }
+  }
+
+readTrackingPermission() {
+
+    if (this.platform.is('cordova') && this.platform.is('ios')) {
+
+      if (window.cordova) {
+        window.cordova.exec(win, fail, 'idfa', "getInfo", []);
+      }
+    }
+
+    function win(res) {
+      console.log('success  ' + JSON.stringify(res));
+    }
+    function fail(res) {
+      console.log('fail ' + JSON.stringify(res));
+    }
+  }
+
+  showAppTrackingTransparency() {
+    const idfaPlugin = window.cordova.plugins.idfa;
+    idfaPlugin.getInfo().then((info) => {
+      if (!info.trackingLimited) {
+        return info.idfa || info.aaid;
+      } else if (
+        info.trackingPermission ===
+        idfaPlugin.TRACKING_PERMISSION_NOT_DETERMINED
+      ) {
+        return idfaPlugin.requestPermission().then((result) => {
+          if (result === idfaPlugin.TRACKING_PERMISSION_AUTHORIZED) {
+  
+            // Start your tracking plugin here!
+  
+            return idfaPlugin.getInfo().then((info) => {
+              return info.idfa || info.aaid;
+            });
+          }
+        });
+      }
+    });
   }
 }

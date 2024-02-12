@@ -79,6 +79,7 @@
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-file": "^8.0.1",
     "cordova-plugin-geolocation": "^5.0.0",
+    "cordova-plugin-idfa": "^3.0.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-splashscreen": "^5.0.3",
@@ -125,7 +126,8 @@
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": "This app requires photo library access to function properly."
       },
       "cordova-plugin-fcm-with-dependency-updated-apns": {},
-      "cordova-plugin-android-permissions": {}
+      "cordova-plugin-android-permissions": {},
+      "cordova-plugin-idfa": {}
     },
     "platforms": [
       "android",

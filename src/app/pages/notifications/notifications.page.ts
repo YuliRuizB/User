@@ -91,7 +91,7 @@ export class NotificationsPage implements OnInit {
 
   unsubscribeFromTopic(topic: string) {
     // this.fcm.unsubscribeFromTopic(topic);
-		// ios this.fcm.unsubscribe(topic);
+	this.fcm.unsubscribeFromTopic(topic);
   }
 
   async deleteReminder(slidingItem: HTMLIonItemSlidingElement, reminder) {

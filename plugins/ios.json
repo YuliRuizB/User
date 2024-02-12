@@ -19,6 +19,9 @@
     "cordova-plugin-device": {
       "PACKAGE_NAME": "com.adn.userv12023"
     },
+    "cordova-plugin-fcm-with-dependency-updated-apns": {
+      "PACKAGE_NAME": "com.adn.userv12023"
+    },
     "cordova-plugin-file": {
       "PACKAGE_NAME": "com.adn.userv12023"
     },
@@ -46,7 +49,7 @@
     "cordova-sqlite-storage": {
       "PACKAGE_NAME": "com.adn.userv12023"
     },
-    "cordova-plugin-fcm-with-dependency-updated-apns": {
+    "cordova-plugin-idfa": {
       "PACKAGE_NAME": "com.adn.userv12023"
     }
   },

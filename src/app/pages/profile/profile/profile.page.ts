@@ -4,7 +4,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage, AngularFireUploadTask, AngularFireStorageReference } from '@angular/fire/storage';
 import * as firebase from 'firebase/app';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { ActionSheetController, NavController } from '@ionic/angular';
+import { ActionSheetController, NavController, AlertController } from '@ionic/angular';
 import { IUserData } from 'src/app/models/models';
 import { StorageService } from 'src/app/services/storage/storage.service';
 import { UsersService } from 'src/app/services/firebase/users.service';
@@ -13,6 +13,7 @@ import { File } from '@ionic-native/file/ngx';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { CustomersService } from 'src/app/services/firebase/customers.service';
+import { AuthService } from '../../../services/firebase/auth.service';
 
 export interface Image {
   id: string;
@@ -75,7 +76,10 @@ export class ProfilePage implements OnInit {
     public customersService: CustomersService,
     private formBuilder: FormBuilder,
     private afs: AngularFirestore,
-    private bucketStorage: AngularFireStorage) {
+    private bucketStorage: AngularFireStorage,
+    private _AlertController: AlertController,
+    private _AuthService: AuthService
+    ) {
     this.auth.authState.subscribe((user) => {
       if (user) {
         this.getSubscriptions(user.uid);
@@ -299,6 +303,37 @@ export class ProfilePage implements OnInit {
     console.log('Selected Round:', this.roundName);
     console.log('Event:', event);
     // Add your custom logic here
+  }
+
+  async delete()
+  {
+    const alert = await this._AlertController.create({
+      cssClass: 'my-custom-class',
+      header: '¿Deseas eliminar su cuenta?',
+      subHeader: 'Al presionar eliminar su cuenta sera borrada',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Eliminar',
+          handler: () => {
+            this.signout();
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  signout() {
+    this._AuthService.signout().then( () => {
+      this.storageService.forceSettings();
+      this.navCtrl.navigateBack('auth');
+    })
   }
 
 }

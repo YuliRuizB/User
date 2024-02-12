@@ -11,7 +11,8 @@ import {
   AlertController,
   IonRouterOutlet,
 	NavController,
-	LoadingController
+	LoadingController,
+  MenuController
 } from "@ionic/angular";
 import * as _ from "lodash";
 import {
@@ -103,12 +104,16 @@ export class HomePage implements OnInit, OnDestroy {
 		private _NavController: NavController,
 		private _AuthService: AuthService,
 		private _AndroidPermissions:AndroidPermissions,
-		private _LoadingController: LoadingController
-  ) { }
+		private _LoadingController: LoadingController,
+    private _MenuController: MenuController
+  ) { 
+    this._MenuController.enable(true);
+  }
 
 
 
   async ionViewDidEnter() {  
+    let loading = null;
     this.storageService.getItem("userData").then(async (userData) => {
       this.user = JSON.parse(userData);
 			console.log('esto veo');
@@ -121,44 +126,55 @@ export class HomePage implements OnInit, OnDestroy {
 				})
 			}
 
-			const loading = await this._LoadingController.create({
+			loading = await this._LoadingController.create({
 				message: 'Obteniendo su Ubicacion...',
 			});
 			await loading.present();
 			console.log('veo el gps 1')
-			const gps = await this.geolocation.getCurrentPosition();
-			console.log('veo el gps 2')
-			loading.dismiss();
-			console.log(gps)
-			console.log(this.user)
-			console.log(this.user.status);
-			if (this.user.status === 'preRegister') {
-				setTimeout(() => {
-					console.log('entro?')
-					this.showInfoPreRegisterModal();
-				},1500)
-				
-			}
-      // this.canShowDevices();
-			
-			console.log('ali 11111111')
-      await this.validateTerms();
-			console.log('ali 22222222')
-			
-			console.log('ali 3333333')
-      await this.getSubscriptions();
-			console.log('ali 4444444')
-      this.validateToken();
-		
 
-      if (this.user && this.user.defaultRoute) {
-        // this.showMapRoute();
-      } else {
-        this.requestDefaultRoute();
-      }
+  
+			this.geolocation.getCurrentPosition().then(async (gps) => {
+        console.log('veo el gps 2:'+gps)
+        console.log('veo el gps 3:'+JSON.stringify(gps))
+        loading.dismiss();
+        console.log(gps)
+        console.log(this.user)
+        console.log(this.user.status);
+        // this._MenuController.enable(true);
+        if (this.user.status === 'preRegister') {
+          setTimeout(() => {
+            console.log('entro?')
+            this.showInfoPreRegisterModal();
+          },1500)
+          
+        }
+        // this.canShowDevices();
+        
+        console.log('ali 11111111')
+        await this.validateTerms();
+        console.log('ali 22222222')
+        
+        console.log('ali 3333333')
+        await this.getSubscriptions();
+        console.log('ali 4444444')
+        this.validateToken();
+      
+
+        if (this.user && this.user.defaultRoute) {
+          // this.showMapRoute();
+        } else {
+          this.requestDefaultRoute();
+        }
+      }).catch((e) => {
+        console.log('gps error:'+ e);
+        loading.dismiss()
+        
+        this._NavController.navigateRoot('gps-request-info')
+      })
     }).catch((error) => {
 			console.log('error 222');
 			console.log(error)
+      loading.dismiss()
 		})
   }
 ngOnDestroy() {

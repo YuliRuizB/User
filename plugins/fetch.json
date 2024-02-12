@@ -129,5 +129,13 @@
     },
     "is_top_level": true,
     "variables": {}
+  },
+  "cordova-plugin-idfa": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-idfa"
+    },
+    "is_top_level": true,
+    "variables": {}
   }
 }

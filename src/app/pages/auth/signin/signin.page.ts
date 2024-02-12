@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/firebase/auth.service';
-import { NavController, LoadingController } from '@ionic/angular';
+import { NavController, LoadingController,MenuController } from '@ionic/angular';
 import { ToastService } from 'src/app/services/toast.service';
 import { UsersService } from 'src/app/services/firebase/users.service';
 import { map } from 'rxjs/operators';
@@ -31,6 +31,7 @@ export class SigninPage implements OnInit {
   }
   constructor(
     private fb: FormBuilder,
+    private _MenuController: MenuController,
     private authService: AuthService,
     public navController: NavController,
     private toastService: ToastService,
@@ -39,6 +40,7 @@ export class SigninPage implements OnInit {
 		private _LoadingController:LoadingController,
 		private _AndroidPermissions: AndroidPermissions
   ) {
+    this._MenuController.enable(false);
     this.loginForm = fb.group({
 			email: ['', Validators.compose([Validators.required, Validators.email, Validators.minLength(3),Validators.maxLength(35)])],
 			password: ['', Validators.compose([Validators.required, Validators.minLength(4), Validators.maxLength(35)])]

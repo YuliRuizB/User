@@ -101,6 +101,10 @@ const routes: Routes = [
   {
     path: 'check-request-pre-register',
     loadChildren: () => import('./pages/check-request-pre-register/check-request-pre-register.module').then( m => m.CheckRequestPreRegisterPageModule)
+  },
+  {
+    path: 'gps-request-info',
+    loadChildren: () => import('./pages/gps-request-info/gps-request-info.module').then( m => m.GpsRequestInfoPageModule)
   }
 
 ];

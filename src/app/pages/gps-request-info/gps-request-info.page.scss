@@ -1,0 +1,10 @@
+.padding {
+	padding: 15px;
+}
+
+.menu {
+  visibility: visible;
+  @media (min-width: 1000px) {
+    visibility: hidden;
+  }
+}
