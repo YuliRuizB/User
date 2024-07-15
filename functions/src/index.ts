@@ -2,20 +2,43 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as basicAuth from 'express-basic-auth';
+import * as moment from 'moment';
+
 //import * as request from 'request';
 
 admin.initializeApp();
 const db = admin.firestore();
 
+// const { PDFDocument, StandardFonts } = require('pdf-lib');
+// const puppeteer = require('puppeteer');
+// const fs = require('fs');
+// const path = require('path');
+
+const nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+	host: 'smtp.gmail.com',
+	port: 465,//465,
+	secure: true,
+	auth: {
+			//user: 'alicarlo.montijop@gmail.com',
+			//pass: 'oibiqaagggwjduzk'
+			user: 'dev.bus2u@gmail.com',
+			pass: 'rxgioamkpqfunzps'
+	}
+});
 
 const Openpay = require('openpay');
-const openpay = new Openpay('m2mkwvsgfxzuc0hrg8fm', 'sk_dc43597b199448588611083a15c02407'); //production
+//old const openpay = new Openpay('m2mkwvsgfxzuc0hrg8fm', 'sk_dc43597b199448588611083a15c02407'); //production
 // const openpay = new Openpay('mptiot2sftktydvpfgxj', 'sk_0038400338e04bdb9ba760ad05f8aa93'); //development
-
-openpay.setProductionReady(true);
+/*Prod*/ const openpay = new Openpay('msbxvjptsxwkbl40zaky', 'sk_fb25efc95bd54d7e901ff2ee28da20e3'); //production
+/*Tester Ali:*/ //const openpay = new Openpay('m0lhvrprbzv2sg8ajmki', 'sk_2a7fdbfb1c3345569c2e376b538ba345');
+/*Prod*/openpay.setProductionReady(true);
+// Tester Ali: openpay.setProductionReady(false);
 
 // CORS Express middleware to enable CORS Requests.
 import * as cors from "cors";
+// import { user } from 'firebase-functions/lib/providers/auth';
+// import { user } from 'firebase-functions/lib/providers/auth';
 
 const app = express();
 app.use(cors({ origin: true }))
@@ -41,7 +64,7 @@ app.post('/allevents', function (req, res) {
       customerId = orderArray[1];
     } else {
       // reference = transaction.payment_method.reference;
-      customerId = transaction.customer_id;
+      customerId = transaction.customerId;
     }
 
 
@@ -183,27 +206,93 @@ app.post('/v1/devices/gema_suspended', basicAuth({ users: { 'gema': 'R92bxFFtNRq
   return res.send(logEvent);
 });
 
+
 exports.api = functions.https.onRequest(app);
+// exports.createBoardingPass = functions.firestore.document('users/{userId}/purchaseRequests/{purchaseRequest}').onUpdate(async (change, context) => {
+// Esta funcion ya no se usa
+exports.createBoardingPass = functions.firestore.document('users/{uid}/purchaseRequests/{idPurchasteRequest}').onUpdate(async (snap: any, context) => {
+	return
+	const newValue = snap.after.data()
+	const productId =  newValue.product_id;//snap.get('product_id')
+	// if (newValue.idPurchasteRequest === '') {
+	// 	return;
+	// }
+	if (newValue.status === 'completed') {
+		let user2 = null as any;
+		const userRef$ = await admin.firestore().collection('users').doc(context.params.uid);
+    userRef$.get().then(async (userDoc) => {
+      user2 = userDoc.data() as any;
+      // Notification details.
+      const payload = {
+        notification: {
+          title: '¡Tu compra se ha registrado con éxito!',
+          body: `${user2.displayName}, tu compra del pase de abordar para el periodo ${newValue.name} ya está en tus compras.`,
+          icon: user2.photoURL
+        },
+        data: {
+          title: '¡Tu pase de abordar está listo!',
+          body: `${user2.displayName}, tu compra del pase de abordar para el periodo ${newValue.name} ya está en tus compras.`,
+          url: 'purchases',
+          color: 'primary',
+          position: 'top',
+          buttons: JSON.stringify([{
+            text: 'Ok',
+            role: 'cancel',
+            handler: "console.log('Cancel clicked')",
+          },
+          {
+            text: 'Ver pase',
+            handlerType: 'navigation',
+            handler: "purchases"
+          }])
+        }
+      };
 
-exports.createBoardingPass = functions.firestore.document('users/{userId}/purchaseRequests/{purchaseRequest}').onWrite(async (change, context) => {
+      // Listing all tokens as an array.
+      const token = user2.token;
+      // Send notifications to all tokens.
+      const sendFCMNotification = await admin.messaging().sendToDevice(token, payload);
+			// For each message check if there was an error.
+      sendFCMNotification;
 
-  const userId = context.params.userId;
-  const chargeRequest = change.after.data() as any || "";
-  console.log(chargeRequest);
-  const orderIdArray = (chargeRequest.order_id).split('-');
-  const productId = orderIdArray[0];
+			await userRef$.update({
+				status: 'active'
+			})
+    
+
+			const newBoardingPassCollectionRef = admin.firestore().collection('users').doc(context.params.uid).collection('boardingPasses');
+			const boardingPassData = {
+				idBoardingPass: '',
+				productId: productId,
+				customerId: user2.customerId,// orderIdArray[1]
+			};
+			const newBoardingPass = { ...boardingPassData, ...newValue };
+			const { id }: any = await  newBoardingPassCollectionRef.add(newBoardingPass);	
+			const newBoardingPassCollectionRefUpdate = admin.firestore().collection('users').doc(context.params.uid).collection('boardingPasses').doc(id);
+			await newBoardingPassCollectionRefUpdate.set({ alicarlo: 'alicarlo test' }, { merge: true })
+			return newBoardingPassCollectionRefUpdate.update({
+				idBoardingPass: id
+			})
+		
+    }).catch(err => console.log(err));
+
+    
+	}
+
+	
+  // const userId = context.params.userId;
+	/*
+  //old const orderIdArray = (chargeRequest.order_id).split('-');
+  //old const productId = orderIdArray[0];
+	const productId =  chargeRequest
   const transactionId = chargeRequest.id;
   delete chargeRequest.id;
   chargeRequest.transactionId = transactionId;
 
   if (chargeRequest.status === 'completed') {
-    console.log('we will create a boarding pass for this payment');
-    console.log('also send a notification');
-
     const userRef$ = await admin.firestore().collection('users').doc(userId);
     userRef$.get().then(async (userDoc) => {
       const user = userDoc.data() as any;
-      console.log(user);
       // Notification details.
       const payload = {
         notification: {
@@ -241,11 +330,12 @@ exports.createBoardingPass = functions.firestore.document('users/{userId}/purcha
     const newBoardingPassCollectionRef = admin.firestore().collection('users').doc(userId).collection('boardingPasses');
     const boardingPassData = {
       productId: productId,
-      customerId: orderIdArray[1]
+      customerId: '9991'// orderIdArray[1]
     };
     const newBoardingPass = { ...boardingPassData, ...chargeRequest };
     return newBoardingPassCollectionRef.add(newBoardingPass);
   }
+	*/
   return true;
 });
 
@@ -293,7 +383,6 @@ exports.addNewOpenpayStoreChargeRequest = functions.https.onCall((data, context)
   const newChargeRequest = data.charge_request;
   // const customerId = data.customer_id;
   // newChargeRequest.customer_id = customerId;
-  console.log(data);
   //   const uid = context.auth.uid;
   //   const name = context.auth.token.name || null;
   //   const picture = context.auth.token.picture || null;
@@ -304,19 +393,19 @@ exports.addNewOpenpayStoreChargeRequest = functions.https.onCall((data, context)
       if (error) { resolve(error) };
       if (charge) {
         resolve(charge)
-        // const purchaseRef$ = admin.firestore().collection('users').doc(uid).collection('purchaseRequests').doc(charge.id);
-        // purchaseRef$.set(charge).then(() => {
-        //   admin.firestore().collection('storeChargeRequests').doc(charge.id).set(charge);
-        // }).then(() => {
-        //   resolve(charge);
-        // })
+      		/*const purchaseRef$ = admin.firestore().collection('users').doc(uid).collection('purchaseRequests').doc(charge.id);
+        		purchaseRef$.set(charge).then(() => {
+        		admin.firestore().collection('storeChargeRequests').doc(charge.id).set(charge);
+        		}).then(() => {
+        		resolve(charge);
+        		})*/
       };
     });
   });
 });
 
 exports.addNewOpenpayCardChargeRequest = functions.https.onCall((data, context) => {
-
+	
   if (!context.auth) {
     // Throwing an HttpsError so that the client gets the error details.
     throw new functions.https.HttpsError('failed-precondition',
@@ -324,7 +413,7 @@ exports.addNewOpenpayCardChargeRequest = functions.https.onCall((data, context) 
   }
 
   // Authentication / user information is automatically added to the request.
-  console.log(data);
+
   const newChargeRequest = data.charge_request;
   // const customerId = data.customer_id;
   //   const uid = context.auth.uid;
@@ -333,19 +422,30 @@ exports.addNewOpenpayCardChargeRequest = functions.https.onCall((data, context) 
   //   const email = context.auth.token.email || null;
 
   return new Promise((resolve) => {
-    openpay.charges.create(newChargeRequest, (error: unknown, charge: unknown) => {
+    openpay.charges.create(newChargeRequest, (error: unknown, charge: any) => {
       if (error) { resolve(error) };
       if (charge) {
-        resolve(charge)
-        // const purchaseRef$ = admin.firestore().collection('users').doc(uid).collection('purchaseRequests').doc(charge.id);
-        // purchaseRef$.set(charge).then(() => {
-        //   admin.firestore().collection('storeChargeRequests').doc(charge.id).set(charge);
-        // }).then(() => {
-        //   resolve(charge);
-        // })
-      };
+        // resolve(charge)
+				// const aux1 = admin.firestore();
+				// const aux2 =  admin.firestore();
+				const purchaseRef$ = admin.firestore().collection('users').doc(data.user.uid).collection('purchaseRequests').doc(charge.id);
+				charge['routeId'] = '';
+        purchaseRef$.set(charge).then(() => {
+           admin.firestore().collection('storeChargeRequests').doc(charge.id).set(charge).then(() => {
+						resolve(charge)
+					 }).catch((err) => resolve(err))
+         }).catch((err) => resolve(err))
+        /*const purchaseRef$ = admin.firestore().collection('users').doc(data.user.uid).collection('purchaseRequests').doc(charge.id);
+        purchaseRef$.set(charge).then(() => {
+           admin.firestore().collection('storeChargeRequests').doc(charge.id).set(charge);
+         }).then(() => {
+           resolve(charge);
+         })*/
+      }
+			
     });
   });
+	
 });
 
 exports.createActivity = functions.firestore.document('activityLog/{Id}').onCreate((snap, context) => {
@@ -369,7 +469,8 @@ exports.createActivity = functions.firestore.document('activityLog/{Id}').onCrea
         lastUsedVehicle: newValue.vehicle,
         validation: userKey,
         allowedOnBoard: newValue.allowedOnBoard,
-        lastValidUsage: newValue.validUsage
+        lastValidUsage: newValue.validUsage,
+				callDateFunction: moment().format()
       }
     };
 
@@ -393,18 +494,17 @@ exports.sendFCMNotification = functions.firestore.document('testFCM/{userId}').o
   const userId = context.params.userId;
   const userRef$ = await admin.firestore().collection('users').doc(userId);
   userRef$.get().then(async (userDoc) => {
-    const user = userDoc.data() as any;
-    console.log(user);
+    const user3 = userDoc.data() as any;
     // Notification details.
     const payload = {
       notification: {
         title: '¡Tu pase de abordar está listo!',
-        body: `${user.displayName}, ya puedes usar el transporte de Bus2U`,
-        icon: user.photoURL
+        body: `${user3.displayName}, ya puedes usar el transporte de Bus2U`,
+        icon: user3.photoURL
       },
       data: {
         title: '¡Tu pase de abordar está listo!',
-        body: `${user.displayName}, ya puedes usar el transporte de Bus2U`,
+        body: `${user3.displayName}, ya puedes usar el transporte de Bus2U`,
         url: 'purchases',
         color: 'primary',
         position: 'top',
@@ -422,7 +522,7 @@ exports.sendFCMNotification = functions.firestore.document('testFCM/{userId}').o
     };
 
     // Listing all tokens as an array.
-    const token = user.token;
+    const token = user3.token;
     // Send notifications to all tokens.
     const sendFCMNotification = await admin.messaging().sendToDevice(token, payload);
     // For each message check if there was an error.
@@ -459,3 +559,350 @@ exports.setLiveProgram = functions.firestore.document('customers/{customerId}/pr
   return updateLiveProgram.update(updated);
 
 })
+
+exports.sendToDeviceMessage = functions.firestore.document('chatMessages/{uid}').onCreate(async (snap, context) => {
+  const dataChatMessage: any = snap.data();
+  const token = dataChatMessage.token || null;
+  let userNotificationToken = dataChatMessage.token || '';
+  let userMessage = dataChatMessage.msg || '';
+
+  if (userNotificationToken) {
+    // create custom notification payload
+
+    if (token.length > 0) {
+      const payload = {
+        notification: {
+          title: 'Bus2U Informa',
+          body: userMessage
+        },
+        data: {
+          title: 'Bus2U Informa',
+          body: userMessage,
+          color: 'primary',
+          position: 'top',
+          buttons: JSON.stringify([{
+            text: 'Ok',
+            role: 'cancel',
+            handler: "console.log('Cancel clicked')",
+          }])
+        }
+      };
+      // Send notifications to all tokens.
+      const sendFCMNotification = await admin.messaging().sendToDevice(token, payload);
+      // For each message check if there was an error.
+      sendFCMNotification;
+
+    } else {
+      // Users found does not have a token to be used for notification, so no user will be notified
+      // TODO: Once we can be sure it all works, we can remove console.log
+      console.log('Users found but none have a token to be used for notification');
+      return;
+    }
+  }
+});
+
+// addNewOpenpayCardChargeRequest
+exports.createPurchaseRequest = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    // Throwing an HttpsError so that the client gets the error details.
+    throw new functions.https.HttpsError('failed-precondition',
+      'The function must be called while authenticated.');
+  }
+	return new Promise(async (resolve) => {
+		// await newBoardingPassCollectionRefUpdate.set({ alicarlo: 'alicarlo test' }, { merge: true })
+		console.log('ali1')
+		console.log(JSON.stringify(data))
+		console.log('ali2')
+		
+		const newData = data.purchaseRequestData;
+		const userData = data.user;
+		const idBoardingPass = data.idBoardingPass;
+		const newPurchaseCollectionRef = admin.firestore().collection('users').doc(userData.uid).collection('purchaseRequests');
+		const { id } = await newPurchaseCollectionRef.add(newData);
+
+		const newPurchaseCollectionRef2 = admin.firestore().collection('users').doc(userData.uid).collection('purchaseRequests').doc(id);
+		await newPurchaseCollectionRef2.set({ idPurchasteRequest: id }, { merge: true })
+		
+		const newBoardingCollectionRef3 = admin.firestore().collection('users').doc(userData.uid).collection('boardingPasses').doc(idBoardingPass);
+		await newBoardingCollectionRef3.set({ idPurchasteRequest: id  }, { merge: true })
+		await newBoardingCollectionRef3.set({ idBoardingPass: idBoardingPass  }, { merge: true })
+
+		const structureStoreChargeRequest = {
+			amount: newData.amount,
+			authorization: newData.authorization,
+			card: {
+				type: newData.card.type,
+				brand: newData.card.brand,
+				address: newData.card.address,
+				card_number: newData.card.card_number,
+				holder_name: newData.card.holder_name,
+				expiration_year: newData.card.expiration_year,
+				expiration_month: newData.card.expiration_month,
+				allows_charges: newData.card.allows_charges,
+				allows_payouts: newData.card.allows_payouts,
+				bank_name: newData.card.bank_name,
+				bank_code: newData.card.bank_code,
+				points_card: newData.card.points_card,
+				points_type: newData.card.points_type,
+			},
+			conciliated: newData.conciliated,
+			creation_date: newData.creation_date,
+			currency: newData.currency,
+			customer: {
+				name: newData.customer.name,
+				last_name: newData.customer.last_name,
+				email: newData.customer.email,
+				phone_number: newData.customer.phone_number,
+				address: newData.customer.address,
+				creation_date: newData.customer.creation_date,
+				external_id: newData.customer.external_id,
+				clabe: newData.customer.clabe
+			},
+			description: newData.description,
+			error_message: newData.error_message,
+			fee: {
+				amount: null,
+				tax: null,
+				currency: null
+			},
+			gateway_card_present: null,
+			id: id,
+			method: newData.method,
+			operation_date: newData.operation_date,
+			operation_type: newData.operation_type,
+			order_id: newData.order_id,
+			routeId: newData.routeId,
+			status: newData.status,
+			transaction_type: newData.transaction_type
+		}
+
+		admin.firestore().collection('storeChargeRequests').doc(id).set(structureStoreChargeRequest).then(() => {
+			resolve(true)
+		}).catch((err) => resolve(err))
+	})
+});
+
+
+// Esta funcion se usa en la app de users
+exports.createBoardingPassAppUsers = functions.https.onCall(async (data, context) => {
+
+	return new Promise(async (resolve) => {
+		const userData = data.user;
+		const purchase = data.purschase;
+		console.log('ali1')
+		console.log(JSON.stringify(purchase))
+		console.log('ali2')
+		const purchaseGet$ =  await admin.firestore().collection('users').doc(userData.uid).collection('purchaseRequests').doc(purchase.id);
+		purchaseGet$.get().then(async (purchaseDoc: any) => {
+			let purchaseData = purchaseDoc.data();
+			console.log('ali3')
+			console.log(JSON.stringify(purchaseData))
+			console.log('ali4')
+			const userRef$ = await admin.firestore().collection('users').doc(userData.uid);
+			const payload = {
+				notification: {
+					title: '¡Tu compra se ha registrado con éxito!',
+					body: `${userData.displayName}, tu compra del pase de abordar para el periodo ${purchaseData.name} ya está en tus compras.`,
+					icon: userData.photoURL
+				},
+				data: {
+					title: '¡Tu pase de abordar está listo!',
+					body: `${userData.displayName}, tu compra del pase de abordar para el periodo ${purchaseData.name} ya está en tus compras.`,
+					url: 'purchases',
+					color: 'primary',
+					position: 'top',
+					buttons: JSON.stringify([{
+						text: 'Ok',
+						role: 'cancel',
+						handler: "console.log('Cancel clicked')",
+					},
+					{
+						text: 'Ver pase',
+						handlerType: 'navigation',
+						handler: "purchases"
+					}])
+				}
+			};
+
+			console.log('payload:'+JSON.stringify(payload))
+			console.log('user:'+JSON.stringify(userData))
+			// Listing all tokens as an array.
+			const token = userData.token;
+			// Send notifications to all tokens.
+			const sendFCMNotification = await admin.messaging().sendToDevice(token, payload);
+			// For each message check if there was an error.
+			sendFCMNotification;
+
+			await userRef$.update({
+				status: 'active'
+			})
+
+			const newBoardingPassCollectionRef = admin.firestore().collection('users').doc(userData.uid).collection('boardingPasses');
+			console.log('boardingPass0:'+JSON.stringify(newBoardingPassCollectionRef))
+			const boardingPassData = {
+				idBoardingPass: '',
+				productId: purchaseData.product_id,
+				customerId: userData.customerId,// orderIdArray[1]
+			};
+			console.log('boardingPass1:'+JSON.stringify(boardingPassData))
+			const newBoardingPass = { ...boardingPassData, ...purchaseData };
+			console.log('boardingPass2:'+JSON.stringify(boardingPassData))
+			const { id }: any = await  newBoardingPassCollectionRef.add(newBoardingPass);
+			console.log('boardingPass3:'+JSON.stringify(id))
+			const newBoardingPassCollectionRefUpdate = admin.firestore().collection('users').doc(userData.uid).collection('boardingPasses').doc(id);
+			console.log('boardingPass4:'+JSON.stringify(newBoardingPassCollectionRefUpdate))
+			// await newBoardingPassCollectionRefUpdate.set({ alicarlo: 'alicarlo test' }, { merge: true })
+			await newBoardingPassCollectionRefUpdate.update({
+				idBoardingPass: id
+			})
+
+			resolve(true);
+		}).catch((err) => resolve(err))
+	});
+});
+
+
+/*async function generatePdf(htmlContent: any, outputPath: any) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(htmlContent);
+  await page.pdf({ path: outputPath, format: 'A4' });
+  await browser.close();
+}*/
+
+
+/*async function generatePdf(htmlContent: any, outputPath: any) {
+  // Crear un nuevo documento PDF
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage();
+
+  // Incorporar el contenido HTML como texto en la página PDF
+  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  page.drawText(htmlContent, {
+    x: 50,
+    y: page.getHeight() - 50,
+    size: 12,
+    font: helveticaFont,
+    maxWidth: 500,
+  });
+
+  // Escribir el archivo PDF al sistema de archivos
+  const pdfBytes = await pdfDoc.save();
+  fs.writeFileSync(outputPath, pdfBytes);
+}*/
+
+
+
+exports.createReport = functions.runWith({ timeoutSeconds: 540 }).https.onCall(async (data, context) => {
+
+	return new Promise(async (resolve, reject) => {
+
+
+		// const token = data.token;
+		console.log(data.route)
+		const route = data.route;
+		// console.log()
+		const htmlContent = createHtmlTemplate(route);
+		/*const pdfPath = path.join('/tmp', 'output.pdf');
+		
+		// Generar el PDF usando Puppeteer
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(htmlContent); // Establecer el contenido HTML en la página
+    await page.pdf({
+      path: pdfPath,
+      format: 'A4',
+      printBackground: true,
+    });
+    await browser.close();
+    console.log('PDF generado exitosamente en', pdfPath);*/
+  // Send the HTML content via email
+  const msg = {
+    to: 'dev.bus2u@gmail.com',
+    from: 'dev.bus2u@gmail.com',
+    subject: 'Rutas y paradas',
+    html: htmlContent,
+		/*attachments: [
+			{
+				filename: 'output.pdf',
+				path: pdfPath
+			}
+		]*/
+  };
+
+  try {
+		await transporter.sendMail(msg);
+		resolve(true)
+	} catch (error) {
+		console.error('Error sending email:', error);
+		return error;
+			// Puedes manejar el error aquí según tu requerimiento
+	}
+		
+	});
+});
+
+
+
+
+function createHtmlTemplate(data: any) {
+	console.log('esto llega');
+	console.log(data)
+	let html = `
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; }
+        .box { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+        .box2 { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+        h4 { margin: 0 0 10px 0; }
+        p { margin: 0 0 5px 0; }
+      </style>
+    </head>
+    <body>`;
+
+  data.forEach((route: any, i: any) => {
+    html += `
+      <div>
+        <h4>Nombre de ruta: ${route.name}</h4>
+        <div class="box">
+          <p>Total de pases de abordar de la ruta: ${route.routesByBordingPasses.length}</p>
+          <p>Total de Alumnos con pase de abordar en la ruta: ${route.studentsCont.length}</p>
+        </div>
+        <br>
+        <div class="box">
+          <h4>Total de paradas: ${route.stopList.length}</h4>`;
+    
+    route.stopList.forEach((stop: any) => {
+      html += `
+          <div class="box2">
+            <p>Nombre de la Parada: ${stop.name}</p>
+            <p>Cantidad de pases de abordar: ${check1(stop.id, route.stopStudentsByBordingPasses)}</p>
+            <p>Cantidad de alumnos en la ruta: ${check2(stop.id, route.studentsContFilterStops)}</p>
+          </div>
+          <br>`;
+    });
+
+    html += `
+        </div>
+        <br>
+      </div>`;
+  });
+
+  html += `
+    </body>
+    </html>`;
+
+  return html;
+}
+
+function check1(idStop: any, stopStudentsByBordingPasses: any) {
+	let ff = stopStudentsByBordingPasses.filter((x: any) => x.id === idStop)
+	return ff.length
+}
+
+function check2(idStop: any, stopStudentsByBordingPasses: any) {
+	let ff = stopStudentsByBordingPasses.filter((x: any) => x.uid === idStop)
+	return ff.length
+}
+

@@ -36,14 +36,14 @@ export class MessagesService {
     return notifications.snapshotChanges();
   }
 
-  getMessages(user: any, limit: number) {
+  getMessages(user: IUserData, limit: number) {
     const messages = this.afs.collection("users").doc(user.uid).collection('messages', ref => 
       ref.orderBy("timestamp")
       .limit(limit));
     return messages.snapshotChanges();
   }
 
-  getNextMessages(user: any, lastVisible: any, limit: number) {
+  getNextMessages(user: IUserData, lastVisible: any, limit: number) {
     const messages = this.afs.collection("users").doc(user.uid).collection('messages', ref => 
       ref.orderBy("timestamp")
       .startAfter(lastVisible)

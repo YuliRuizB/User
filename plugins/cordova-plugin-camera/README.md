@@ -21,11 +21,9 @@ description: Take pictures with the device camera.
 #         under the License.
 -->
 
-|AppVeyor|Travis CI|
-|:-:|:-:|
-|[![Build status](https://ci.appveyor.com/api/projects/status/github/apache/cordova-plugin-camera?branch=master)](https://ci.appveyor.com/project/ApacheSoftwareFoundation/cordova-plugin-camera)|[![Build Status](https://travis-ci.org/apache/cordova-plugin-camera.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-camera)|
-
 # cordova-plugin-camera
+
+[![Android Testsuite](https://github.com/apache/cordova-plugin-camera/actions/workflows/android.yml/badge.svg)](https://github.com/apache/cordova-plugin-camera/actions/workflows/android.yml) [![Chrome Testsuite](https://github.com/apache/cordova-plugin-camera/actions/workflows/chrome.yml/badge.svg)](https://github.com/apache/cordova-plugin-camera/actions/workflows/chrome.yml) [![iOS Testsuite](https://github.com/apache/cordova-plugin-camera/actions/workflows/ios.yml/badge.svg)](https://github.com/apache/cordova-plugin-camera/actions/workflows/ios.yml) [![Lint Test](https://github.com/apache/cordova-plugin-camera/actions/workflows/lint.yml/badge.svg)](https://github.com/apache/cordova-plugin-camera/actions/workflows/lint.yml)
 
 This plugin defines a global `navigator.camera` object, which provides an API for taking pictures and for choosing images from
 the system's image library.
@@ -40,16 +38,20 @@ Although the object is attached to the global scoped `navigator`, it is not avai
 
 ## Installation
 
-This requires cordova 5.0+
-
     cordova plugin add cordova-plugin-camera
-Older versions of cordova can still install via the __deprecated__ id
 
-    cordova plugin add org.apache.cordova.camera
 It is also possible to install via repo url directly ( unstable )
 
     cordova plugin add https://github.com/apache/cordova-plugin-camera.git
 
+## Plugin variables
+
+The plugin uses the `ANDROIDX_CORE_VERSION` variable to configure `androidx.core:core` dependency. This allows to avoid conflicts with other plugins that have the dependency hardcoded.
+If no value is passed, it will use `1.6.+` as the default value.
+
+The variable is configured on install time
+
+    cordova plugin add cordova-plugin-camera --variable ANDROIDX_CORE_VERSION=1.8.0
 
 ## How to Contribute
 
@@ -170,8 +172,6 @@ __Supported Platforms__
 - Android
 - Browser
 - iOS
-- Windows
-- OSX
 
 More examples [here](#camera-getPicture-examples). Quirks [here](#camera-getPicture-quirks).
 
@@ -276,19 +276,14 @@ Optional parameters to customize the camera settings.
 
 ### Camera.DestinationType : <code>enum</code>
 Defines the output format of `Camera.getPicture` call.
-_Note:_ On iOS passing `DestinationType.NATIVE_URI` along with
-`PictureSourceType.PHOTOLIBRARY` or `PictureSourceType.SAVEDPHOTOALBUM` will
-disable any image modifications (resize, quality change, cropping, etc.) due
-to implementation specific.
 
 **Kind**: static enum property of <code>[Camera](#module_Camera)</code>  
 **Properties**
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| DATA_URL | <code>number</code> | <code>0</code> | Return base64 encoded string. DATA_URL can be very memory intensive and cause app crashes or out of memory errors. Use FILE_URI or NATIVE_URI if possible |
+| DATA_URL | <code>number</code> | <code>0</code> | Return base64 encoded string. DATA_URL can be very memory intensive and cause app crashes or out of memory errors. Use FILE_URI if possible |
 | FILE_URI | <code>number</code> | <code>1</code> | Return file uri (content://media/external/images/media/2 for Android) |
-| NATIVE_URI | <code>number</code> | <code>2</code> | Return native uri (eg. asset-library://... for iOS) |
 
 <a name="module_Camera.EncodingType"></a>
 
@@ -317,9 +312,6 @@ to implementation specific.
 
 ### Camera.PictureSourceType : <code>enum</code>
 Defines the output format of `Camera.getPicture` call.
-_Note:_ On iOS passing `PictureSourceType.PHOTOLIBRARY` or `PictureSourceType.SAVEDPHOTOALBUM`
-along with `DestinationType.NATIVE_URI` will disable any image modifications (resize, quality
-change, cropping, etc.) due to implementation specific.
 
 **Kind**: static enum property of <code>[Camera](#module_Camera)</code>  
 **Properties**
@@ -435,7 +427,7 @@ Take a photo and retrieve it as a Base64-encoded image:
      * Warning: Using DATA_URL is not recommended! The DATA_URL destination
      * type is very memory intensive, even with a low quality setting. Using it
      * can result in out of memory errors and application crashes. Use FILE_URI
-     * or NATIVE_URI instead.
+     * instead.
      */
     navigator.camera.getPicture(onSuccess, onFail, { quality: 25,
         destinationType: Camera.DestinationType.DATA_URL
@@ -482,28 +474,13 @@ displays:
         // do your thing here!
     }, 0);
 
-#### Windows Phone 7 Quirks
-
-Invoking the native camera application while the device is connected
-via Zune does not work, and triggers an error callback.
-
-#### Windows quirks
-
-On Windows Phone 8.1 using `SAVEDPHOTOALBUM` or `PHOTOLIBRARY` as a source type causes application to suspend until file picker returns the selected image and
-then restore with start page as defined in app's `config.xml`. In case when `camera.getPicture` was called from different page, this will lead to reloading
-start page from scratch and success and error callbacks will never be called.
-
-To avoid this we suggest using SPA pattern or call `camera.getPicture` only from your app's start page.
-
-More information about Windows Phone 8.1 picker APIs is here: [How to continue your Windows Phone app after calling a file picker](https://msdn.microsoft.com/en-us/library/windows/apps/dn720490.aspx)
-
 ## `CameraOptions` Errata <a name="CameraOptions-quirks"></a>
 
 #### Android Quirks
 
 - Any `cameraDirection` value results in a back-facing photo. (= You can only use the back camera)
 
-- **`allowEdit` is unpredictable on Android and it should not be used!** The Android implementation of this plugin tries to find and use an application on the user's device to do image cropping. The plugin has no control over what application the user selects to perform the image cropping and it is very possible that the user could choose an incompatible option and cause the plugin to fail. This sometimes works because most devices come with an application that handles cropping in a way that is compatible with this plugin (Google Plus Photos), but it is unwise to rely on that being the case. If image editing is essential to your application, consider seeking a third party library or plugin that provides its own image editing utility for a more robust solution.
+- **`allowEdit` is unpredictable on Android and it should not be used!** The Android implementation of this plugin tries to find and use an application on the user's device to do image cropping. The plugin has no control over what application the user selects to perform the image cropping and it is very possible that the user could choose an incompatible option and cause the plugin to fail. This sometimes works because most devices come with an application that handles cropping in a way that is compatible with this plugin (Google Photos), but it is unwise to rely on that being the case. If image editing is essential to your application, consider seeking a third party library or plugin that provides its own image editing utility for a more robust solution.
 
 - `Camera.PictureSourceType.PHOTOLIBRARY` and `Camera.PictureSourceType.SAVEDPHOTOALBUM` both display the same photo album.
 
@@ -513,9 +490,6 @@ More information about Windows Phone 8.1 picker APIs is here: [How to continue y
 
 - When using `destinationType.FILE_URI`, photos are saved in the application's temporary directory. The contents of the application's temporary directory is deleted when the application ends.
 
-- When using `destinationType.NATIVE_URI` and `sourceType.CAMERA`, photos are saved in the saved photo album regardless on the value of `saveToPhotoAlbum` parameter.
-
-- When using `destinationType.NATIVE_URI` and `sourceType.PHOTOLIBRARY` or `sourceType.SAVEDPHOTOALBUM`, all editing options are ignored and link is returned to original picture.
 
 [android_lifecycle]: http://cordova.apache.org/docs/en/dev/guide/platforms/android/lifecycle.html
 
@@ -545,7 +519,7 @@ function setOptions(srcType) {
         encodingType: Camera.EncodingType.JPEG,
         mediaType: Camera.MediaType.PICTURE,
         allowEdit: true,
-        correctOrientation: true  //Corrects Android orientation quirks
+        correctOrientation: true
     }
     return options;
 }
@@ -583,12 +557,6 @@ function displayImage(imgUri) {
     var elem = document.getElementById('imageFile');
     elem.src = imgUri;
 }
-```
-
-To display the image on some platforms, you might need to include the main part of the URI in the Content-Security-Policy `<meta>` element in index.html. For example, on Windows 10, you can include `ms-appdata:` in your `<meta>` element. Here is an example.
-
-```html
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: ms-appdata: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">
 ```
 
 ## Take a Picture and Return Thumbnails (Resize the Picture) <a name="getThumbnails"></a>

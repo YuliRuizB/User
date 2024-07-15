@@ -71,8 +71,20 @@ export class StorageService {
     }
   }
 
-  setItem(storageKey, storageValue) {
-    return this.storage.set(storageKey, storageValue);
+  async setItem(storageKey, storageValue) {
+		/*return new Promise((resolve) => {
+			this.storage.set(storageKey, storageValue).then((resp) => {
+				resolve(true)
+			}).catch((error) => {
+				resolve(false)
+			})
+		})*/
+		return await this.storage.set(storageKey, storageValue);
+  }
+
+	async setItem2(storageKey) {
+
+		return await this.storage.set(storageKey, '');
   }
 
   getItem(storageKey) {
@@ -83,7 +95,7 @@ export class StorageService {
     return this.storage.get(this.BASIC_AUTHORIZATION);
   }
 
-  forceSettings() {
-    return this.storage.clear();
+  async forceSettings() {
+    return await this.storage.clear();
   }
 }

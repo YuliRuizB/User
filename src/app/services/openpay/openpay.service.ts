@@ -4,6 +4,7 @@ import { Device } from '@ionic-native/device/ngx';
 import { PurchasesService } from '../firebase/purchases.service';
 import * as firebase from 'firebase';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { IUserData,ICardCustomerData, IPayNowReference, ICardOpenPayResponse, IPurchaseRequest, ICardOpenPayResponseStoreChargeRequest } from '../../models/models'
 declare var OpenPay: any;
 
 @Injectable({
@@ -30,6 +31,8 @@ export class OpenpayService {
   constructor( private afs: AngularFirestore, private aff: AngularFireFunctions, private device: Device, private purchasesService: PurchasesService) {
     
     this.afs.collection('openpay_keys').doc('currentKeys').valueChanges().subscribe( (data: any) => {
+			console.log('entra');
+			console.log(data)
       this.API_URL = data.apiUrl;
       this.VERSION = data.version;
       this.ID = data.merchantId;
@@ -37,7 +40,7 @@ export class OpenpayService {
       this.SANDBOX_MODE = data.sandboxMode;
       OpenPay.setId(this.ID);
       OpenPay.setApiKey(this.PUBLIC_TOKEN);
-      OpenPay.setSandboxMode(this.SANDBOX_MODE);
+      OpenPay.setSandboxMode(this.SANDBOX_MODE); //this.SANDBOX_MODE
       this.DEVICE = this.device.uuid;
       console.log(this.DEVICE);
       console.log(data);
@@ -77,13 +80,23 @@ export class OpenpayService {
     );
   }
 
-  newCardChargeRequest(cardChargeRequest: object, product: any, user: any) {
+	createBoardingPass(idPurschase: any, user: IUserData) {
+		const addNewCardChargeRequest = this.aff.httpsCallable('createBoardingPassAppUsers');
+    return addNewCardChargeRequest({ purschase: idPurschase, user }).toPromise().then((response: any) => {
+			return response;
+    })
+	}
+
+  newCardChargeRequest(cardChargeRequest: ICardCustomerData, product: IPayNowReference, user: IUserData) {
+
+		console.log(user)
     const addNewCardChargeRequest = this.aff.httpsCallable('addNewOpenpayCardChargeRequest');
-    return addNewCardChargeRequest({ charge_request: cardChargeRequest }).toPromise().then((response: any) => {
+    return addNewCardChargeRequest({ charge_request: cardChargeRequest, user }).toPromise().then((response: any) => {
+			console.log('esto regresa la tarjeta');
       console.log(response);
       if( response && response.status == 'completed') {
-      const chargeRequestProduct = {
-        id: response.id,
+      const chargeRequestProduct: IPurchaseRequest = {
+        idPurchasteRequest: response.id,
         authorization: response.authorization,
         operation_type: response.operation_type,
         method: response.method,
@@ -104,7 +117,7 @@ export class OpenpayService {
           points_card: response.card.points_card || '',
           points_type: response.card.points_type || '',
         },
-        status: 'awaiting confirmation',
+        status: 'completed',// 'awaiting confirmation',
         conciliated: response.conciliated,
         creation_date: response.creation_date,
         operation_date: response.operation_date,
@@ -144,16 +157,18 @@ export class OpenpayService {
         stopName: product.stopName,
         validFrom: new firebase.firestore.Timestamp(product.validFrom.seconds, product.validFrom.nanoseconds),
         validTo: new firebase.firestore.Timestamp(product.validTo.seconds, product.validTo.nanoseconds),
-        is_courtesy: false
+        is_courtesy: false,
+				typePayment: 'Card'
+
       }
       console.log(chargeRequestProduct);
-      this.createChargeRequestWithProduct(user.uid, chargeRequestProduct);
+      this.createChargeRequestWithProductNewCard(user.uid, chargeRequestProduct);
     }
       return response;
     })
   }
 
-  newStoreChargeRequest(storeChargeRequest: object, product: any, user: any) {
+  newStoreChargeRequest(storeChargeRequest: object, product: any, user: IUserData) {
     console.log('request received: ', storeChargeRequest);
     console.log('product', product);
     let newStoreChargeRequest = storeChargeRequest;
@@ -162,8 +177,9 @@ export class OpenpayService {
     return addNewStoreChargeRequest({ charge_request: newStoreChargeRequest }).toPromise().then((response: any) => {
       console.log(response);
 
-      const chargeRequestProduct = {
-        id: response.id,
+      const chargeRequestProduct: ICardOpenPayResponseStoreChargeRequest = {
+				id: response.id,
+        idPurchaseRequest: response.id,
         authorization: response.authorization,
         operation_type: response.operation_type,
         method: response.method,
@@ -213,7 +229,8 @@ export class OpenpayService {
         type: product.type || '',
         isOpenpay: true,
         paidApp: 'user',
-        is_courtesy: false
+        is_courtesy: false,
+				typePayment: 'Card'
       }
       this.createChargeRequestWithProduct(user.uid, chargeRequestProduct);
       return response;
@@ -222,10 +239,101 @@ export class OpenpayService {
     );
   }
 
-  createChargeRequestWithProduct(uid: string, request: object) {
-    this.purchasesService.setCustomerChargeRequest(uid, request);
+  async createChargeRequestWithProduct(uid: string, request: ICardOpenPayResponseStoreChargeRequest) {
+    await this.purchasesService.setCustomerChargeRequest(uid, request);
+		console.log('regresa 1')
+		this.purchasesService.updateStoreChargeRequests(uid, request)
     console.log(request);
   }
+
+	async createChargeRequestWithProductNewCard(uid: string, request: IPurchaseRequest) {
+		console.log('este truena 1')
+		console.log(uid)
+		console.log(request)
+		console.log(request.idPurchasteRequest)
+    await this.purchasesService.setCustomerChargeRequest(uid, request);
+		console.log('regresa 2');
+		this.purchasesService.updateStoreChargeRequests(uid, request)
+    console.log(request);
+  }
+
+	async createPurchaseRequest(user: IUserData) {
+		const send = {
+			// flagCloud: false,
+			idPurchasteRequest: '',
+			authorization: 'sdfsdfsdfsf',
+			operation_type: '',
+			method: 'efectivo',
+			transaction_type: '',
+			card:
+			{
+				type: '',
+				brand: '',
+				address: '',
+				card_number: '',
+				holder_name: '',
+				expiration_year: '',
+				expiration_month: '',
+				allows_charges: '',
+				allows_payouts: '',
+				bank_name: '',
+				bank_code: '',
+				points_card: '',
+				points_type: '',
+			},
+			status: 'test',
+			conciliated: '',
+			creation_date: '',
+			operation_date: '',
+			description: 'test',
+			error_message: '',
+			order_id: '',
+			currency: '',
+			amount: '',
+			customer:
+			{
+				name: 'ali',
+				last_name: 'ali2',
+				email: 'ali@test.com',
+				phone_number: '',
+				address: '',
+				creation_date: '',
+				external_id: '',
+				clabe: ''
+			},
+			active: true,
+			category: '',
+			date_created: '',
+			product_description: '',
+			product_id: '',
+			name: '',
+			isTaskIn: '',
+			isTaskOut: '',
+			type: '',
+			isOpenpay: false,
+			paidApp: '',
+			price: null,
+			round: null,
+			routeId: '',
+			routeName: '',
+			stopDescription: '',
+			stopId: '',
+			stopName: '',
+			validFrom: '',
+			validTo: '',
+			is_courtesy: false,
+			typePayment: ''
+		}
+		// purchaseRequest: IPurchaseRequest, user: IUserData, idBoardingPass: string
+		const purchaseRequest2 = this.aff.httpsCallable('createPurchaseRequest');
+		purchaseRequest2({ purchaseRequestData: send, user, idBoardingPass: '0AxHQmgz2wEFB4zuAcef'  }).toPromise().then((response: any) => {
+			console.log('regresa')
+			console.log(response)
+		}).catch((err) => {
+			console.log('trono');
+			console.log(err);
+		})
+	}
 
 }
 

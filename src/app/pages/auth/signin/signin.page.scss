@@ -1,0 +1,130 @@
+.header ion-toolbar:last-child {
+    --border-width: 0 0 0 0;
+}
+
+ion-content {
+	// --ion-background-color:#3880ff;
+} 
+
+.float1 {
+	position: absolute; 
+	z-index: 1; 
+	background-color: #3880ff;
+	height: 90%;
+	width: 100%;
+	border-bottom-left-radius: 100px;
+	border-bottom-right-radius: 100px;
+	@media(max-width: 375px) {
+		height: 98%;
+	}
+}
+
+.float2 {
+	position: absolute; 
+	z-index: 2; 
+	height: 100%; 
+	width: 100%;
+}
+
+.banner {
+    /*position: relative;
+    width: calc(100% - 46px);
+    margin: 0 auto;
+		margin-top: 21px;
+		*/
+		height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+		padding-top: 80px;
+
+    img {
+        width: 105px;
+        display: block;
+    }
+
+    h4 {
+        margin: 0;
+        font-weight: 400;
+        color: red;
+        margin-top: 34px;
+
+        span {
+            display: block;
+            font-weight: 700;
+        }
+    }
+}
+
+.form {
+    margin-top: 55px;
+    display: block;
+    width: calc(100% - 46px);
+    margin: 0 auto;
+		@media(min-width: 1000px) {
+			width: calc(70% - 46px);
+		}
+    h4 {
+        margin-right: 20px;
+        font-weight: 400;
+        font-size: 1.01rem;
+        color: red;
+        margin-top: 14px;
+
+        span {
+            display: block;
+            font-weight: 700;
+        }
+    }
+
+    ion-list {
+        margin-bottom: 20px;
+        border: 1px solid #e6e6e6 !important;
+        border-radius: 10px;
+        padding: 18px 0px 0 0px;
+        .item {
+            ion-icon{
+                &.zmdi-email{
+                    color: yellow;
+                }
+                &.zmdi-lock-outline{
+                    color: green;
+                }
+                &.zmdi-eye-off{
+                    color: lighten(gray, 40%);
+                }
+            }
+        }
+    }
+}
+
+ion-footer {
+    h4 {
+        color: black;
+        margin: 0;
+        font-weight: 400;
+        font-size: 1.25rem;
+        padding-bottom: 24px;
+
+        span {
+            color: blue;
+            font-weight: 700;
+        }
+    }
+}
+
+:root {
+    --border-radius: 2px;
+}
+
+.error-messages {
+	color: var(--ion-color-danger);
+	font-size: 13px;
+	text-align: center;
+}
+
+.item1 {
+	border: 1px solid rgb(63, 63, 63);
+	border-radius: 9px;
+}

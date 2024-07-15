@@ -28,10 +28,14 @@ import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/fi
 import { AngularFireFunctionsModule, FUNCTIONS_REGION } from '@angular/fire/functions';
 import { AngularFireAuthGuard, AngularFireAuthGuardModule } from '@angular/fire/auth-guard';
 import { AngularFireStorageModule } from '@angular/fire/storage';
+import { NgxDocViewerModule } from 'ngx-doc-viewer'
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+// import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+//FCM // OLD Cordova 9
+//import { FCM } from '@ionic-native/fcm/ngx';
 
-
-//FCM
-import { FCM } from '@ionic-native/fcm/ngx';
+//FCM // New Cordova 12
+import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { HttpClientModule } from '@angular/common/http';
 
 //Device Id
@@ -47,10 +51,21 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-
+import { PhoneMaskDirective } from './directives/phoneMask/phone-mask.directive';
+import { InfoUserPreRegisterModalPageModule } from './modals/info-user-pre-register-modal/info-user-pre-register-modal.module';
+import { NgCircleProgressModule } from 'ng-circle-progress';
+import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
+import { StopsListPageModule }  from '../app/pages/notifications/stops-list/stops-list.module';
+import { StopPointsPageModule } from '../app/pages/purchases/products/product-details/stop-points/stop-points.module';
+import { BusInfoPageModule } from '../app/pages/home/bus-info/bus-info.module'
+import { StationInfoPageModule } from '../app/pages/home/station-info/station-info.module'
+import  { PromotionDetailsPageModule } from '../app/pages/promotions/promotion-details/promotion-details.module'
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [ ],
+  declarations: [AppComponent, PhoneMaskDirective],
+  entryComponents: [],
+	exports: [
+		PhoneMaskDirective
+  ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -63,17 +78,39 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
     AngularFireStorageModule,    
     HttpClientModule,
     NgxQRCodeModule,
-    IonicStorageModule.forRoot()
+		NgxDocViewerModule,
+		PdfViewerModule,
+		// NgxExtendedPdfViewerModule,
+		InfoUserPreRegisterModalPageModule,
+		StopsListPageModule,
+		StopPointsPageModule,
+		BusInfoPageModule,
+		StationInfoPageModule,
+		PromotionDetailsPageModule,
+    IonicStorageModule.forRoot(
+			{driverOrder: ['indexeddb', 'sqlite', 'websql']}
+		),
+		NgCircleProgressModule.forRoot({
+      // set defaults here
+      radius: 100,
+      outerStrokeWidth: 16,
+      innerStrokeWidth: 8,
+      outerStrokeColor: "#78C000",
+      innerStrokeColor: "#C7E596",
+      animationDuration: 300,
+    })
   ],
   providers: [
     StatusBar,
     SplashScreen,
     Geolocation,
-    FCM,
+    // FCM,
+		FirebaseX,
     Device,
     SocialSharing,
     Camera,
     File,
+		AndroidPermissions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
     { provide: LOCALE_ID, useValue: "es-MX" },
