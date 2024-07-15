@@ -28,8 +28,9 @@ import { AngularFirestoreModule, FirestoreSettingsToken } from '@angular/fire/fi
 import { AngularFireFunctionsModule, FUNCTIONS_REGION } from '@angular/fire/functions';
 import { AngularFireAuthGuard, AngularFireAuthGuardModule } from '@angular/fire/auth-guard';
 import { AngularFireStorageModule } from '@angular/fire/storage';
-
-
+import { NgxDocViewerModule } from 'ngx-doc-viewer'
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+// import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 //FCM // OLD Cordova 9
 //import { FCM } from '@ionic-native/fcm/ngx';
 
@@ -77,6 +78,9 @@ import  { PromotionDetailsPageModule } from '../app/pages/promotions/promotion-d
     AngularFireStorageModule,    
     HttpClientModule,
     NgxQRCodeModule,
+		NgxDocViewerModule,
+		PdfViewerModule,
+		// NgxExtendedPdfViewerModule,
 		InfoUserPreRegisterModalPageModule,
 		StopsListPageModule,
 		StopPointsPageModule,

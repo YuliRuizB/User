@@ -12,7 +12,8 @@ import {
   AlertController,
   IonRouterOutlet,
 	NavController,
-	LoadingController
+	LoadingController,
+	MenuController
 } from "@ionic/angular";
 import * as _ from "lodash";
 import {
@@ -42,7 +43,9 @@ import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
 import { IUserData, IRoles } from '../../../app/models/models';
 import { Device } from '@ionic-native/device/ngx';
 import * as moment from 'moment';
+import { CustomersService } from '../../services/firebase/customers.service';
 
+declare  var google;
 
 @Component({
   selector: "app-home",
@@ -86,9 +89,12 @@ export class HomePage implements OnInit, OnDestroy {
   password = 'Bus2Utr@ccar';
 	auxData4: any = [];
 	fullUserAuxTest: any = [];
-    private socket$: WebSocketSubject<any>;
+  private socket$: WebSocketSubject<any>;
   
-
+	
+	public directionsService:      any;
+  public polygon:                any= [];
+	
   constructor(
     private apiService: OnemapService,
     private geolocation: Geolocation,
@@ -108,10 +114,30 @@ export class HomePage implements OnInit, OnDestroy {
 		private _AndroidPermissions:AndroidPermissions,
 		private _LoadingController: LoadingController,
 		private _Platform: Platform,
-		private _Device: Device
-  ) { }
+		private _Device: Device,
+		private _MenuController: MenuController,
+		private _CustomersService: CustomersService
+  ) { 
+		this._MenuController.enable(true)
+		this.directionsService = new google.maps.DirectionsService();
+	}
 
 
+	getCustomers() {
+		this._CustomersService.getCustomersList().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as any;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    ).subscribe( async (customers) => {
+      console.log('aliiiiii')
+			console.log(customers);
+      for (let data of customers) {
+				await this._CustomersService.addCustomerPaymenth(data);
+			}
+    })
+	}
 
   async ionViewDidEnter() {  
 		// 
@@ -138,7 +164,7 @@ export class HomePage implements OnInit, OnDestroy {
 				if (this.user.status === 'preRegister') {
 					setTimeout(() => {
 						// console.log('entro?')
-						this.showInfoPreRegisterModal();
+						// this.showInfoPreRegisterModal();
 					},1500)
 					
 				}
@@ -657,6 +683,8 @@ socket$.subscribe(
         )
       )
       .subscribe((routeStops) => {
+				console.log('ali')
+				console.log(routeStops)
         this.routeStopsList = routeStops;
         this.addStopsToMap(this.routeStopsList);
         if (this.hasUserGeoLocation) {
@@ -691,7 +719,7 @@ socket$.subscribe(
       }); */
   }
 
-  addStopsToMap(stationsArray) {
+  async addStopsToMap(stationsArray) {
     let arrayOfLatLngs = [];
     let coordinates = "";
     let radiuses = "";
@@ -733,13 +761,67 @@ socket$.subscribe(
         .addTo(this.stationsMarkers)
         .bindPopup(customPopup);
     });
+
+		console.log('alicarlo')
+		console.log(arrayOfLatLngs)
+		let waypts = [];
+		let encodeString = [];
+		let dataReturn = [];
+		for (let x = 1; x < arrayOfLatLngs.length-1; x ++) {
+			waypts.push({
+				location: {
+					lat: arrayOfLatLngs[x][0],
+					lng: arrayOfLatLngs[x][1],
+				}
+			})
+		}
+
+		console.log('superrrrrrrrr')
+		console.log(waypts)
+		console.log(arrayOfLatLngs[0][0])
+		console.log(arrayOfLatLngs[0][1])
+		await this.directionsService.route({
+			origin: new google.maps.LatLng(arrayOfLatLngs[0][0], arrayOfLatLngs[0][1]),
+			waypoints: waypts,
+			destination: new google.maps.LatLng(arrayOfLatLngs[arrayOfLatLngs.length-1][0], arrayOfLatLngs[arrayOfLatLngs.length-1][1]),
+			travelMode: 'DRIVING',
+		},(response, status)=>{
+			console.log(status)
+			console.log(response)
+
+			let polylinePath = response.routes[0].overview_polyline;
+			let encodePath: string = polylinePath;
+			let encodeString2 = google.maps.geometry.encoding.decodePath(encodePath);
+			for(var x = 0; x < encodeString2.length; x++) {
+				// { markers: { lat: encodeString2[x].lat(), lng: encodeString2[x].lng() }}
+				encodeString.push(
+					[ encodeString2[x].lat(), encodeString2[x].lng()]
+				);
+			}
+			console.log(encodeString)
+		})
    // console.log("arrayOfLatLngs");
    // console.log(arrayOfLatLngs);
-    let bounds =
-      arrayOfLatLngs.length > 0 ? new L.LatLngBounds(arrayOfLatLngs) : [];
+
+	 console.log('el endondeeee')
+	 console.log()
+	 console.log(encodeString)
+    let bounds = arrayOfLatLngs.length > 0 ? new L.LatLngBounds(arrayOfLatLngs) : [];
+		var style = {
+			color: "#3880ff",
+			weight: 8,
+			opacity: 0.6,
+		},
+			stroke = {
+				color: "#3171e0",
+				weight: 10,
+				opacity: 0.4,
+			};
+
+			L.polyline(encodeString, style).addTo(this.map);
 
     // let polyline = (encode([[38.5, -120.2], [40.7, -120.95], [43.252, -126.453]]));
-    this.osrmService
+    /*this.osrmService
       .getMatchService(
         "driving",
         coordinates.substring(0, coordinates.length - 1),
@@ -772,6 +854,7 @@ socket$.subscribe(
       },(error) => {
 				console.log(error)
 			})
+		*/
 
     const boundsExists = arrayOfLatLngs.length > 0;
     if (boundsExists) {
@@ -796,6 +879,7 @@ socket$.subscribe(
         )
       )
       .subscribe((devices) => {
+				console.log(devices)
 				console.log(this.markers)
 			
 
@@ -815,7 +899,7 @@ socket$.subscribe(
 								this.markers[device].remove();
 							}*/
 							// this.markers.remove();
-             
+							this.markers[device].remove();
             });
           }
         }

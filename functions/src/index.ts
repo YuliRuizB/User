@@ -3,11 +3,29 @@ import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as basicAuth from 'express-basic-auth';
 import * as moment from 'moment';
+
 //import * as request from 'request';
 
 admin.initializeApp();
 const db = admin.firestore();
 
+// const { PDFDocument, StandardFonts } = require('pdf-lib');
+// const puppeteer = require('puppeteer');
+// const fs = require('fs');
+// const path = require('path');
+
+const nodemailer = require('nodemailer');
+let transporter = nodemailer.createTransport({
+	host: 'smtp.gmail.com',
+	port: 465,//465,
+	secure: true,
+	auth: {
+			//user: 'alicarlo.montijop@gmail.com',
+			//pass: 'oibiqaagggwjduzk'
+			user: 'dev.bus2u@gmail.com',
+			pass: 'rxgioamkpqfunzps'
+	}
+});
 
 const Openpay = require('openpay');
 //old const openpay = new Openpay('m2mkwvsgfxzuc0hrg8fm', 'sk_dc43597b199448588611083a15c02407'); //production
@@ -742,3 +760,149 @@ exports.createBoardingPassAppUsers = functions.https.onCall(async (data, context
 		}).catch((err) => resolve(err))
 	});
 });
+
+
+/*async function generatePdf(htmlContent: any, outputPath: any) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setContent(htmlContent);
+  await page.pdf({ path: outputPath, format: 'A4' });
+  await browser.close();
+}*/
+
+
+/*async function generatePdf(htmlContent: any, outputPath: any) {
+  // Crear un nuevo documento PDF
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage();
+
+  // Incorporar el contenido HTML como texto en la página PDF
+  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  page.drawText(htmlContent, {
+    x: 50,
+    y: page.getHeight() - 50,
+    size: 12,
+    font: helveticaFont,
+    maxWidth: 500,
+  });
+
+  // Escribir el archivo PDF al sistema de archivos
+  const pdfBytes = await pdfDoc.save();
+  fs.writeFileSync(outputPath, pdfBytes);
+}*/
+
+
+
+exports.createReport = functions.runWith({ timeoutSeconds: 540 }).https.onCall(async (data, context) => {
+
+	return new Promise(async (resolve, reject) => {
+
+
+		// const token = data.token;
+		console.log(data.route)
+		const route = data.route;
+		// console.log()
+		const htmlContent = createHtmlTemplate(route);
+		/*const pdfPath = path.join('/tmp', 'output.pdf');
+		
+		// Generar el PDF usando Puppeteer
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(htmlContent); // Establecer el contenido HTML en la página
+    await page.pdf({
+      path: pdfPath,
+      format: 'A4',
+      printBackground: true,
+    });
+    await browser.close();
+    console.log('PDF generado exitosamente en', pdfPath);*/
+  // Send the HTML content via email
+  const msg = {
+    to: 'dev.bus2u@gmail.com',
+    from: 'dev.bus2u@gmail.com',
+    subject: 'Rutas y paradas',
+    html: htmlContent,
+		/*attachments: [
+			{
+				filename: 'output.pdf',
+				path: pdfPath
+			}
+		]*/
+  };
+
+  try {
+		await transporter.sendMail(msg);
+		resolve(true)
+	} catch (error) {
+		console.error('Error sending email:', error);
+		return error;
+			// Puedes manejar el error aquí según tu requerimiento
+	}
+		
+	});
+});
+
+
+
+
+function createHtmlTemplate(data: any) {
+	console.log('esto llega');
+	console.log(data)
+	let html = `
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; }
+        .box { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+        .box2 { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+        h4 { margin: 0 0 10px 0; }
+        p { margin: 0 0 5px 0; }
+      </style>
+    </head>
+    <body>`;
+
+  data.forEach((route: any, i: any) => {
+    html += `
+      <div>
+        <h4>Nombre de ruta: ${route.name}</h4>
+        <div class="box">
+          <p>Total de pases de abordar de la ruta: ${route.routesByBordingPasses.length}</p>
+          <p>Total de Alumnos con pase de abordar en la ruta: ${route.studentsCont.length}</p>
+        </div>
+        <br>
+        <div class="box">
+          <h4>Total de paradas: ${route.stopList.length}</h4>`;
+    
+    route.stopList.forEach((stop: any) => {
+      html += `
+          <div class="box2">
+            <p>Nombre de la Parada: ${stop.name}</p>
+            <p>Cantidad de pases de abordar: ${check1(stop.id, route.stopStudentsByBordingPasses)}</p>
+            <p>Cantidad de alumnos en la ruta: ${check2(stop.id, route.studentsContFilterStops)}</p>
+          </div>
+          <br>`;
+    });
+
+    html += `
+        </div>
+        <br>
+      </div>`;
+  });
+
+  html += `
+    </body>
+    </html>`;
+
+  return html;
+}
+
+function check1(idStop: any, stopStudentsByBordingPasses: any) {
+	let ff = stopStudentsByBordingPasses.filter((x: any) => x.id === idStop)
+	return ff.length
+}
+
+function check2(idStop: any, stopStudentsByBordingPasses: any) {
+	let ff = stopStudentsByBordingPasses.filter((x: any) => x.uid === idStop)
+	return ff.length
+}
+

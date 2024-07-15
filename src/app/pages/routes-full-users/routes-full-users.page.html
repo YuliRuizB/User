@@ -1,0 +1,98 @@
+<ion-header>
+  <ion-toolbar>
+		<ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Reporte de Paradas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<div style="padding: 15px;">
+		<ion-item>
+			<ion-label>
+					Tu token: {{ token }}
+			</ion-label>
+		</ion-item>
+
+		<ion-item>
+			<ion-label>Fecha Inicial</ion-label>
+			<ion-datetime  [(ngModel)]="startDate" placeholder="fecha inicial"></ion-datetime>
+		</ion-item>
+
+		<ion-item>
+			<ion-label>Fecha Final</ion-label>
+			<ion-datetime  [(ngModel)]="endDate" placeholder="fecha final"></ion-datetime>
+		</ion-item>
+
+		<ion-item *ngIf="startDate !== null && endDate !== null">
+			<ion-icon slot="start" name="business"></ion-icon>
+			<ion-label>
+					Escuela/Empresa
+			</ion-label>
+			<ion-select cancelText="Cancelar" [(ngModel)]="customerSelect" (ionChange)="onChange($event)" okText="Seleccionar" placeholder="Selecciona una" >
+				<ion-select-option *ngFor="let c of customersList" [value]="c">{{ c.name }}</ion-select-option>
+			</ion-select>
+		</ion-item>
+		<div class="load" *ngIf="loading === 1">
+			<p>Cargando...</p>
+		</div>
+		<div *ngIf="loading === 2">
+			<h2>Rutas</h2>
+			<div *ngFor="let data of routesList; index as i">
+				<div>
+					<h4>Nombre de ruta: {{ data.name}}</h4>
+					<div class="box">
+						<p>Total de pases de abordar de la ruta : {{ data.routesByBordingPasses.length }}</p>
+						<p>Total de Alumnos con pase de abordar en la ruta : {{ data.studentsCont.length }}</p>
+					</div>
+					
+					<br>
+					<div class="box">
+						<h4>Total de paradas: {{ data.stopList.length }}</h4>
+						<div *ngFor="let data2 of data.stopList">
+							<div class="box2">
+								<p>Nombre de la Parada: {{ data2.name}}</p>
+								<p>Cantidad de pases de abordar: {{ check1(data2.id,  data.stopStudentsByBordingPasses) }}</p>
+								<p>Cantidad de alumnos en la ruta: {{   check2(data2.id, data.studentsContFilterStops) }}</p>
+							</div>
+							<br>
+						</div>
+					</div>
+					<br>
+				</div>
+			</div>
+
+
+			<!--<h2>Listado de Paradas</h2>
+			<div *ngFor="let data of routesList">
+				<div>
+					<h4>Total de paradas: {{ data.stopList.length }}</h4>
+					<div *ngFor="let data2 of data.stopList">
+						<p>Nombre de la Parada: {{ data2.name}}</p>
+					</div>
+				</div>
+			</div>
+
+			<!--<h2>Cantidad de</h2>
+			<div *ngFor="let data of routesList">
+				<div>
+					<h4>Total de paradas: {{ data.stopList.length }}</h4>
+					<div *ngFor="let data2 of data.stopList">
+						<p>Nombre de la Parada: {{ data2.name}}</p>
+					</div>
+				</div>
+			</div>
+			<!--
+			<div>
+				<h4>Total de paradas: {{ data.stopList.length }}</h4>
+				Listado de Paradas
+				<div></div>
+			</div>
+			-->
+		</div>
+		
+	</div>
+	
+
+</ion-content>

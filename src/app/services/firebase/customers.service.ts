@@ -37,4 +37,26 @@ export class CustomersService {
     this.customers = this.afs.collection('pCustomers', ref => ref.where('active', '==', true).orderBy('name','asc'));
     return this.customers.snapshotChanges();
    }
+
+	 getCustomersList() {
+    this.customers = this.afs.collection('customers', ref => ref.orderBy('name','asc'));
+    return this.customers.snapshotChanges();
+   }
+
+	 async addCustomerPaymenth(data) {
+			return new Promise ((resolve,reject)=>{
+				this.afs.collection('customers').doc(data.id).collection('paymentMethods').add({  
+					active: true,
+					icon: 'image',
+					method: "transfer",
+					name: 'Transferencia',
+					userNavigation: 'reference/transfers'
+				}).then(function(dataAux)  {
+					resolve(true)
+				}).catch(function(error) {
+					console.log("Error getting document:", error);
+					resolve(false)
+				});
+			});
+		}
 }

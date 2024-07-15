@@ -49,10 +49,12 @@
     "leaflet.marker.slideto": "^0.2.0",
     "moment": "^2.29.4",
     "ng-circle-progress": "^1.5.1",
+    "ng2-pdf-viewer": "^6.4.1",
+    "ngx-doc-viewer": "^1.0.0",
     "ngx-qrcode2": "0.0.9",
     "openpay": "^1.0.4",
     "rxjs": "~6.5.4",
-    "tslib": "^1.10.0",
+    "tslib": "^1.14.1",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

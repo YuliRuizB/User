@@ -110,7 +110,16 @@ const routes: Routes = [
   {
     path: 'history-login',
     loadChildren: () => import('./pages/super-admin/history-login/history-login.module').then( m => m.HistoryLoginPageModule)
+  },
+  {
+    path: 'routes-full-users',
+    loadChildren: () => import('./pages/routes-full-users/routes-full-users.module').then( m => m.RoutesFullUsersPageModule)
+  },
+  {
+    path: 'reference/transfers',
+    loadChildren: () => import('./pages/purchases/reference/transfers/transfers.module').then( m => m.TransfersPageModule)
   }
+
 
 
 ];

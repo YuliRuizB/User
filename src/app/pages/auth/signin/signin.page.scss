@@ -62,7 +62,9 @@ ion-content {
     display: block;
     width: calc(100% - 46px);
     margin: 0 auto;
-
+		@media(min-width: 1000px) {
+			width: calc(70% - 46px);
+		}
     h4 {
         margin-right: 20px;
         font-weight: 400;

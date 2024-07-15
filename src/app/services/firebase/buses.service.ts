@@ -27,6 +27,12 @@ export class BusesService {
     return activeRoutes.snapshotChanges();
   }
 
+	getUserActiveRoutes2(customerId) {
+    const activeRoutes = this.afs.collection('customers').doc(customerId).collection('routes');
+    activeRoutes.ref.where('active','==', true);
+    return activeRoutes.snapshotChanges();
+  }
+
 	test() {
     const activeRoutes = this.afs.collection('users').doc('kSV7rFYh3fcc4oFCjZSKd6qytJF2').collection('boardingPasses' , ref => {
 			let aux = ref.where('creation_date','==', '2023-12-26T20:42:09.890Z');
@@ -71,6 +77,13 @@ export class BusesService {
     const routeStops = this.routesRef.doc(user.defaultRoute).collection('stops', ref => ref.where('active','==', true).orderBy('order','asc'));
     return routeStops.snapshotChanges();
   }
+
+	getUserRouteActiveStops2(customerId: any, defaultRoute: any) {
+    this.routesRef = this.afs.collection('customers').doc(customerId).collection('routes');
+    const routeStops = this.routesRef.doc(defaultRoute).collection('stops', ref => ref.where('active','==', true).orderBy('order','asc'));
+    return routeStops.snapshotChanges();
+  }
+
 
   getUserSelectedRouteActiveStops(user: IUserData, routeId: string) {
     this.routesRef = this.afs.collection('customers').doc(user.customerId).collection('routes');

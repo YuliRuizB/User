@@ -177,6 +177,14 @@ export class AppComponent {
       url: '/history-login',
       icon: 'list',
       color: 'warning'
+    },
+		{
+			id: 11,
+      title: 'Paradas por usuario',
+      subtitle: 'Administracion',
+      url: '/routes-full-users',
+      icon: 'people',
+      color: 'warning'
     }
   ];
 	validUser: any = '[]';

@@ -1,0 +1,187 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="atrás" defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Transferencias</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+	<div [hidden]="loading !== 1">
+		<ion-card>
+
+			<h2 style="text-align: center;">Producto Seleccionado</h2>
+			<ion-card-header>
+				<ion-card-subtitle>{{ data.product.category }}</ion-card-subtitle>
+				<ion-card-title>{{ data.product.name }}</ion-card-title>
+			</ion-card-header>
+	
+			<ion-card-content>
+				{{ data.product.description }}
+			</ion-card-content>
+	
+			<ion-item color="secondary" class="ion-text-center" lines="none">
+				<ion-label>
+					<h1>{{ data.product.price | currency:'MXN' }}</h1>
+				</ion-label>
+			</ion-item>
+		</ion-card>
+	
+		<div>
+			<h4>Agregar Comprobante</h4>
+	
+			<ion-list>
+				<ion-radio-group [(ngModel)]="selectedValueFormat" (ionChange)="onSelectionChange($event)">
+					<ion-list-header>
+						<ion-label>Seleccione un formato</ion-label>
+					</ion-list-header>
+			
+					<ion-item>
+						<ion-label>Comprobante en imagen</ion-label>
+						<ion-radio slot="start" value="img"></ion-radio>
+					</ion-item>
+	
+					<ion-item>
+						<ion-label>Comprobante en PDF</ion-label>
+						<ion-radio slot="start" value="pdf"></ion-radio>
+					</ion-item>
+			
+				</ion-radio-group>
+			</ion-list>
+	
+			
+			<br>
+			<div *ngIf="selectedValueFormat !== null && convert === ''" 
+			class="img-box"
+			>
+			<!--class="img-box"-->
+				<div  *ngIf="selectedValueFormat === 'img' && convert === ''">
+					<ion-buttons>
+						<ion-button >
+							<ion-icon name="image"></ion-icon>
+							<ion-label>Agregue una imagen</ion-label>
+						</ion-button>
+					</ion-buttons>
+					<div style="display: inline-block">
+						<input style="opacity: 0; font-size: 0;width: 250px; height: 37px;  float: left;     margin-top: -50px;" type="file"     #userPhoto (change)="onFileSelectedPortadaSend($event, 1)"/>
+					</div>
+				</div>
+	
+				<div  *ngIf="selectedValueFormat === 'pdf'  && convert === ''">
+					<ion-buttons>
+						<ion-button >
+							<ion-icon name="document"></ion-icon>
+							<ion-label>Agregue un pdf</ion-label>
+						</ion-button>
+					</ion-buttons>
+					<div style="display: inline-block">
+						<input style="opacity: 0; font-size: 0;width: 250px; height: 37px;  float: left;     margin-top: -50px;" type="file"     #userPhoto (change)="onFileSelectedPortadaSend($event, 1)"/>
+					</div>
+				</div>
+				
+			</div>
+	
+			<div *ngIf="convert !== ''">
+				<div class="img-box2">
+					<div *ngIf="selectedValueFormat === 'img'" class="box1">
+						<p>{{ fileName}}</p>
+
+						<div class="box2">
+							<ion-buttons (click)="show(2)">
+								<ion-button >
+									<ion-icon name="search"></ion-icon>
+								</ion-button>
+							</ion-buttons>
+	
+							<ion-buttons (click)="rm2()">
+								<ion-button >
+									<ion-icon name="trash" color="danger"></ion-icon>
+								</ion-button>
+							</ion-buttons>
+						</div>
+						
+	
+					</div>
+					<div *ngIf="selectedValueFormat === 'pdf'" class="box1">
+						<p>{{ fileName}}</p>
+						
+						<div class="box2">
+							<ion-buttons (click)="show(3)">
+								<ion-button >
+									<ion-icon name="search"></ion-icon>
+								</ion-button>
+							</ion-buttons>
+	
+							<ion-buttons (click)="rm2()">
+								<ion-button >
+									<ion-icon name="trash" color="danger"></ion-icon>
+								</ion-button>
+							</ion-buttons>
+						</div>
+					</div>
+				</div>
+
+				<h5>Nuestro equipo validara su comprobante de transferencia</h5>
+				<ion-button class="ion-margin" (click)="load()"
+				expand="block" size="large">Agregar</ion-button>
+			</div>
+		</div>
+
+	
+
+	</div>
+
+	<div *ngIf="loading === 2">
+		<div >
+			<div  style="height: 10%; width:  100%;     display: flex;
+    justify-content: flex-end;">
+				<ion-buttons slot="end" (click)="closePhoto()" style="padding-top: 25px;margin-left: 85%;">
+					<ion-button color="dark" style="font-size: 30px;     height: 40px;">
+						<ion-icon name="close-circle"></ion-icon>
+						</ion-button>
+			</ion-buttons>
+			</div>
+			<br>
+			<img src="{{convert}}"    style="height: auto; width: 100%;" >
+		</div>
+	</div>
+
+	<div *ngIf="loading === 3" style="height: 100%;">
+		<div style="height: 80%;">
+			<div  style="height: 10%; width:  100%;     display: flex;
+    justify-content: flex-end;">
+				<ion-buttons slot="end" (click)="closePhoto()" style="padding-top: 25px;margin-left: 85%;">
+					<ion-button color="dark" style="font-size: 30px;     height: 40px;">
+						<ion-icon name="close-circle"></ion-icon>
+						</ion-button>
+			</ion-buttons>
+			</div>
+			<br>
+			<!--<object [data]="sanitizer.bypassSecurityTrustResourceUrl(pdfUrl)" type="application/pdf" style="width: 100%; height: 500px;"></object>-->
+			<!--<iframe [src]="pdfUrl" style="width: 100%; height: 500px;"></iframe>-->
+			<!--<ngx-extended-pdf-viewer [src]="pdfUrl" style="width: 100%; height: 500px;"></ngx-extended-pdf-viewer>-->
+			<div class="pdf-viewer">
+
+			</div>
+
+			<div>
+				
+			</div>
+
+			<!--(touchstart)="onPdfTouch()"-->
+			<pdf-viewer  
+				
+				[zoom]="zoomLevel"
+				[src]="pdfUrl" 
+				[original-size]="false" 
+        [show-all]="true"
+				[render-text]="true" 
+				style="display: block;width: 100%; height: 100%"
+			>
+			</pdf-viewer>
+		</div>
+	</div>
+
+</ion-content>

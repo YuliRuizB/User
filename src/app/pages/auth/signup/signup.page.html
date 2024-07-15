@@ -22,31 +22,55 @@
       <ion-list lines="none">
         <ion-item>
           <ion-icon slot="start" name="contact"></ion-icon>
-          <ion-input value="" formControlName="firstName" type="text" placeholder="Nombre(s)" required>
+          <ion-input  formControlName="firstName" type="text" placeholder="Nombre(s)" required>
           </ion-input>
         </ion-item>
+
+				<div class="error-messages">
+					<ng-container *ngFor="let error of error_messages.firstName">
+						<div class="error-message" *ngIf="signupForm.get('firstName')?.hasError(error.type) && (signupForm.get('firstName')?.dirty || signupForm.get('firstName')?.touched)">
+							{{error.message}}
+						</div>
+					</ng-container>
+				</div>
 
         <ion-item>
             <ion-icon slot="start" name="contact"></ion-icon>
-            <ion-input value="" formControlName="lastName" type="text" placeholder="Apellido(s)" required>
+            <ion-input  formControlName="lastName" type="text" placeholder="Apellido(s)" required>
             </ion-input>
-          </ion-item>
+        </ion-item>
+
+				<div class="error-messages">
+					<ng-container *ngFor="let error of error_messages.lastName">
+						<div class="error-message" *ngIf="signupForm.get('lastName')?.hasError(error.type) && (signupForm.get('lastName')?.dirty || signupForm.get('lastName')?.touched)">
+							{{error.message}}
+						</div>
+					</ng-container>
+				</div>
 
         <ion-item>
           <ion-icon slot="start" name="mail"></ion-icon>
-          <ion-input value="" formControlName="email" type="email" placeholder="Correo electrónico" required>
+          <ion-input  formControlName="email" type="email" placeholder="Correo electrónico" required>
           </ion-input>
         </ion-item>
 
+				<div class="error-messages">
+					<ng-container *ngFor="let error of error_messages.email">
+						<div class="error-message" *ngIf="signupForm.get('email')?.hasError(error.type) && (signupForm.get('email')?.dirty || signupForm.get('email')?.touched)">
+							{{error.message}}
+						</div>
+					</ng-container>
+				</div>
+
 				<ion-item>
           <ion-icon slot="start" name="call"></ion-icon>
-          <ion-input value=""  formControlName="phone"  type="tel" maxlength="10" placeholder="Numero de Telefono" required >
+          <ion-input   formControlName="phone"  type="tel" maxlength="10" placeholder="Numero de Telefono" required >
           </ion-input>
 				</ion-item>
 
         <ion-item>
           <ion-icon slot="start" name="bookmarks"></ion-icon>
-          <ion-input value="" formControlName="studentId" type="text" placeholder="Matrícula" required></ion-input>
+          <ion-input  formControlName="studentId" type="text" placeholder="Matrícula" required></ion-input>
         </ion-item>
 
         <ion-item>
@@ -95,13 +119,13 @@
 
         <ion-item>
           <ion-icon slot="start" name="finger-print"></ion-icon>
-          <ion-input type="password" clearInput value="" formControlName="password" placeholder="Contraseña 8 dígitos" required>
+          <ion-input type="password" clearInput  formControlName="password" placeholder="Contraseña 8 dígitos" required>
           </ion-input>
         </ion-item>
 
         <ion-item>
           <ion-icon slot="start" name="finger-print"></ion-icon>
-          <ion-input type="password" clearInput value="" formControlName="verifyPassword"
+          <ion-input type="password" clearInput  formControlName="verifyPassword"
             placeholder="Confirmar contraseña 8 dígitos" required>
           </ion-input>
         </ion-item>

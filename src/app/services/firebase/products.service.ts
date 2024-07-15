@@ -38,4 +38,50 @@ export class ProductsService {
     this.product = this.afs.collection('customers').doc(user.customerId).collection('products').doc(id);
     return this.product.snapshotChanges();
   }
+
+	insertTransferSubCollection(dataUser: any, url: any, product: any, stopInfo: any, dateTime, date) {
+		const fire1= this.afs;
+		const fire2 = this.afs;
+    return new Promise ((resolve,reject)=>{
+      fire1.collection('users').doc(dataUser.uid).collection('transfers').add({  
+				userId: dataUser.uid,
+				customerId: dataUser.customerId,
+				customerName: dataUser.customerName,
+				url: url,
+				product: product,
+				stopInfo: stopInfo,
+				dateTime, 
+				date,
+				status: 'pending',
+				active: true
+      }).then(function(dataAux)  {
+				resolve(true)
+			}).catch(function(error) {
+        console.log("Error getting document:", error);
+				resolve(false)
+      });
+    });
+	}
+
+	insertTransferCollection(dataUser: any, url: any, product: any, stopInfo: any,dateTime, date) {
+		const fire1= this.afs;
+		const fire2 = this.afs;
+    return new Promise ((resolve,reject)=>{
+      fire1.collection('transfers').add({  
+				userId: dataUser.uid,
+				customerId: dataUser.customerId,
+				customerName: dataUser.customerName,
+				url: url,
+				product: product,
+				stopInfo: stopInfo,
+				dateTime, 
+				date
+      }).then(function(dataAux)  {
+				resolve(true)
+			}).catch(function(error) {
+        console.log("Error getting document:", error);
+				resolve(false)
+      });
+    });
+	}
 }

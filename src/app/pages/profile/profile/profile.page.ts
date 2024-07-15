@@ -42,7 +42,7 @@ export class ProfilePage implements OnInit {
   uploadvalue: number = 0;
   downloadURL: Observable<string>;
   roundOptions = [];
-  roundName: string = "";
+  roundName: any = "";
   stopsOptions = [];
 
 
@@ -85,10 +85,100 @@ export class ProfilePage implements OnInit {
     });
   }
 
+	bd() {
+		console.log('entro');
+		/*const file = this.bucketStorage.storage.file('path/to/your/file');
+		file.download({ destination: 'local-folder/file' })
+			.then(() => {
+				console.log('File downloaded successfully!');
+			})
+			.catch(error => {
+				console.error('Error downloading file:', error);
+			});
+		/*fetch('https://us-central1-bus2u-qa-391716.cloudfunctions.net/downloadAllFiles')
+		.then(response => {
+			console.log(response)
+			if (response.ok) {
+				return response.json();
+			}
+			
+		}).catch((e) => {
+			console.log(e)
+		})
+		.then(data => {
+			console.log('Archivos descargados:', data.files);
+			// Aquí puedes realizar alguna acción con los archivos descargados, como mostrarlos en una lista o procesarlos de alguna manera
+		})
+		.catch(error => {
+			console.error('Error downloading files:', error);
+		});
+		/*const storageRef = firebase.storage().ref();
+		const folderRef: any = this.bucketStorage.storage.ref().child('ali/ali2/')
+		folderRef.listAll().then(result => {
+			console.log(result)
+			result.items.forEach(itemRef => {
+				// Descarga cada archivo
+				itemRef.getDownloadURL().then(url => {
+					// Utiliza la URL para descargar el archivo utilizando fetch o cualquier método de descarga de tu elección
+					fetch(url).then(response => {
+						if (response.ok) {
+							// La respuesta es exitosa, descarga el archivo
+							return response.blob();
+						}
+						throw new Error('Network response was not ok.');
+					}).then(blob => {
+						// Ahora tienes el archivo como un objeto Blob, puedes guardarlo localmente
+						// Por ejemplo, puedes crear un enlace de descarga para que el usuario lo descargue manualmente
+						const a = document.createElement('a');
+						a.href = URL.createObjectURL(blob);
+						a.download = itemRef.name;
+						a.click();
+					}).catch(error => {
+						console.error('Error downloading file:', error);
+					});
+				}).catch(error => {
+					console.error('Error getting download URL:', error);
+				});
+			});
+		}).catch(error => {
+			console.error('Error listing files:', error);
+		});
+		// console.log(folderRef)
+		/*folderRef.listAll().then(result => {
+			result.items.forEach(itemRef => {
+				// Descarga cada archivo
+				itemRef.getDownloadURL().then(url => {
+					// Utiliza la URL para descargar el archivo utilizando fetch o cualquier método de descarga de tu elección
+					fetch(url).then(response => {
+						if (response.ok) {
+							// La respuesta es exitosa, descarga el archivo
+							return response.blob();
+						}
+						throw new Error('Network response was not ok.');
+					}).then(blob => {
+						// Ahora tienes el archivo como un objeto Blob, puedes guardarlo localmente
+						// Por ejemplo, puedes crear un enlace de descarga para que el usuario lo descargue manualmente
+						const a = document.createElement('a');
+						a.href = URL.createObjectURL(blob);
+						a.download = itemRef.name;
+						a.click();
+					}).catch(error => {
+						console.error('Error downloading file:', error);
+					});
+				}).catch(error => {
+					console.error('Error getting download URL:', error);
+				});
+			});
+		}).catch(error => {
+			console.error('Error listing files:', error);
+		});*/
+	}
+
   ngOnInit() {
     this.storageService.getItem('userData').then((userData) => {
       this.userData = JSON.parse(userData);
-      console.log(this.userData.defaultRoute);
+      console.log('super');
+			console.log(this.userData.defaultRoute);
       this.roundName = this.userData.defaultRouteName;
       //console.log("this.userData");
       console.log(this.userData);     
@@ -101,7 +191,8 @@ export class ProfilePage implements OnInit {
       ).subscribe( (routes) => {
         console.log("routes");
         console.log(routes);
-        this.roundOptions = routes;        
+        this.roundOptions = routes;   
+				this.roundName = this.roundOptions.filter((x: any) => x.routeId === this.userData.defaultRoute)      
       })
 
       this.customersService.getRouteStopPoints(this.userData.customerId,this.userData.defaultRoute).pipe(
