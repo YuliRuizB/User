@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as express from 'express';
 import * as basicAuth from 'express-basic-auth';
+import * as moment from 'moment';
 //import * as request from 'request';
 
 admin.initializeApp();
@@ -450,7 +451,8 @@ exports.createActivity = functions.firestore.document('activityLog/{Id}').onCrea
         lastUsedVehicle: newValue.vehicle,
         validation: userKey,
         allowedOnBoard: newValue.allowedOnBoard,
-        lastValidUsage: newValue.validUsage
+        lastValidUsage: newValue.validUsage,
+				callDateFunction: moment().format()
       }
     };
 

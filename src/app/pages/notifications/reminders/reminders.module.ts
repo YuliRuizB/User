@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { RemindersPageRoutingModule } from './reminders-routing.module';
 
 import { RemindersPage } from './reminders.page';
-import { StopsListPage } from '../stops-list/stops-list.page';
+// import { StopsListPage } from '../stops-list/stops-list.page';
 
 @NgModule({
   imports: [
@@ -17,7 +17,9 @@ import { StopsListPage } from '../stops-list/stops-list.page';
     IonicModule,
     RemindersPageRoutingModule
   ],
-  declarations: [RemindersPage, StopsListPage],
-  entryComponents: [StopsListPage]
+  // declarations: [RemindersPage, StopsListPage],
+  // entryComponents: [StopsListPage]
+	declarations: [RemindersPage],
+  entryComponents: []
 })
 export class RemindersPageModule {}

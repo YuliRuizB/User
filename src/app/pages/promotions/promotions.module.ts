@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { PromotionsPageRoutingModule } from './promotions-routing.module';
 
 import { PromotionsPage } from './promotions.page';
-import { PromotionDetailsPage } from './promotion-details/promotion-details.page';
+// import { PromotionDetailsPage } from './promotion-details/promotion-details.page';
 
 @NgModule({
   imports: [
@@ -16,7 +16,9 @@ import { PromotionDetailsPage } from './promotion-details/promotion-details.page
     IonicModule,
     PromotionsPageRoutingModule
   ],
-  declarations: [PromotionsPage, PromotionDetailsPage],
-  entryComponents: [ PromotionDetailsPage ]
+  // declarations: [PromotionsPage, PromotionDetailsPage],
+  // entryComponents: [ PromotionDetailsPage ]
+	declarations: [PromotionsPage],
+  entryComponents: []
 })
 export class PromotionsPageModule {}

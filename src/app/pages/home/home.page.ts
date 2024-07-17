@@ -6,6 +6,7 @@ import "leaflet.marker.slideto";
 import { OnemapService } from "../../services/data/onemap.service";
 import { Geolocation } from "@ionic-native/geolocation/ngx";
 import {
+	Platform,
   ToastController,
   ModalController,
   AlertController,
@@ -40,6 +41,9 @@ import { InfoUserPreRegisterModalPage } from '../../modals/info-user-pre-registe
 import { AuthService } from '../../services/firebase/auth.service';
 import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
 import { IUserData, IRoles } from '../../../app/models/models';
+import { Device } from '@ionic-native/device/ngx';
+import * as moment from 'moment';
+
 
 @Component({
   selector: "app-home",
@@ -105,19 +109,18 @@ export class HomePage implements OnInit, OnDestroy {
 		private _AuthService: AuthService,
 		private _AndroidPermissions:AndroidPermissions,
 		private _LoadingController: LoadingController,
-    private _MenuController: MenuController
+    private _MenuController: MenuController,
+    private _Platform: Platform,
+		private _Device: Device
   ) { 
     this._MenuController.enable(true);
   }
-
-
+		
 
   async ionViewDidEnter() {  
     let loading = null;
     this.storageService.getItem("userData").then(async (userData) => {
       this.user = JSON.parse(userData);
-			console.log('esto veo');
-			console.log(this.user)
 			//Validate if data user is null 
 			if (this.user === null) {
 				this._AuthService.signout().then( () => {
@@ -144,7 +147,7 @@ export class HomePage implements OnInit, OnDestroy {
         if (this.user.status === 'preRegister') {
           setTimeout(() => {
             console.log('entro?')
-            this.showInfoPreRegisterModal();
+            // this.showInfoPreRegisterModal();
           },1500)
           
         }
@@ -172,7 +175,6 @@ export class HomePage implements OnInit, OnDestroy {
         this._NavController.navigateRoot('gps-request-info')
       })
     }).catch((error) => {
-			console.log('error 222');
 			console.log(error)
       loading.dismiss()
 		})
@@ -181,9 +183,22 @@ ngOnDestroy() {
     //this.subscription.unsubscribe();
     
   }
+	async getFireUser() {
+		return new Promise((resolve, reject) => {
+			this.usersService
+      .getUser(this.user.uid)
+      .subscribe(async (dataUser: any) => {
+				this.user = dataUser.payload.data();
+				let dat = await this.storageService.setItem("userData", JSON.stringify(this.user));
+				resolve(true)
+				// this.fullUserAuxTest
+      },(error) => {
+				resolve(false)
+			})
+		})
+	}
 
   loadMapAfterSubscriptions() {
-		console.log('entra ali 3');
     this.map = new Map("mapId").setView([25.6739571, -100.3400463], 10);
     this.stationsMarkers = L.layerGroup().addTo(this.map);
     this.busesMarkers = L.layerGroup().addTo(this.map);
@@ -194,12 +209,8 @@ ngOnDestroy() {
 
   async ngOnInit() {
 		const accessCamera = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.CAMERA);
-		console.log('camera1')
-		console.log(accessCamera)
 		if (!accessCamera.hasPermission) {
 			const camera = await this._AndroidPermissions.requestPermission(this._AndroidPermissions.PERMISSION.CAMERA);
-			console.log('camera1')
-			console.log(camera)
 		}
 		
     // this.apiService.getGeofences().then((geofences) => {
@@ -303,7 +314,6 @@ socket$.subscribe(
 
 	//This methos call all user for testing
 	async showFullUsers() {
-		console.log(this.fullUserAuxTest);
 		return;
 		let index = 0;
 		for await (const item of this.fullUserAuxTest) {
@@ -330,9 +340,7 @@ socket$.subscribe(
 		console.log(this.fullUserAuxTest)
 		for (let x = 0; x < this.fullUserAuxTest.length; x ++) {
 			await this.usersService.setUserAll(this.fullUserAuxTest[x].uid,this.fullUserAuxTest[x]).then((resp) => {
-				console.log('index:'+x)
 			}).catch((error) => {
-				console.log('error 333');
 				console.log(error);
 			})
 		}
@@ -340,9 +348,7 @@ socket$.subscribe(
 
   validateTerms() {
 		return new Promise((resolve) => {
-		// console.log('llega aqui1')
-		//console.log(this.user);
-    const uid = this.user.id;
+    const uid = this.user.uid;
     this.usersService
       .getUser(uid)
       .pipe(
@@ -352,9 +358,11 @@ socket$.subscribe(
           return { id, ...data };
         })
       )
-      .subscribe((dataUser) => {
-				// console.log('esto1');
-				//console.log(dataUser)
+      .subscribe(async (dataUser) => {
+				// await this.storageService.setItem("userData", '');
+				console.log(dataUser)
+				this.user = dataUser;
+				// await this.storageService.setItem("userData", JSON.stringify(this.user));
         let result = dataUser.hasOwnProperty('terms');
 				// console.log(result)
         this.edited = result;
@@ -365,22 +373,12 @@ socket$.subscribe(
   }
 
   async validateToken() {
-
-		// const aux  = await this.fcm.hasPermission();
-		// console.log('veo el perimso');
-		// console.log(aux)
-    console.log('alientro');
     this.fcm.getToken().then((token) => {
-      console.log("getToken() from homepage");
-			console.log(token);
-      console.log('ali:'+token);
       this.usersService.registerToken(this.user.uid, token);
     }).catch((e) => {
       console.log('alierror'+e)
     })
     this.fcm.onTokenRefresh().subscribe((token) => {
-      console.log("onTokenRefresh() from homepage");
-			console.log(token)
       this.usersService.registerToken(this.user.uid, token);
     });
     /*this.fcm.getAPNSToken().then((token) => {
@@ -476,8 +474,6 @@ socket$.subscribe(
     this.geolocation
       .getCurrentPosition()
       .then((resp) => {
-        // console.log("respuesta get current location");
-        // console.log(resp);
         this.userGeoLocation = resp;
         this.hasUserGeoLocation = true;
         this.updateTimeTravel();
@@ -491,8 +487,6 @@ socket$.subscribe(
 
     const watch = this.geolocation.watchPosition();
     watch.subscribe((data: any) => {
-      // console.log("data current location");
-      // console.log(data);
       // this.updateTimeTravel();
       // const pulsingIcon = L.Icon.pulse({
       //   iconSize: [20, 20],
@@ -551,24 +545,19 @@ socket$.subscribe(
         )
 		)
 		.subscribe((routes) => {
-			console.log('entra ali 2');
-			console.log(routes)
+
 			routes.forEach((item) => {
 				if (item.creation_date === '2023-12-26T20:42:09.890Z') {
-					console.log('encontro');
-					console.log(item)
+
 				}
 			})
 		},(error) => {
-			console.log('este error 377777');
 			console.log(error);
 		})
 	}
 
   getSubscriptions() {
 		return new Promise((resolve) => {
-			console.log('entra ali 1');
-			console.log(this.user)
 			this.busesService
 				.getUserActiveRoutes(this.user)
 				.pipe(
@@ -581,13 +570,11 @@ socket$.subscribe(
 					)
 				)
 				.subscribe((routes) => {
-					console.log('entra ali 2');
 					this.routes = routes;
 					this.loadMapAfterSubscriptions();
 					this.loading = false;
 					resolve(true);
 				},(error) => {
-					console.log('este error 37');
 					console.log(error);
 				})
 		})
@@ -623,20 +610,16 @@ socket$.subscribe(
 
   leafletMap() {
     // In setView add latLng and zoom
-		console.log('entra ali 4');
-		console.log(this.map);
     this.map.zoomControl.remove();
     tileLayer("https://mt0.google.com/vt/lyrs=m&hl=es&x={x}&y={y}&z={z}&s=Ga", {
       maxZoom: 20,
       subdomains: ["mt0", "mt1", "mt2", "mt3"],
+			// style: L.MaptilerStyle.STREETS, // optional
       // style: 'https://api.maptiler.com/maps/1ddaeb93-5681-4398-ac48-bba52a074fd3/?key=crAqHWwNhI6CF3sWYjMT#'
     }).addTo(this.map);
 
     this.map.whenReady(() => {
-      console.log("map is ready55555555555555555");
-			console.log(this.user)
       if (this.user && this.user.defaultRoute) {
-				console.log('entra 11111111111')
         this.showMapRoute();
         this.startAutoUpdate();
       }
@@ -659,7 +642,6 @@ socket$.subscribe(
   }
 
 	async showInfoPreRegisterModal() {
-		console.log('entra');
     const modal = await this.modalController.create({
       component: InfoUserPreRegisterModalPage,
       componentProps: { value: this.user },
@@ -667,8 +649,6 @@ socket$.subscribe(
 			backdropDismiss:false,
     });
 		modal.onDidDismiss().then((result)=>{
-			console.log('veooooo')
-			console.log(result)
 			if (result.data === 1) {
 				this._NavController.navigateForward('check-request-pre-register');
 			} else {
@@ -679,7 +659,6 @@ socket$.subscribe(
   }
 
   showMapRoute() {
-		console.log('entra 2222222222')
     this.busesService
       .getUserRouteActiveStops(this.user)
       .pipe(
@@ -692,12 +671,7 @@ socket$.subscribe(
         )
       )
       .subscribe((routeStops) => {
-				console.log('entra 333333333')
-       // console.log("routeStops");
-       // console.log(routeStops);
         this.routeStopsList = routeStops;
-       // console.log("stopsrouteList");
-       // console.log(this.routeStopsList);
         this.addStopsToMap(this.routeStopsList);
         if (this.hasUserGeoLocation) {
           this.updateTimeTravel();
@@ -732,8 +706,6 @@ socket$.subscribe(
   }
 
   addStopsToMap(stationsArray) {
-		console.log('entra 44444444444444')
-    //console.log(stationsArray);
     let arrayOfLatLngs = [];
     let coordinates = "";
     let radiuses = "";
@@ -775,16 +747,10 @@ socket$.subscribe(
         .addTo(this.stationsMarkers)
         .bindPopup(customPopup);
     });
-   // console.log("arrayOfLatLngs");
-   // console.log(arrayOfLatLngs);
     let bounds =
       arrayOfLatLngs.length > 0 ? new L.LatLngBounds(arrayOfLatLngs) : [];
 
     // let polyline = (encode([[38.5, -120.2], [40.7, -120.95], [43.252, -126.453]]));
-		console.log('entra 55555555555555')
-		console.log(coordinates.substring(0, coordinates.length - 1));
-		console.log(radiuses.substring(0, radiuses.length - 1));
-		console.log(timestamps.substring(0, timestamps.length - 1));
     this.osrmService
       .getMatchService(
         "driving",
@@ -793,12 +759,9 @@ socket$.subscribe(
         timestamps.substring(0, timestamps.length - 1)
       )
       .subscribe((response: any) => {
-				console.log('entra 66666666666')
-        console.log(response);
         let polylineArray = [];
         const tracepoints = response.matchings[0].geometry.coordinates;
         _.map(tracepoints, (point) => {
-        //  console.log(typeof point);
           if (point.length > 0) {
             polylineArray.push([point[1], point[0]]);
           }
@@ -815,13 +778,9 @@ socket$.subscribe(
             weight: 10,
             opacity: 0.4,
           };
-					console.log('alicarlo');
-					console.log(polylineArray)
-					console.log(style);
-					console.log(this.map)
+
         	L.polyline(polylineArray, style).addTo(this.map);
       },(error) => {
-				console.log('erroooor 777777777');
 				console.log(error)
 			})
 
@@ -848,27 +807,33 @@ socket$.subscribe(
         )
       )
       .subscribe((devices) => {
-       // console.log("devices");
-        //console.log(devices);
+				console.log(this.markers)
+			
 
         if (this.devices.length > 0) {
           const currentDevices = _.map(devices, (a) => {
             return a.id;
           });
-          console.log("this.device(s) is greather than 0");
-          console.log(this.devices);
-          console.log(currentDevices);
+
           const difference = _.difference(this.devices, currentDevices);
           if (difference.length > 0) {
             difference.forEach((device) => {
-              console.log("difference ", device);
-              this.markers[device].remove();
+							// this.markers['userPosition'].remove();
+							// this.markers.splice(device,1);
+							/*console.log(this.markers.length)*/
+							/*if (this.markers.length !== 0) {
+								this.markers[device].remove();
+							}*/
+							// this.markers.remove();
+             
             });
           }
         }
         this.devices = _.map(devices, (a) => {
           return a.vehicleId;
         });
+
+				// console.log(this.devices)
         devices.forEach((device: any) => {
           device.occupancy = (device.count * 100) / device.capacity;
           device.availability = device.capacity - device.count;
@@ -937,6 +902,7 @@ socket$.subscribe(
           )
             .addTo(this.map)
             .bindPopup(customPopup); // , customOptions);
+					
         });
         this.asyncProcess = false;
       });
@@ -1072,7 +1038,6 @@ socket$.subscribe(
   }
 
   AcceptTerms() {
-    console.log(this.chkTerms);
     this.usersService
       .updateUserTerms(this.user.id, this.chkTerms)
       .then(() => {
@@ -1082,6 +1047,5 @@ socket$.subscribe(
 
   updateTerms(){
   this.chkTerms = this.termsVal;
-  console.log("terms accepted: " + this.termsVal);
   }
 }
