@@ -7,6 +7,8 @@ alias: bus2u
 
 jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore bus2uUsers.keystore app-release.aab  bus2u 
 
+node hooks/after_prepare/010_update_gradle_config.js
+
 ***  Notas  ***
 
 // 	https://www.paynet.com.mx/mapa-tiendas/index.html

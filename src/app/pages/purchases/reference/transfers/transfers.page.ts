@@ -8,6 +8,7 @@ import { StorageService } from "../../../../services/storage/storage.service";
 import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
 import { ProductsService } from '../../../../services/firebase/products.service';
+import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 
 @Component({
   selector: 'app-transfers',
@@ -35,10 +36,11 @@ export class TransfersPage implements OnInit {
 	downloadURL: Observable<string> | any;
 
 	user: any;
+	token: string = '';
 	@ViewChild('pdfViewerContainer', { static: false }) pdfViewerContainer: ElementRef;
   constructor(private _ActivatedRoute: ActivatedRoute, private _ToastController: ToastController,private sanitizer: DomSanitizer,
 		private _LoadingController: LoadingController, private _BucketStorage: AngularFireStorage, private storageService: StorageService,
-		private _ProductsService: ProductsService
+		private _ProductsService: ProductsService,  private fcm: FirebaseX,
 	) { }
 
   ngOnInit() {
@@ -50,6 +52,12 @@ export class TransfersPage implements OnInit {
 		this.storageService.getItem("userData").then(async (userData) => {
       this.user = JSON.parse(userData);
 		})
+
+		this.fcm.getToken().then((token) => {
+      console.log("getToken() from homepage");
+			console.log(token);
+			this.token = token;
+    });
   }
 
 	onSelectionChange(event) {
@@ -219,8 +227,8 @@ export class TransfersPage implements OnInit {
 		const date = moment().format('DD-MM-YYYY');
 		const urlImage  = await this.uploadImage(dateTimeId)
 
-		await this._ProductsService.insertTransferSubCollection(this.user, urlImage, this.data.product, this.data.stopInfo, dateTime, date);
-		await this._ProductsService.insertTransferCollection(this.user, urlImage, this.data.product, this.data.stopInfo, dateTime, date);
+		await this._ProductsService.insertTransferSubCollection(this.user, urlImage, this.data.product, this.data.stopInfo, dateTime, date, this.token);
+		await this._ProductsService.insertTransferCollection(this.user, urlImage, this.data.product, this.data.stopInfo, dateTime, date, this.token);
 		this.presentToast('Envio exitoso',3000, 'success');
 		loading.dismiss();
 	}

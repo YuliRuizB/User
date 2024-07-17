@@ -39,7 +39,7 @@ export class ProductsService {
     return this.product.snapshotChanges();
   }
 
-	insertTransferSubCollection(dataUser: any, url: any, product: any, stopInfo: any, dateTime, date) {
+	insertTransferSubCollection(dataUser: any, url: any, product: any, stopInfo: any, dateTime, date, token) {
 		const fire1= this.afs;
 		const fire2 = this.afs;
     return new Promise ((resolve,reject)=>{
@@ -53,7 +53,8 @@ export class ProductsService {
 				dateTime, 
 				date,
 				status: 'pending',
-				active: true
+				active: true,
+				token
       }).then(function(dataAux)  {
 				resolve(true)
 			}).catch(function(error) {
@@ -63,7 +64,7 @@ export class ProductsService {
     });
 	}
 
-	insertTransferCollection(dataUser: any, url: any, product: any, stopInfo: any,dateTime, date) {
+	insertTransferCollection(dataUser: any, url: any, product: any, stopInfo: any,dateTime, date, token) {
 		const fire1= this.afs;
 		const fire2 = this.afs;
     return new Promise ((resolve,reject)=>{
@@ -75,7 +76,8 @@ export class ProductsService {
 				product: product,
 				stopInfo: stopInfo,
 				dateTime, 
-				date
+				date, 
+				token
       }).then(function(dataAux)  {
 				resolve(true)
 			}).catch(function(error) {
