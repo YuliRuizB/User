@@ -75,6 +75,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/contact-us/contact-us.module').then( m => m.ContactUsPageModule),
     ...canActivate(redirectUnauthorizedToLanding)
   },
+	{
+    path: 'history-login',
+    loadChildren: () => import('./pages/super-admin/history-login/history-login.module').then( m => m.HistoryLoginPageModule),
+    ...canActivate(redirectUnauthorizedToLanding)
+  },
   {
     path: 'regulation/:from',
     loadChildren: () => import('./pages/regulation/regulation.module').then( m => m.RegulationPageModule),
@@ -105,7 +110,11 @@ const routes: Routes = [
   {
     path: 'gps-request-info',
     loadChildren: () => import('./pages/gps-request-info/gps-request-info.module').then( m => m.GpsRequestInfoPageModule)
+  },{
+    path: 'history-login',
+    loadChildren: () => import('./pages/super-admin/history-login/history-login.module').then( m => m.HistoryLoginPageModule)
   }
+
 
 ];
 

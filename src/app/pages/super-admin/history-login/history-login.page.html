@@ -1,0 +1,38 @@
+<ion-header class="ion-no-border" >
+  <ion-toolbar color="ligth">
+		<ion-buttons slot="start" (click)="close()">
+      <ion-button  color="dark">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+		<ion-title color="dark" mode="ios"> 
+    	Inicios de Sesion
+    </ion-title>
+  </ion-toolbar>
+
+	<ion-toolbar>
+		<div>
+			<ion-searchbar (ionInput)="getItems($event)" placeholder="Filtro"></ion-searchbar>
+	</div>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<div *ngFor="let data of list">
+		<ion-card >
+			<div style="padding: 10px;">
+				<p>Fecha de inicio de sesion (carga de home): {{ data.lastDataConnectWithHour}}</p>
+				<p>Correo: {{ data.email}}</p>
+				<p>Usuario: {{data.name }} {{ data.lastName }}</p>
+				<p>Plataforma: {{ data.platform}}</p>
+				<p>Version OS: {{ data.versionPlatformDevice }}</p>
+				<p>Modelo: {{ data.model }}</p>
+				<p>Manufactura: {{ data.manufacturer }}</p>
+				
+				
+			</div>
+			
+		</ion-card>
+	</div>
+</ion-content>

@@ -356,6 +356,29 @@ export interface IUserData {
 		roundTrip: string;
 		status: string;
 		turno: string;
+		deviceInfo: {
+			lastDataConnectWithHour: string;
+			lastDateConnect: string;
+			lastDateConnectFull: string;
+			manufacturer: string;
+			model: string;
+			platform: string;
+			versionPlatformAppStore: string;
+			versionPlatformAppStoreString: string;
+			versionPlatformDevice: string;
+			platformPermisionStatus: {
+				businesName: string;
+				id: any;
+				idDoc: string;
+			},
+			businesPlatform: {
+				businesName: string;
+				businesType: string;
+				currentVersion: string;
+				id: any;
+				idDoc: string;
+			}
+		}
 }
 
 export interface IBoardingPass {

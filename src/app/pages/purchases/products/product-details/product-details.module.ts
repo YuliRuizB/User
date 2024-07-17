@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ProductDetailsPageRoutingModule } from './product-details-routing.module';
 import { ProductDetailsPage } from './product-details.page';
-import { StopPointsPage } from './stop-points/stop-points.page';
+// import { StopPointsPage } from './stop-points/stop-points.page';
 
 @NgModule({
   imports: [
@@ -15,7 +15,9 @@ import { StopPointsPage } from './stop-points/stop-points.page';
     IonicModule,
     ProductDetailsPageRoutingModule
   ],
-  declarations: [ProductDetailsPage, StopPointsPage],
-  entryComponents: [StopPointsPage]
+  // declarations: [ProductDetailsPage, StopPointsPage],
+  // entryComponents: [StopPointsPage]
+	declarations: [ProductDetailsPage],
+  entryComponents: []
 })
 export class ProductDetailsPageModule {}

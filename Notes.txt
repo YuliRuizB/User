@@ -9,7 +9,7 @@ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore bus2uUsers.keys
 
 ***  Notas  ***
 
-
+// 	https://www.paynet.com.mx/mapa-tiendas/index.html
 [	
 	//Error
 	Al compilar si salen los siguientes errores

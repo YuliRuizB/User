@@ -1,18 +1,20 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar class="ion-no-padding">
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="presentAlertRadio()">
-        <ion-icon color="primary" name="map"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Paradas Cercanas</ion-title>
+
+<div class="header-main">
+	<div class="header-float">
+		<ion-buttons slot="start">
+			<ion-menu-button></ion-menu-button>
+		</ion-buttons>
+		<!--<ion-title>Paradas Cercanas</ion-title>-->
+		<p class="text-center">Paradas Cercanas</p>
+		<ion-buttons slot="end">
+			<ion-button (click)="presentAlertRadio()">
+				<ion-icon color="primary" name="map"></ion-icon>
+			</ion-button>
+		</ion-buttons>
 		<!--<ion-button (click)="test1Web()">Ali1</ion-button>-->
-		
-  </ion-toolbar>
-</ion-header>
+	</div>
+</div>
+
 
 <ion-content fullscreen="true">
 	
@@ -33,6 +35,8 @@
     <ion-button (click)="AcceptTerms()">Aceptar</ion-button>
   </div>
   <div [hidden]="!edited">
+
+	
   <div class="map">
     <div id="mapId" style="width: 100%; height: 100%"></div>
   </div>
@@ -59,7 +63,7 @@
     </ion-fab-list>
   </ion-fab>
 
-  <ion-toolbar style="top: 70vh !important;">
+  <ion-toolbar style="top: 80vh !important;">
     <ion-slides [options]="sliderConfig">
       <ion-slide *ngIf="routeStopsList.length == 0 && !loading">
         <ion-card button (click)="presentAlertRadio()">
@@ -74,7 +78,7 @@
       </ion-slide>
       <ion-slide *ngFor="let stop of routeStopsList">
         <ion-card>
-          <ion-item lines="none" (click)="openModalStationInfo(stop)">
+          <ion-item lines="none" (click)="openModalStationInfo(stop)" style="min-height: 100px;">
             <ion-thumbnail slot="start" class="ion-no-padding ion-no-margin">
               <img class="ion-no-padding" [src]="stop.iconUrl ? stop.iconUrl : 'assets/icon/pin_station.png'" style="width: 30px; height: 30px;">
             </ion-thumbnail>
