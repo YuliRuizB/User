@@ -147,7 +147,7 @@ export class HomePage implements OnInit, OnDestroy {
         if (this.user.status === 'preRegister') {
           setTimeout(() => {
             console.log('entro?')
-            this.showInfoPreRegisterModal();
+            // this.showInfoPreRegisterModal();
           },1500)
           
         }

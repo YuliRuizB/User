@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.adn.userv12023" version="1.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Usuarios</name>
-    <description>Bus2 Usuarios</description>
+<widget id="com.adn.userv12023" version="1.0.9" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Bus2u-Users</name>
+    <description>Bus2U user mobile app.</description>
     <author email="" href="">Alicarlo Montijo</author>
     <content src="index.html" />
     <access origin="*" />
