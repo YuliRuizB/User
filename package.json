@@ -73,7 +73,7 @@
     "@types/leaflet": "^1.5.8",
     "@types/node": "^13.1.8",
     "codelyzer": "^5.2.1",
-    "cordova-android": "^12.0.1",
+    "cordova-android": "^13.0.0",
     "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-camera": "^7.0.0",
     "cordova-plugin-device": "^2.0.3",
