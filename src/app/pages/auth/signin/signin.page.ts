@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/firebase/auth.service';
-import { NavController, LoadingController, Platform, MenuController } from '@ionic/angular';
+import { NavController, LoadingController, Platform, MenuController, ModalController } from '@ionic/angular';
 import { ToastService } from 'src/app/services/toast.service';
 import { UsersService } from 'src/app/services/firebase/users.service';
 import { map } from 'rxjs/operators';
@@ -9,13 +9,15 @@ import { StorageService } from 'src/app/services/storage/storage.service';
 import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import * as moment from 'moment';
+import { ReportIssueModalPage } from '../../../modals/report-issue-modal/report-issue-modal.page';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.page.html',
   styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
-
+	remember: any;
+	showEye: boolean = true;
   loginForm: FormGroup;
   loading = false;
   error_messages={
@@ -41,7 +43,8 @@ export class SigninPage implements OnInit {
 		private _AndroidPermissions: AndroidPermissions,
 		private _Platform: Platform,
 		private _Device: Device,
-		private _MenuController: MenuController
+		private _MenuController: MenuController,
+		private _ModalController: ModalController
   ) {
     this.loginForm = fb.group({
 			email: ['', Validators.compose([Validators.required, Validators.email, Validators.minLength(3),Validators.maxLength(50)])],
@@ -51,6 +54,19 @@ export class SigninPage implements OnInit {
    }
 
   async ngOnInit() {
+		let flag =  await this.usersService.getRememberFlagStorage();
+		console.log('cafeee')
+		console.log(flag)
+		this.remember = flag !== null && flag !== false ? true : false;
+		if (flag !== null && flag !== false) {
+		
+			let data =  await this.usersService.getRememberDataFlagStorage();
+			console.log('omega')
+			console.log(data)
+			this.loginForm.patchValue({ email: data.email });
+			this.loginForm.patchValue({ password: data.password });
+		}
+
 		const accessCoarseLocation = await this._AndroidPermissions.checkPermission(this._AndroidPermissions.PERMISSION.ACCESS_COARSE_LOCATION);
 		if (!accessCoarseLocation.hasPermission) {
 			await this._AndroidPermissions.requestPermissions([this._AndroidPermissions.PERMISSION.ACCESS_COARSE_LOCATION, this._AndroidPermissions.PERMISSION.ACCESS_FINE_LOCATION]);
@@ -66,10 +82,18 @@ export class SigninPage implements OnInit {
 			})
 			
 		}
+
+		
    
   }
 
+	eye() {
+		this.showEye =  !this.showEye;
+	}
+
   async signin() {
+		console.log(this.remember);
+	
     if(this.loginForm.valid) {
 			const loading = await this._LoadingController.create({
 				message: 'Cargando...',
@@ -107,6 +131,18 @@ export class SigninPage implements OnInit {
 									this.getDataDevice(userR)
 									// flag = check;
 								}
+								if (this.remember) {
+									this.usersService.setRememberFlagStorage(true);
+									let data = {
+										email: this.loginForm.value.email,
+										password: this.loginForm.value.password 
+									}
+									this.usersService.setRememberDataFlagStorage(data)
+								}else{
+									this.usersService.clearRememberFlagStorage()
+									this.usersService.clearRememberDataFlagStorage();
+								}
+
 								this.navController.navigateRoot('home');
 							}).catch((err) => {
 								this.toastService.presentToast(err, 3000, 'danger')
@@ -181,6 +217,22 @@ export class SigninPage implements OnInit {
 		const auc2 = await this.usersService.loginHistoryUser(user.uid, dataDevice, user, plat);
 		resolve(true);
 	})
+}
+
+async report() {
+	const modal = await this._ModalController.create({
+		component: ReportIssueModalPage,
+		showBackdrop:true,
+		backdropDismiss:false,
+	});
+	modal.onDidDismiss().then((result)=>{
+		if (result.data === 1) {
+			// this._NavController.navigateForward('check-request-pre-register');
+		} else {
+	
+		}
+	});
+	await modal.present();
 }
 
 }

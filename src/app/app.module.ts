@@ -60,6 +60,9 @@ import { StopPointsPageModule } from '../app/pages/purchases/products/product-de
 import { BusInfoPageModule } from '../app/pages/home/bus-info/bus-info.module'
 import { StationInfoPageModule } from '../app/pages/home/station-info/station-info.module'
 import  { PromotionDetailsPageModule } from '../app/pages/promotions/promotion-details/promotion-details.module'
+import { UpdateStoreModalPageModule } from './modals/update-store-modal/update-store-modal.module';
+import { ReportIssueModalPageModule } from './modals/report-issue-modal/report-issue-modal.module'
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 @NgModule({
   declarations: [AppComponent, PhoneMaskDirective],
   entryComponents: [],
@@ -87,6 +90,8 @@ import  { PromotionDetailsPageModule } from '../app/pages/promotions/promotion-d
 		BusInfoPageModule,
 		StationInfoPageModule,
 		PromotionDetailsPageModule,
+		UpdateStoreModalPageModule,
+		ReportIssueModalPageModule,
     IonicStorageModule.forRoot(
 			{driverOrder: ['indexeddb', 'sqlite', 'websql']}
 		),
@@ -110,6 +115,7 @@ import  { PromotionDetailsPageModule } from '../app/pages/promotions/promotion-d
     SocialSharing,
     Camera,
     File,
+		InAppBrowser,
 		AndroidPermissions,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: FirestoreSettingsToken, useValue: {} },
