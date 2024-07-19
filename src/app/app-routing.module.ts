@@ -118,7 +118,15 @@ const routes: Routes = [
   {
     path: 'reference/transfers',
     loadChildren: () => import('./pages/purchases/reference/transfers/transfers.module').then( m => m.TransfersPageModule)
+  },  {
+    path: 'update-store-modal',
+    loadChildren: () => import('./modals/update-store-modal/update-store-modal.module').then( m => m.UpdateStoreModalPageModule)
+  },
+  {
+    path: 'report-issue-modal',
+    loadChildren: () => import('./modals/report-issue-modal/report-issue-modal.module').then( m => m.ReportIssueModalPageModule)
   }
+
 
 
 

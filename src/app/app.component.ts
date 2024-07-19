@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform, NavController, ToastController } from '@ionic/angular';
+import { Platform, NavController, ToastController, ModalController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './services/firebase/auth.service';
@@ -10,6 +10,10 @@ import { FirebaseX } from "@ionic-native/firebase-x/ngx";
 import { UsersService } from './services/firebase/users.service';
 import { Router } from '@angular/router';
 import { IUserData, IRoles } from '../app/models/models';
+import { UpdateStoreModalPage } from '../app/modals/update-store-modal/update-store-modal.page';
+import { Device } from '@ionic-native/device/ngx';
+import { map } from 'leaflet';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -188,6 +192,7 @@ export class AppComponent {
     }
   ];
 	validUser: any = '[]';
+	// version: string = '1.1.6'
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -198,7 +203,9 @@ export class AppComponent {
     private usersService: UsersService,
     private fcm: FirebaseX,
     private router: Router,
-    public toastController: ToastController
+    public toastController: ToastController,
+		private _ModalController: ModalController,
+		private _Device:  Device
   ) {
     this.authService.getUserFromDB().subscribe( (user) => {
       this.user = user;
@@ -255,8 +262,25 @@ export class AppComponent {
           this.makeToast(data);
         };
       });
+
+			this.checkDeviceUpdate();
     });
   }
+
+	async checkDeviceUpdate() {
+		console.log(this._Device)
+		console.log(this._Device.platform)
+		this.usersService.getUpdate(this._Device.platform).then((data: any) => {
+			console.log(data)
+			let version = this.usersService.getVersion();
+			console.log(version)
+			console.log(data[0].version)
+			if (data[0].version !== version) {
+				this.showUpdateModal();
+			}
+		})
+		
+	}
 
   signout() {
     this.authService.signout().then( () => {
@@ -375,4 +399,21 @@ export class AppComponent {
 			}
 		}
 	}
+
+	async showUpdateModal() {
+    const modal = await this._ModalController.create({
+      component: UpdateStoreModalPage,
+      componentProps: { value: this.user },
+			showBackdrop:true,
+			backdropDismiss:false,
+    });
+		modal.onDidDismiss().then((result)=>{
+			if (result.data === 1) {
+				// this._NavController.navigateForward('check-request-pre-register');
+			} else {
+		
+			}
+		});
+    await modal.present();
+  }
 }

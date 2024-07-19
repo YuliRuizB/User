@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start" (click)="back()">
+			<ion-icon name="arrow-back"></ion-icon>
+    </ion-buttons>
+    <ion-title>
+      Reporte de Problemas
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<div class="pd">
+
+		<ion-item>
+			<ion-label position="floating">Nombre</ion-label>
+			<ion-input [(ngModel)]="name"></ion-input>
+		</ion-item>
+		
+		<br>
+		<ion-item>
+			<ion-label position="floating">Descripcion del problema</ion-label>
+			<ion-textarea  [(ngModel)]="description" rows="6" cols="20"></ion-textarea>
+		</ion-item>
+
+		<ion-button class="ion-margin" (click)="send()"
+		expand="block" size="large">Enviar</ion-button>
+	</div>
+
+</ion-content>

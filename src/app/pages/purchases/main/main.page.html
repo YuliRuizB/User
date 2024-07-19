@@ -34,7 +34,8 @@
 					<!--*ngIf="card.type === 'Producto'"-->
 					{{user.uid}} {{card.idBoardingPass}}
 					<div >
-						<ngx-qrcode *ngIf="showQRCode"  qrc-version = "5" qrc-value="{{user.uid}}-{{card.idBoardingPass}}"
+						<!--*ngIf="showQRCode"-->
+						<ngx-qrcode   qrc-version = "5" qrc-value="{{user.uid}}-{{card.idBoardingPass}}"
         			qrc-class="qrCode-size" qrc-errorCorrectionLevel="Q">
       			</ngx-qrcode>
 					</div>
@@ -62,7 +63,7 @@
 						<div class="box-text">
 							<p class="center">Tipo</p>
 							<div class="box-text1">
-								<ion-icon name="attach" slot="start"></ion-icon>
+								<ion-icon style="font-size: 20px;" name="attach" slot="start"></ion-icon>
 								<ion-label>{{ card.type }}</ion-label>
 							</div>
 						</div>
@@ -72,7 +73,7 @@
 						<div class="box-text">
 							<p class="center">Turno</p>
 							<div class="box-text1">
-								<ion-icon name="alarm" slot="start"></ion-icon>
+								<ion-icon  style="font-size: 20px;" name="alarm" slot="start"></ion-icon>
 								<ion-label>{{ card.round }}</ion-label>
 							</div>
 						</div>
@@ -82,8 +83,10 @@
 						<div class="box-text">
 							<p class="center">Ruta</p>
 							<div class="box-text1">
-								<ion-icon name="bus" slot="start"></ion-icon>
-								<ion-label>{{ card.stopName }}</ion-label>
+								<ion-icon style="font-size: 20px;" name="bus" slot="start"></ion-icon>
+								<p>{{ card.
+									routeName }}</p>
+								<!--<ion-label>{{ card.name }}</ion-label>-->
 							</div>
 						</div>
           </ion-item>

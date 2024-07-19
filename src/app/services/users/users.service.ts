@@ -12,11 +12,13 @@ import * as tslib from 'tslib';
   providedIn: 'root'
 })
 export class UsersService {
+
 	private readonly CHUNK_SIZE = 35;
   private readonly DELAY_BETWEEN_CHUNKS = 250;
   constructor(private afs: AngularFirestore) { }
 
 
+	
 	async getUsersWithBoardingPasses(): Promise<any[]> {
 		try {
 			const batchSize = 100;
@@ -272,6 +274,9 @@ export class UsersService {
 			throw error;
 		}
 	}
+
+
+
 }
 
 
