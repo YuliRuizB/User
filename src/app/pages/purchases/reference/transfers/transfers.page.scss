@@ -1,0 +1,45 @@
+.img-box {
+	padding: 10px;
+  background-color: #f0f0f0;
+  // display: flex;
+  border-radius: 12px;
+	height: 50px;
+}
+
+.img-box2 {
+	padding: 10px;
+  background-color: #f0f0f0;
+  // display: flex;
+  border-radius: 12px;
+}
+
+.box1 {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	.box2 {
+		display: flex;
+		gap: 5px;
+	}
+}
+
+p {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/*
+.pdf-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.pdf-viewer {
+  flex: 1;
+  overflow: hidden;
+}
+	*/

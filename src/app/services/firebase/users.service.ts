@@ -9,7 +9,6 @@ import { IUserData } from 'src/app/models/models';
   providedIn: 'root'
 })
 export class UsersService {
-
   users: AngularFirestoreCollection;
   user: AngularFirestoreDocument;
 	batch: any;
@@ -30,12 +29,44 @@ export class UsersService {
 			businesName: 'user'
 		}
 	];
-	versionPlatformAppStoreAndroid: string =  '1.0.0';
-	versionPlatformAppStoreIos: string =  '1.0.0';
+	versionPlatformAppStoreAndroid: string =  '1.1.8';
+	versionPlatformAppStoreIos: string =  '1.1.8';
+	version: string = '1.1.8'
   constructor(private afs: AngularFirestore, private fbStorage: AngularFireStorage) {
     this.users = this.afs.collection('users');
 		this.batch = this.afs.firestore.batch();
 		// this.afs.firestore.batch
+  }
+
+	getVersion() {
+		return this.version;
+	}
+
+
+	async getUpdate(device: any) {
+		/*this.afs.firestore.batch
+    const user = this.afs.collection('storeUpdate');
+		user.ref.where('device' === device);
+    return user.snapshotChanges();*/
+		// const users = this.afs.collection('storeUpdate')
+    // users.ref.where('device','==', device);
+    // return users.snapshotChanges();
+		return new Promise((resolve) => {
+			console.log(device)
+			this.afs.collection('storeUpdate').ref.where('device','==', device).get().then((doc) => {
+				if(doc.empty){
+					resolve(false);
+				}else{
+					let filterData = []
+					doc.forEach(element => {
+						filterData.push(element.data());
+					});
+					resolve(filterData)
+				}
+			}).catch((error) => {
+				console.log(error)
+			})
+		})
   }
 
   getUser(uid: string) {
@@ -254,6 +285,7 @@ export class UsersService {
     const user = this.users.doc(uid);
     return user.update(preference);
   }
+	
   updateUserTerms(uid: string, terms: boolean) {
     const user = this.users.doc(uid);
     return user.update({"terms": terms});
@@ -311,4 +343,53 @@ export class UsersService {
   }
 
 
+	insertReportIssue(name: any, description: any, device: any, dateTime, date) {
+		const fire1= this.afs;
+		const fire2 = this.afs;
+    return new Promise ((resolve,reject)=>{
+      fire1.collection('issueReport').add({  
+				manufacturer: device.manufacturer,
+				platform: device.platform,
+				version: device.version,
+				versionApp: this.version,
+				date: date,
+				dateTime: dateTime,
+				name: name,
+				description: description,
+				status: 'Active'
+      }).then(function(dataAux)  {
+				resolve(true)
+			}).catch(function(error) {
+        console.log("Error getting document:", error);
+				resolve(false)
+      });
+    });
+	}
+
+
+	public setRememberFlagStorage(data: any) {
+		localStorage.setItem('rememberFlag', JSON.stringify(data));
+	}
+
+	public getRememberFlagStorage() {
+		const data: any = localStorage.getItem('rememberFlag');
+		return JSON.parse(data);
+	}
+
+	public clearRememberFlagStorage() {
+		localStorage.removeItem('rememberFlag');
+	}
+
+	public setRememberDataFlagStorage(data: any) {
+		localStorage.setItem('rememberData', JSON.stringify(data));
+	}
+
+	public getRememberDataFlagStorage() {
+		const data: any = localStorage.getItem('rememberData');
+		return JSON.parse(data);
+	}
+
+	public clearRememberDataFlagStorage() {
+		localStorage.removeItem('rememberData');
+	}
 }

@@ -28,11 +28,19 @@
 							</ng-container>
 						</div>
 						<br>
-						<ion-item color="ligth" class="item1">
+						<ion-item color="ligth" class="item1" *ngIf="showEye">
 							<ion-icon slot="start" name="finger-print"></ion-icon>
-							<ion-input type="password" clearInput value="" formControlName="password" placeholder="Contraseña" required></ion-input>
+							<ion-input type="password"   formControlName="password" placeholder="Contraseña" required></ion-input>
+							<ion-icon name="eye" slot="end" (click)="eye()"></ion-icon>
 						</ion-item>
-	
+						
+						<ion-item color="ligth" class="item1" *ngIf="!showEye">
+							<ion-icon slot="start" name="finger-print"></ion-icon>
+							<ion-input type="text"   formControlName="password" placeholder="Contraseña" required></ion-input>
+							<ion-icon name="eye-off" slot="end" (click)="eye()"></ion-icon>
+							
+						</ion-item>
+
 						<div class="error-messages">
 							<ng-container *ngFor="let error of error_messages.password">
 								<div class="error-message" *ngIf="loginForm.get('password')?.hasError(error.type) && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)">
@@ -40,7 +48,12 @@
 								</div>
 							</ng-container>
 						</div>
-						<br><br>
+						
+						<div style="display: flex; align-items: center; justify-content: center; padding: 10px;">
+							<ion-checkbox color="light" checked="false"  [(ngModel)]="remember" [ngModelOptions]="{standalone: true}"   ></ion-checkbox>
+							<label for="rem" style="margin-left:10px;">Recuerdame</label>
+						</div>
+					
 						<div>
 							<ion-progress-bar *ngIf="loading" type="indeterminate"></ion-progress-bar>
 							<ion-button expand="block" class="" size="large" type="button" (click)="signin()" strong="true" [color]="loginForm.valid ? 'primary' : 'medium'" [fill]="loginForm.valid ? 'solid' : 'outline'" [disabled]="!loginForm.valid">Ingresar</ion-button>
@@ -55,8 +68,12 @@
 									Regístrate
 								</ion-text>
 							</span>
-						</h5>
+							</h5>
+
+							<p style="text-align: center;" (click)="report()">Reportar Problema</p>
+						
 						</div>
+						<p style="text-align: center !important;">Version 1.1.8</p>
 					</ion-list>
 				</div>
 			</form>

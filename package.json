@@ -29,6 +29,7 @@
     "@ionic-native/fcm": "^5.36.0",
     "@ionic-native/file": "^5.36.0",
     "@ionic-native/geolocation": "^5.36.0",
+    "@ionic-native/in-app-browser": "^5.36.0",
     "@ionic-native/social-sharing": "^5.36.0",
     "@ionic-native/splash-screen": "^5.20.0",
     "@ionic-native/status-bar": "^5.20.0",
@@ -50,10 +51,12 @@
     "leaflet.marker.slideto": "^0.2.0",
     "moment": "^2.29.4",
     "ng-circle-progress": "^1.5.1",
+    "ng2-pdf-viewer": "^6.4.1",
+    "ngx-doc-viewer": "^1.0.0",
     "ngx-qrcode2": "0.0.9",
     "openpay": "^1.0.4",
     "rxjs": "~6.5.4",
-    "tslib": "^1.10.0",
+    "tslib": "^1.14.1",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
@@ -72,14 +75,15 @@
     "@types/leaflet": "^1.5.8",
     "@types/node": "^13.1.8",
     "codelyzer": "^5.2.1",
-    "cordova-android": "^12.0.1",
     "cordova-ios": "^6.3.0",
+    "cordova-android": "^13.0.0",
     "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-camera": "^7.0.0",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-file": "^8.0.1",
     "cordova-plugin-geolocation": "^5.0.0",
     "cordova-plugin-idfa": "^3.0.0",
+    "cordova-plugin-inappbrowser": "3.2.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^5.0.0",
     "cordova-plugin-splashscreen": "^5.0.3",
@@ -127,7 +131,8 @@
       },
       "cordova-plugin-fcm-with-dependency-updated-apns": {},
       "cordova-plugin-android-permissions": {},
-      "cordova-plugin-idfa": {}
+      "cordova-plugin-idfa": {},
+      "cordova-plugin-inappbrowser": {}
     },
     "platforms": [
       "android",

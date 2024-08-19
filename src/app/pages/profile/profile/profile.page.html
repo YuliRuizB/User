@@ -65,6 +65,30 @@
     </ion-list>
 
     <ion-list *ngIf="userData && userData.defaultRoute">
+			<ion-list-header>
+        <ion-label>
+       Información de Operación
+      </ion-label>
+      </ion-list-header>
+			<ion-item>
+        <ion-icon slot="start" name="reorder-three-outline" color="tertiary"> </ion-icon>
+				<div style="display: flex; gap: 5px; justify-content: flex-end; width: 100%;">
+					<p style="margin: 0;">Turno:</p>
+					<span *ngIf="userData.turno === '1'">Día</span>
+					<span *ngIf="userData.turno === '2'">Tarde</span>
+					<span *ngIf="userData.turno === '3'">Noche</span>
+				</div>
+				
+		
+      </ion-item>
+      <ion-item *ngIf="roundName">
+        <ion-icon slot="start" name="reorder-two-outline" color="tertiary"> </ion-icon>
+				<div style="display: flex; gap: 5px; justify-content: flex-end; width: 100%;">
+					<p style="margin: 0;">Operación:</p>
+					<span *ngIf="roundName.length">{{ roundName[0].name }}</span>
+				</div>
+      </ion-item>  
+			<!--
       <ion-list-header>
         <ion-label>
        Información Academica
@@ -102,6 +126,7 @@
       <ion-item>
       <ion-button size="small" color="primary" (click)="updateMyInfo()" expand="full">Guardar Cambios</ion-button> 
       </ion-item>
+		-->
     </ion-list>
 
     <ion-list *ngIf="userData && userData.defaultRoute">

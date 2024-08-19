@@ -36,6 +36,25 @@ export class SignupPage implements OnInit {
 		{ id: 3,name: 'Nocturno'},
 		// { name: 'no definido'},
 	]
+
+	error_messages={
+		'firstName':[
+      {type: 'required', message: 'Nombre requerido'},
+      {type: 'minlength', message: 'Minimo 3 caracteres'},
+			{type: 'maxlength', message: 'Maximo 50 caracteres'},
+    ],
+    'lastName':[
+      {type: 'required', message: 'Apellido requerido'},
+      {type: 'minlength', message: 'Minimo 3 caracteres'},
+			{type: 'maxlength', message: 'Maximo 50 caracteres'}
+    ],
+		'email':[
+      {type: 'required', message: 'Correo requerido'},
+			{type: 'email', message: 'Formato invalido'},
+      {type: 'minlength', message: 'Minimo 3 caracteres'},
+			{type: 'maxlength', message: 'Maximo 50 caracteres'},
+    ],
+  }
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -54,8 +73,8 @@ export class SignupPage implements OnInit {
 
   createForm() {
     this.signupForm = this.fb.group({
-      firstName: ['', Validators.compose([Validators.required, Validators.maxLength(30), Validators.minLength(5)])],
-      lastName: ['', Validators.compose([Validators.required, Validators.maxLength(30), Validators.minLength(5)])],
+      firstName: ['', Validators.compose([Validators.required, Validators.maxLength(30), Validators.minLength(3)])],
+      lastName: ['', Validators.compose([Validators.required, Validators.maxLength(30), Validators.minLength(3)])],
       email: ['', Validators.compose([Validators.required, Validators.email])],
 			phone:['',Validators.required],
       studentId: ['', Validators.compose([ Validators.required])],

@@ -43,7 +43,9 @@ import { AndroidPermissions }  from '@ionic-native/android-permissions/ngx';
 import { IUserData, IRoles } from '../../../app/models/models';
 import { Device } from '@ionic-native/device/ngx';
 import * as moment from 'moment';
+import { CustomersService } from '../../services/firebase/customers.service';
 
+declare  var google;
 
 @Component({
   selector: "app-home",
@@ -87,9 +89,12 @@ export class HomePage implements OnInit, OnDestroy {
   password = 'Bus2Utr@ccar';
 	auxData4: any = [];
 	fullUserAuxTest: any = [];
-    private socket$: WebSocketSubject<any>;
+  private socket$: WebSocketSubject<any>;
   
-
+	
+	public directionsService:      any;
+  public polygon:                any= [];
+	
   constructor(
     private apiService: OnemapService,
     private geolocation: Geolocation,
@@ -111,11 +116,31 @@ export class HomePage implements OnInit, OnDestroy {
 		private _LoadingController: LoadingController,
     private _MenuController: MenuController,
     private _Platform: Platform,
-		private _Device: Device
+		private _Device: Device,
+    private _CustomersService: CustomersService
   ) { 
-    this._MenuController.enable(true);
+    this._MenuController.enable(true)
+		this.directionsService = new google.maps.DirectionsService();
   }
 		
+
+
+
+	getCustomers() {
+		this._CustomersService.getCustomersList().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as any;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    ).subscribe( async (customers) => {
+      console.log('aliiiiii')
+			console.log(customers);
+      for (let data of customers) {
+				await this._CustomersService.addCustomerPaymenth(data);
+			}
+    })
+	}
 
   async ionViewDidEnter() {  
     let loading = null;
@@ -671,6 +696,8 @@ socket$.subscribe(
         )
       )
       .subscribe((routeStops) => {
+				console.log('ali')
+				console.log(routeStops)
         this.routeStopsList = routeStops;
         this.addStopsToMap(this.routeStopsList);
         if (this.hasUserGeoLocation) {
@@ -705,7 +732,7 @@ socket$.subscribe(
       }); */
   }
 
-  addStopsToMap(stationsArray) {
+  async addStopsToMap(stationsArray) {
     let arrayOfLatLngs = [];
     let coordinates = "";
     let radiuses = "";
@@ -751,7 +778,7 @@ socket$.subscribe(
       arrayOfLatLngs.length > 0 ? new L.LatLngBounds(arrayOfLatLngs) : [];
 
     // let polyline = (encode([[38.5, -120.2], [40.7, -120.95], [43.252, -126.453]]));
-    this.osrmService
+    /*this.osrmService
       .getMatchService(
         "driving",
         coordinates.substring(0, coordinates.length - 1),
@@ -783,6 +810,7 @@ socket$.subscribe(
       },(error) => {
 				console.log(error)
 			})
+		*/
 
     const boundsExists = arrayOfLatLngs.length > 0;
     if (boundsExists) {
@@ -807,6 +835,7 @@ socket$.subscribe(
         )
       )
       .subscribe((devices) => {
+				console.log(devices)
 				console.log(this.markers)
 			
 
@@ -825,7 +854,7 @@ socket$.subscribe(
 								this.markers[device].remove();
 							}*/
 							// this.markers.remove();
-             
+							this.markers[device].remove();
             });
           }
         }

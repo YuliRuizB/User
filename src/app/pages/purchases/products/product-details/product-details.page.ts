@@ -70,7 +70,6 @@ export class ProductDetailsPage implements OnInit {
     private storageService: StorageService,
     public modalController: ModalController) { 
     this.productId = this.activatedRoute.snapshot.paramMap.get('id');
-    console.log(this.productId);
   }
 
   ngOnInit() {
@@ -96,8 +95,6 @@ export class ProductDetailsPage implements OnInit {
         return { id, ...data };
     })
     ).subscribe( (product: IProduct) => {
-			console.log('este es el producto payNow')
-      console.log(product);
       this.product = product;
       this.loading = false;
     });
@@ -109,7 +106,6 @@ export class ProductDetailsPage implements OnInit {
         return { id, ...data };
       }))
     ).subscribe( (stoppoints) => {
-      console.log(stoppoints);
       this.stopPoints = _.sortBy(stoppoints, "name", "desc");
       this.loading = false;
     });
@@ -134,7 +130,16 @@ export class ProductDetailsPage implements OnInit {
           text: method.name,
           icon: method.icon,
           handler: () => {
-            this.navController.navigateForward(method.userNavigation);
+
+						if (method.method ===  "transfer") {
+							const queryParams = { 
+								stopInfo: this.productDetailsForm.value,
+								product: this.product
+							};
+							this.navController.navigateForward(method.userNavigation, {
+								queryParams: queryParams
+							});
+						}else this.navController.navigateForward(method.userNavigation);
           }
         };
         this.paymentMethodsButtons.push(button);
@@ -160,31 +165,21 @@ export class ProductDetailsPage implements OnInit {
     
     modal.onWillDismiss().then((stopPoint) => {
       const stopPointSelected = stopPoint.data.data;
-			console.log('stopPointSelected')
-      console.log(stopPointSelected);
-			//Se arma esta estructura 
-			// { stopName: '', stopId: '', stopDescription: '', routeId: '', routeName: ''}
+		
       this.productDetailsForm.controls['stopName'].setValue(stopPointSelected.name);
       this.productDetailsForm.controls['stopId'].setValue(stopPointSelected.id);
       this.productDetailsForm.controls['stopDescription'].setValue(stopPointSelected.description);
       this.productDetailsForm.controls['routeId'].setValue(stopPointSelected.routeId);
       this.productDetailsForm.controls['routeName'].setValue(stopPointSelected.routeName);
-      console.log(this.productDetailsForm.value);
+ 
     })
 
     return await modal.present();
   }
 
   submitForm() {
-    console.log(this.productDetailsForm.value);
     const purchaseRequest: IPayNowReference = {...this.product, ...this.productDetailsForm.value, active: true};
-		console.log('payNowReference4 llenado');
-		console.log(this.product)
-		console.log(this.productDetailsForm.value)
-    console.log(purchaseRequest);
     localStorage.setItem('payNowReference', JSON.stringify(purchaseRequest));
-		console.log('payNowReference4');
-		console.log(purchaseRequest);
     this.presentActionSheet(purchaseRequest);
   }
 

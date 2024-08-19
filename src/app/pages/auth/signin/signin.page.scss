@@ -67,6 +67,9 @@ ion-content {
         width: calc(70% - 46px);
     }
 
+		@media(min-width: 1000px) {
+			width: calc(70% - 46px);
+		}
     h4 {
         margin-right: 20px;
         font-weight: 400;
