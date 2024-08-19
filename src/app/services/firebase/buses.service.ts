@@ -22,9 +22,14 @@ export class BusesService {
   }
 
   getUserActiveRoutes(user: IUserData) {
-    const activeRoutes = this.afs.collection('customers').doc(user.customerId).collection('routes');
-    activeRoutes.ref.where('active','==', true);
+    /*const activeRoutes = this.afs.collection('customers').doc(user.customerId).collection('routes').ref.where('active','==', true);
+    // activeRoutes.ref.where('active','==', true);
     return activeRoutes.snapshotChanges();
+    */
+    return this.afs.collection('customers')
+    .doc(user.customerId)
+    .collection('routes', ref => ref.where('active', '==', true))
+    .snapshotChanges();
   }
 
 	getUserActiveRoutes2(customerId) {

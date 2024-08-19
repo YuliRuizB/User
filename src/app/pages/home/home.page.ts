@@ -683,8 +683,6 @@ socket$.subscribe(
         )
       )
       .subscribe((routeStops) => {
-				console.log('ali')
-				console.log(routeStops)
         this.routeStopsList = routeStops;
         this.addStopsToMap(this.routeStopsList);
         if (this.hasUserGeoLocation) {
@@ -762,8 +760,7 @@ socket$.subscribe(
         .bindPopup(customPopup);
     });
 
-		console.log('alicarlo')
-		console.log(arrayOfLatLngs)
+
 		let waypts = [];
 		let encodeString = [];
 		let dataReturn = [];
