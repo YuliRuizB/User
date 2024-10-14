@@ -94,7 +94,8 @@ export class HomePage implements OnInit, OnDestroy {
 	
 	public directionsService:      any;
   public polygon:                any= [];
-	
+  
+  polyline: any = [];
   constructor(
     private apiService: OnemapService,
     private geolocation: Geolocation,
@@ -717,7 +718,7 @@ socket$.subscribe(
       }); */
   }
 
-  async addStopsToMap(stationsArray) {
+  /*async addStopsToMap(stationsArray) {
     let arrayOfLatLngs = [];
     let coordinates = "";
     let radiuses = "";
@@ -853,12 +854,198 @@ socket$.subscribe(
 			})
 		*/
 
-    const boundsExists = arrayOfLatLngs.length > 0;
+    /*const boundsExists = arrayOfLatLngs.length > 0;
     if (boundsExists) {
       this.map.fitBounds(bounds);
       this.map.invalidateSize();
     }
-  }
+  }*/
+
+    async addStopsToMap(stationsArray) {
+      console.log('entra  11111111111')
+      if (this.polyline.length !== 0) {
+        console.log('okssssssssssss')
+        /*L.polyline([]).removeFrom(this.map)
+        this.map.removeLayer(this.polyline); // Eliminar la polyline del mapa
+        // this.polyline = null;    
+        L.polyline([]).addTo(this.map); 
+        L.polyline([]).remove()
+        this.polyline = null;  */
+        console.log(this.polyline)
+        const map = this.map;
+        console.log(map);
+        this.polyline.forEach(function (item) {
+          map.removeLayer(item)
+        });
+        this.polyline = [];
+      }
+  
+     
+  
+     
+      const batchSize = 24;
+      let arrayOfLatLngs = [];
+      let coordinates = "";
+      let radiuses = "";
+      let timestamps = "";
+      let count = 0;
+        
+  
+      setTimeout(async () => {
+  
+      
+      for (let i = 0; i < stationsArray.length; i += batchSize) {
+        const batch = stationsArray.slice(i, i + batchSize);
+    
+        batch.forEach((station) => {
+          count += 1000;
+          const customPopup = `
+            <strong>${station.name}</strong><br/>
+            ${station.description}<br/>
+          `;
+    
+          coordinates += `${station.geopoint.longitude},${station.geopoint.latitude};`;
+          radiuses += "49;";
+          timestamps +=
+            +(new Date().getTime() / 1000 + count * 60).toFixed(0) + ";";
+    
+          arrayOfLatLngs.push([
+            station.geopoint.latitude,
+            station.geopoint.longitude,
+          ]);
+          const marker = L.marker([station.geopoint.latitude, station.geopoint.longitude], {
+            icon: L.icon({
+              iconUrl: station.iconUrl
+                ? station.iconUrl
+                : "assets/icon/pin_station.png",
+              iconSize: [30, 30],
+              iconAnchor: [30, 30],
+              popupAnchor: [-15, -20],
+              shadowUrl: "assets/icon/drop_shadow_bus.png",
+              shadowRetinaUrl: "assets/icon/drop_shadow_bus.png",
+              shadowSize: [45, 45],
+              shadowAnchor: [45, 27],
+            }),
+          })
+            .addTo(this.stationsMarkers)
+            .bindPopup(customPopup);
+  
+            /*marker.on('popupopen', (e) => {
+              this.interval = setInterval(() => {
+                console.log(station)
+                const stopIdToFilter = station.id;
+                console.log(this.devices)
+  
+                console.log('cafeeeeee')
+                console.log(this.devices)
+                console.log(this.devicesAux)
+                const result = this.devicesAux.map(item => {
+                  console.log('chapoooo')
+                  console.log(item)
+                  
+                  console.log(stopIdToFilter)
+                  if (item.stopsTime === undefined) {
+                    return
+                  }
+                    const stop = item.stopsTime.find((s: any) => s.stopId === stopIdToFilter);
+                    if (stop) {
+                      const date = moment(stop.dateTimeInsert, "DD-MM-YYYY-HH:mm:ss");
+    
+                      // Da formato a la fecha como desees, por ejemplo, "hh:mm:ss A" para AM/PM
+                      const formattedTime = date.format("hh:mm:ss A");
+                        return {
+                            driver: item.driver,
+                            vehicle: item.vehicleName,
+                            dateTimeInsert: formattedTime,// moment(stop.dateTimeInsert).format('hh:mm:ss a'),
+                            distanceInKm: stop.stopGoogle.distanceInKm,
+                            duration: stop.stopGoogle.duration.text
+                        };
+                    }
+                    return null; // O manejar el caso donde no se encuentra el stop
+                }).filter(Boolean); // Filtra los elementos nulos
+    
+                console.log(result);
+                // this.selectMarker =  result;
+                // this.flagDistance = true;
+                // this.selectMarker = station;
+                console.log(`Popup abierto para la estación: ${station.name}`);
+              },50000)
+              
+              // Aquí puedes llamar a cualquier función o lógica adicional que necesites
+            });
+            */
+            
+            // Escucha el evento popupclose
+            marker.on('popupclose', (e) => {
+              // this.flagDistance = false;
+              // clearInterval(this.interval)
+              console.log(`Popup cerrado para la estación: ${station.name}`);
+              // Aquí puedes llamar a cualquier función o lógica adicional que necesites
+            });
+        });
+    
+        let waypts = [];
+        let encodeString = [];
+    
+        for (let x = 1; x < arrayOfLatLngs.length - 1; x++) {
+          waypts.push({
+            location: {
+              lat: arrayOfLatLngs[x][0],
+              lng: arrayOfLatLngs[x][1],
+            },
+          });
+        }
+    
+        await this.directionsService.route(
+          {
+            origin: new google.maps.LatLng(arrayOfLatLngs[0][0], arrayOfLatLngs[0][1]),
+            waypoints: waypts,
+            destination: new google.maps.LatLng(
+              arrayOfLatLngs[arrayOfLatLngs.length - 1][0],
+              arrayOfLatLngs[arrayOfLatLngs.length - 1][1]
+            ),
+            travelMode: 'DRIVING',
+          },
+          (response, status) => {
+            if (status === 'OK') {
+              let polylinePath = response.routes[0].overview_polyline;
+              let encodePath: string = polylinePath;
+              let encodeString2 = google.maps.geometry.encoding.decodePath(encodePath);
+    
+              for (let x = 0; x < encodeString2.length; x++) {
+                encodeString.push([encodeString2[x].lat(), encodeString2[x].lng()]);
+              }
+    
+              var style = {
+                color: "#3880ff",
+                weight: 8,
+                opacity: 0.6,
+              }
+              
+              
+              let aux =  L.polyline(encodeString, style).addTo(this.map);
+              console.log('shjowww');
+              console.log(this.polyline)
+              this.polyline.push(aux)
+            }
+          }
+        );
+    
+        arrayOfLatLngs = []; // Limpiar array para el siguiente lote
+        // waypts = [];
+        // encodeString = [];
+      }
+    
+      const boundsExists = arrayOfLatLngs.length > 0;
+      if (boundsExists) {
+        const bounds = new L.LatLngBounds(arrayOfLatLngs);
+        this.map.fitBounds(bounds);
+        this.map.invalidateSize();
+      }
+      
+    },250)
+  
+    }
 
   updateDevices() {
     this.asyncProcess = true;

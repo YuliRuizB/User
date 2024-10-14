@@ -29,9 +29,9 @@ export class UsersService {
 			businesName: 'user'
 		}
 	];
-	versionPlatformAppStoreAndroid: string =  '1.1.9';
-	versionPlatformAppStoreIos: string =  '1.1.9';
-	version: string = '1.1.9'
+	versionPlatformAppStoreAndroid: string =  '1.1.10';
+	versionPlatformAppStoreIos: string =  '1.1.10';
+	version: string = '1.1.10'
   constructor(private afs: AngularFirestore, private fbStorage: AngularFireStorage) {
     this.users = this.afs.collection('users');
 		this.batch = this.afs.firestore.batch();
